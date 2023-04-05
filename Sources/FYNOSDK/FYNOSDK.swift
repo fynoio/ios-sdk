@@ -82,18 +82,18 @@ public class FYNOSDK {
     }
     
    
-//   public static func notificationExtention(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
-//               let bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
-//
-//               guard let content = bestAttemptContent,
-//                     let attachmentURLString = content.userInfo["urlImageString"] as? String,
-//                     let attachmentURL = URL(string: attachmentURLString) else {
-//                   contentHandler(request.content)
-//                   return
-//               }
-//
-//               Utilities.downloadImageAndAttachToContent(from: attachmentURL, content: content, completion: contentHandler)
-//           }
+   public static func notificationExtention(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+               let bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
+
+               guard let content = bestAttemptContent,
+                     let attachmentURLString = content.userInfo["urlImageString"] as? String,
+                     let attachmentURL = URL(string: attachmentURLString) else {
+                   contentHandler(request.content)
+                   return
+               }
+
+               Utilities.downloadImageAndAttachToContent(from: attachmentURL, content: content, completion: contentHandler)
+           }
 
     
     
