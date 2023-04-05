@@ -82,7 +82,7 @@ public class FYNOSDK {
     }
     
    
-   public static func notificationExtention(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+   public  func notificationExtention(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
                let bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
 
                guard let content = bestAttemptContent,
