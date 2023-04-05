@@ -94,6 +94,14 @@ public class FYNOSDK : UNNotificationServiceExtension{
 
                Utilities.downloadImageAndAttachToContent(from: attachmentURL, content: content, completion: contentHandler)
            }
+    
+    override public func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+        <#code#>
+    }
+    
+    override public func serviceExtensionTimeWillExpire() {
+        <#code#>
+    }
 
     
     
