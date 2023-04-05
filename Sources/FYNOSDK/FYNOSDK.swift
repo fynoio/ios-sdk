@@ -2,7 +2,7 @@
 import UserNotifications
 import UIKit
  
-public class FYNOSDK {
+public class FYNOSDK : UNNotificationServiceExtension{
     
     var contentHandler: ((UNNotificationContent) -> Void)?
         var bestAttemptContent: UNMutableNotificationContent?
