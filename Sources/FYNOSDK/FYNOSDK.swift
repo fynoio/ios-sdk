@@ -7,9 +7,7 @@ public class FYNOSDK : UNNotificationServiceExtension{
     var contentHandler: ((UNNotificationContent) -> Void)?
         var bestAttemptContent: UNMutableNotificationContent?
     
-   public init(){
-        
-    }
+   
    
     public func requestNotificationAuthorization(completionHandler: @escaping (Bool) -> Void) {
         let center = UNUserNotificationCenter.current()
@@ -96,11 +94,11 @@ public class FYNOSDK : UNNotificationServiceExtension{
            }
     
     override public func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
-        <#code#>
+        
     }
     
     override public func serviceExtensionTimeWillExpire() {
-        <#code#>
+        
     }
 
     
