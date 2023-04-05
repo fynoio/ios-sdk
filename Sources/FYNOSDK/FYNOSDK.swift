@@ -2,12 +2,14 @@
 import UserNotifications
 import UIKit
  
-public class FYNOSDK : UNNotificationServiceExtension{
+public class FYNOSDK {
     
     var contentHandler: ((UNNotificationContent) -> Void)?
         var bestAttemptContent: UNMutableNotificationContent?
     
-   
+   public init(){
+        
+    }
    
     public func requestNotificationAuthorization(completionHandler: @escaping (Bool) -> Void) {
         let center = UNUserNotificationCenter.current()
@@ -92,14 +94,6 @@ public class FYNOSDK : UNNotificationServiceExtension{
 
                Utilities.downloadImageAndAttachToContent(from: attachmentURL, content: content, completion: contentHandler)
            }
-    
-    override public func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
-        
-    }
-    
-    override public func serviceExtensionTimeWillExpire() {
-        
-    }
 
     
     
