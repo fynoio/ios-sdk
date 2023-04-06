@@ -97,7 +97,7 @@ public class FYNOSDK {
                Utilities.downloadImageAndAttachToContent(from: attachmentURL, content: content, completion: contentHandler)
            }
     
-    public func initializeApp(deviceToken: String ) -> Void
+    public func initializeApp(deviceToken: String,completionHandler: @escaping (Result<Bool, Error>) -> Void)
     {
         Utilities.sendRequest(deviceToken, completionHandler: <#T##(Result<Bool, Error>) -> Void#>)
     }
