@@ -112,6 +112,7 @@ public class Utilities{
                 }
 
                 completionHandler(.success(true))
+                print(response as String)
             }
             task.resume()
         }
