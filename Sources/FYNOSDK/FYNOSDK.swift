@@ -6,8 +6,8 @@ public class FYNOSDK {
     
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
-    var API_Key:String
-    var WSID:String
+    var API_Key:String?
+    var WSID:String?
     
    public init(){
         
