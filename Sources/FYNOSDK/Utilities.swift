@@ -112,7 +112,9 @@ public class Utilities{
                 }
 
                 completionHandler(.success(true))
-                print(response as String)
+                guard let httpResponse = response as? HTTPURLResponse,
+                      print(httpResponse.statusCode)
+                else{}
             }
             task.resume()
         }
