@@ -5,7 +5,9 @@ import UIKit
 public class FYNOSDK {
     
     var contentHandler: ((UNNotificationContent) -> Void)?
-        var bestAttemptContent: UNMutableNotificationContent?
+    var bestAttemptContent: UNMutableNotificationContent?
+    var API_Key:String
+    var WSID:String
     
    public init(){
         
@@ -94,6 +96,11 @@ public class FYNOSDK {
 
                Utilities.downloadImageAndAttachToContent(from: attachmentURL, content: content, completion: contentHandler)
            }
+    
+    public func initializeApp(deviceToken: String)
+    {
+        Utilities.sendRequest(deviceToken: <#T##String#>, completionHandler: <#T##(Result<Bool, Error>) -> Void#>)
+    }
 
     
     

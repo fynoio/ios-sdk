@@ -45,5 +45,70 @@ public class Utilities{
             completion(content)
         }.resume()
     }
+    
+    public static func sendRequest(deviceToken: String, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+            guard let url = URL(string: "https://api.dev.fyno.io/v1/FYAP3D218C9F2IN/test/profiles") else {
+                completionHandler(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
+                return
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.addValue("dev", forHTTPHeaderField: "version")
+            request.addValue("Bearer yFLpRYF.wARED7+zwqpJeszQWviPsmmg4+CJqNhq", forHTTPHeaderField: "Authorization")
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            let payload: [String: Any] = [
+                "distinct_id": "61",
+                "name": "Shilpa Agarwal",
+                "status": 1,
+                "channel": [
+                    "sms": "+919902622877",
+                    "push": [
+                        [
+                            "token": deviceToken,
+                            "integration_id": "I9F2D49242FEA"
+                        ],
+                        [
+                            "token": "ttt2",
+                            "integration_id": "I9F2D49242FEA"
+                        ]
+                    ],
+                    "inapp": [
+                        [
+                            "token": "inapp_token:1",
+                            "integration_id": nil
+                        ],
+                        [
+                            "token": "inapp_token:1",
+                            "integration_id": nil
+                        ]
+                    ]
+                ]
+            ]
+
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: payload, options: [])
+                request.httpBody = jsonData
+            } catch {
+                completionHandler(.failure(NSError(domain: "JSON encoding failed", code: -1, userInfo: nil)))
+                return
+            }
+
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    completionHandler(.failure(error))
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                    completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: nil)))
+                    return
+                }
+
+                completionHandler(.success(true))
+            }
+            task.resume()
+        }
 }
 #endif
