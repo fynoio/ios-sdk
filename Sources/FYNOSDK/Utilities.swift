@@ -107,7 +107,7 @@ public class Utilities{
                 }
 
                 guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                    completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: httpResponse.statusCode)))
+                    completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: response.statusCode)))
                     return
                 }
 
