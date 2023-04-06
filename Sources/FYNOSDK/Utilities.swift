@@ -9,6 +9,10 @@
 import Foundation
 import UserNotifications
 public class Utilities{
+    var url:String="https://api.dev.fyno.io"
+    var version:String="v1"
+     
+    
     
     public init(){
         
@@ -46,8 +50,9 @@ public class Utilities{
         }.resume()
     }
     
-    public static func sendRequest(deviceToken: String, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
-            guard let url = URL(string: "https://api.dev.fyno.io/v1/FYAP3D218C9F2IN/test/profiles") else {
+    public static func createUserProfile(deviceToken: String,WSID:String,api_key:String, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+        
+        guard let url = URL(string: self.url+"/"+self.version+"/"+WSID+"/test/profiles") else {
                 completionHandler(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
                 return
             }
@@ -55,7 +60,7 @@ public class Utilities{
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.addValue("dev", forHTTPHeaderField: "version")
-            request.addValue("Bearer yFLpRYF.wARED7+zwqpJeszQWviPsmmg4+CJqNhq", forHTTPHeaderField: "Authorization")
+            request.addValue("Bearer "+api_key, forHTTPHeaderField: "Authorization")
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
             let payload: [String: Any] = [
@@ -102,7 +107,7 @@ public class Utilities{
                 }
 
                 guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                    completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: nil)))
+                    completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: httpResponse.statusCode)))
                     return
                 }
 
