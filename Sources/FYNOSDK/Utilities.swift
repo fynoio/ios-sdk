@@ -9,8 +9,8 @@
 import Foundation
 import UserNotifications
 public class Utilities{
-    var url:String="https://api.dev.fyno.io"
-    var version:String="v1"
+    static var url:String="https://api.dev.fyno.io"
+    static var version:String="v1"
      
     
     
