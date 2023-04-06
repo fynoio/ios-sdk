@@ -99,7 +99,7 @@ public class FYNOSDK {
     
     public func initializeApp(deviceToken: String ) -> Void
     {
-        Utilities.sendRequest(deviceToken: <#T##String#>, completionHandler: <#T##(Result<Bool, Error>) -> Void#>)
+        Utilities.sendRequest(deviceToken, completionHandler: <#T##(Result<Bool, Error>) -> Void#>)
     }
 
     
