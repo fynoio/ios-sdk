@@ -101,7 +101,7 @@ public class FYNOSDK {
     {
         self.WSID=WSID
         self.api_key=api_key
-        Utilities.sendRequest(deviceToken:deviceToken,WSID:WSID,api_key:api_key, completionHandler: completionHandler)
+        Utilities.createUserProfile(deviceToken:deviceToken,WSID:WSID,api_key:api_key, completionHandler: completionHandler)
     }
 
     
