@@ -6,7 +6,7 @@ public class FYNOSDK {
     
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
-    var payloadUserProfile: Payload
+    var payloadUserProfile: Payload?
     
    public init(){
         
@@ -22,14 +22,7 @@ public class FYNOSDK {
     }
     
     
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        // Send the device token to your server to register for remote notifications
-        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
-        print(token)
-        //startApp()
-        Utilities.setdeviceToken(deviceToken: token)
-        
-    }
+   
     
     public func registerForRemoteNotifications() {
         UIApplication.shared.registerForRemoteNotifications()
@@ -106,18 +99,20 @@ public class FYNOSDK {
                Utilities.downloadImageAndAttachToContent(from: attachmentURL, content: content, completion: contentHandler)
            }
     
-    public func initializeApp(WSID:String,api_key:String,integrationID:String,UUID:String, completionHandler: @escaping (Result<Bool, Error>) -> Void)
+    public func initializeApp(WSID:String,api_key:String,integrationID:String,UUID:String, deviceToken: String, completionHandler: @escaping (Result<Bool, Error>) -> Void)
     {
-        if (WSID != nil && api_key != nil && integrationID != nil && deviceToken != nil){
+        if (WSID != "" && api_key != "" && integrationID != "" ){
             Utilities.setWSID(WSID: WSID)
             Utilities.setapi_key(api_key: api_key)
             Utilities.setUUID(UUID: UUID)
+            Utilities.setdeviceToken(deviceToken: deviceToken)
 }
         
         
         
         
         let deviceToken = Utilities.getdeviceToken()
+     
 
         
       
@@ -135,7 +130,7 @@ public class FYNOSDK {
         )
         
   
-        Utilities.createUserProfile(deviceToken:deviceToken,WSID:WSID,api_key:api_key, completionHandler: completionHandler)
+        Utilities.createUserProfile(integrationID: integrationID, payload: payloadInstance, completionHandler: completionHandler)
     }
 
     

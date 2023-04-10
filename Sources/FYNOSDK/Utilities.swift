@@ -11,6 +11,7 @@ import UserNotifications
 public class Utilities{
     static var url:String="https://api.dev.fyno.io"
     static var version:String="v1"
+    static let preferences = UserDefaults.standard
      
     
     
@@ -96,7 +97,7 @@ public class Utilities{
                 guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 else {
                     completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: nil )))
                     let httpResponse = response as? HTTPURLResponse
-                         print(httpResponse?.statusCode)
+                    print(httpResponse?.statusCode ?? "404")
                     
                     return
                 }
@@ -108,151 +109,89 @@ public class Utilities{
             task.resume()
         }
     
-    public static func User_Profile_PayloadBuilder(payload:Payload)->Dictionary
-    {
-        var payload =
-        [
-            "distinct_id": "61",
-            "name": "Shilpa Agarwal",
-            "status": 1,
-            "channel": [
-                "sms": "+919902622877",
-                "push": [
-                    [
-                        "token": deviceToken,
-                        "integration_id": "I9F2D49242FEA"
-                    ],
-                    [
-                        "token": "ttt2",
-                        "integration_id": "I9F2D49242FEA"
-                    ]
-                ],
-                "inapp": [
-                    [
-                        "token": "inapp_token:1",
-                        "integration_id": nil
-                    ],
-                    [
-                        "token": "inapp_token:1",
-                        "integration_id": nil
-                    ]
-                ]
-            ]
-        ]
-        
-        return payload
-    }
+
     
-    public static func setUUID (UUID:String)->void
+    public static func setUUID (UUID:String) -> Void
     {
-        let preferences = NSUserDefaults.standardUserDefaults()
+         
         let currentLevelKey = "UUID"
         let currentLevel = UUID
-        preferences.setString(currentLevel, forKey: currentLevelKey)
-        //  Save to disk
-        let didSave = preferences.synchronize()
-        
-        if !didSave {
-        //  Couldn't save (I've never seen this happen in real world testing)
-        }
+        self.preferences.set(currentLevel, forKey: currentLevelKey)
+       
     }
     
-    public static func setWSID (WSID:String)->void
+    public static func setWSID (WSID:String)->Void
     {
-        let preferences = NSUserDefaults.standardUserDefaults()
         let currentLevelKey = "WSID"
         let currentLevel = WSID
-        preferences.setString(currentLevel, forKey: currentLevelKey)
-        //  Save to disk
-        let didSave = preferences.synchronize()
-        
-        if !didSave {
-        //  Couldn't save (I've never seen this happen in real world testing)
-        }
+        preferences.set(currentLevel, forKey: currentLevelKey)
     }
     
-    public static func setapi_key (api_key:String)->void
+    public static func setapi_key (api_key:String)->Void
     {
-        let preferences = NSUserDefaults.standardUserDefaults()
         let currentLevelKey = "api_key"
         let currentLevel = api_key
-        preferences.setString(currentLevel, forKey: currentLevelKey)
-        //  Save to disk
-        let didSave = preferences.synchronize()
+        preferences.set(currentLevel, forKey: currentLevelKey)
         
-        if !didSave {
-        //  Couldn't save (I've never seen this happen in real world testing)
-        }
     }
     
  
     
     public static func setdeviceToken (deviceToken:String)->Void
     {
-        let preferences = NSUserDefaults.standardUserDefaults()
         let currentLevelKey = "deviceToken"
         let currentLevel = deviceToken
-        preferences.setString(currentLevel, forKey: currentLevelKey)
+        if getdeviceToken() != deviceToken {
+            preferences.set(currentLevel, forKey: currentLevelKey)
+        }
         
-        //  Save to disk
-        if getdeviceToken()!==deviceToken {
-            let didSave = preferences.synchronize()
+        
             
-            if !didSave {
-                //  Couldn't save (I've never seen this happen in real world testing)
-            }
-        }
     }
     
-    public static func getWSID ()->string
+    public static func getWSID ()-> String
     {
-        let preferences = NSUserDefaults.standardUserDefaults()
         let currentLevelKey = "WSID"
-        if preferences.objectForKey(currentLevelKey) == nil {
-            //  Doesn't exist
+        if preferences.object(forKey: currentLevelKey) == nil {
         } else {
-            return preferences.stringForKey(currentLevelKey)
+            return preferences.string(forKey: currentLevelKey) ?? ""
         }
-        return nil
+        return ""
     }
     
-    public static func getapi_key ()->string
+    public static func getapi_key ()-> String
     {
-        let preferences = NSUserDefaults.standardUserDefaults()
         let currentLevelKey = "api_key"
-        if preferences.objectForKey(currentLevelKey) == nil {
+        if preferences.object(forKey: currentLevelKey) == nil {
             //  Doesn't exist
         } else {
-            return preferences.stringForKey(currentLevelKey)
+            return preferences.string(forKey: currentLevelKey) ?? ""
         }
-        return nil
-        
+        return ""
     }
     
  
     
     public static func getdeviceToken ()->String
     {
-        let preferences = NSUserDefaults.standardUserDefaults()
         let currentLevelKey = "deviceToken"
-        if preferences.objectForKey(currentLevelKey) == nil {
+        if preferences.object(forKey: currentLevelKey) == nil {
             //  Doesn't exist
         } else {
-            return preferences.stringForKey(currentLevelKey)
+            return preferences.string(forKey: currentLevelKey) ?? ""
         }
-        return nil
+        return ""
     }
     
     public static func getUUID ()->String
     {
-        let preferences = NSUserDefaults.standardUserDefaults()
         let currentLevelKey = "UUID"
-        if preferences.objectForKey(currentLevelKey) == nil {
+        if preferences.object(forKey: currentLevelKey) == nil {
             //  Doesn't exist
         } else {
-            return preferences.stringForKey(currentLevelKey)
+            return preferences.string(forKey: currentLevelKey) ?? ""
         }
-        return nil
+       return ""
     }
     
 }

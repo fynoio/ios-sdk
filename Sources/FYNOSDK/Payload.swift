@@ -9,7 +9,7 @@ import Foundation
 
  
 
-class Payload {
+public class Payload {
     let distinctID: String
     let name: String
     let status: Int
