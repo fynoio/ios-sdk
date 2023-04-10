@@ -6,8 +6,7 @@ public class FYNOSDK {
     
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
-    var api_key:String?
-    var WSID:String?
+    var payloadUserProfile: Payload
     
    public init(){
         
@@ -20,6 +19,16 @@ public class FYNOSDK {
         }
         let category = UNNotificationCategory(identifier: "image-notification", actions: [], intentIdentifiers: [], options: [])
         center.setNotificationCategories([category])
+    }
+    
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Send the device token to your server to register for remote notifications
+        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
+        print(token)
+        //startApp()
+        Utilities.setdeviceToken(deviceToken: token)
+        
     }
     
     public func registerForRemoteNotifications() {
@@ -97,10 +106,35 @@ public class FYNOSDK {
                Utilities.downloadImageAndAttachToContent(from: attachmentURL, content: content, completion: contentHandler)
            }
     
-    public func initializeApp(deviceToken: String,WSID:String,api_key:String,completionHandler: @escaping (Result<Bool, Error>) -> Void)
+    public func initializeApp(WSID:String,api_key:String,integrationID:String,UUID:String, completionHandler: @escaping (Result<Bool, Error>) -> Void)
     {
-        self.WSID=WSID
-        self.api_key=api_key
+        if (WSID != nil && api_key != nil && integrationID != nil && deviceToken != nil){
+            Utilities.setWSID(WSID: WSID)
+            Utilities.setapi_key(api_key: api_key)
+            Utilities.setUUID(UUID: UUID)
+}
+        
+        
+        
+        
+        let deviceToken = Utilities.getdeviceToken()
+
+        
+      
+
+        
+
+        let payloadInstance = Payload(
+            distinctID: UUID,
+            name: "Shilpa Agarwal",
+            status: 1,
+            sms: "+919448760782",
+            pushToken: deviceToken,
+            pushIntegrationID:integrationID
+            
+        )
+        
+  
         Utilities.createUserProfile(deviceToken:deviceToken,WSID:WSID,api_key:api_key, completionHandler: completionHandler)
     }
 
