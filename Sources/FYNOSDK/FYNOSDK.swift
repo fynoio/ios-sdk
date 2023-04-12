@@ -8,10 +8,10 @@ public class FYNOSDK {
     var bestAttemptContent: UNMutableNotificationContent?
     var payloadUserProfile: Payload?
     
-   public init(){
+    public init(){
         
     }
-   
+    
     public func requestNotificationAuthorization(completionHandler: @escaping (Bool) -> Void) {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
@@ -22,7 +22,7 @@ public class FYNOSDK {
     }
     
     
-   
+    
     
     public func registerForRemoteNotifications() {
         UIApplication.shared.registerForRemoteNotifications()
@@ -70,7 +70,7 @@ public class FYNOSDK {
                         } else {
                             options = nil
                         }
-
+                        
                         let unAttachment = try UNNotificationAttachment(identifier: identifier, url: fileURL, options: options)
                         unAttachments.append(unAttachment)
                     } catch {
@@ -85,55 +85,127 @@ public class FYNOSDK {
         completionHandler([.banner, .sound])
     }
     
-   
-   public  func notificationExtention(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
-               let bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
-
-               guard let content = bestAttemptContent,
-                     let attachmentURLString = content.userInfo["urlImageString"] as? String,
-                     let attachmentURL = URL(string: attachmentURLString) else {
-                   contentHandler(request.content)
-                   return
-               }
-
-               Utilities.downloadImageAndAttachToContent(from: attachmentURL, content: content, completion: contentHandler)
-           }
     
-    public func initializeApp(WSID:String,api_key:String,integrationID:String,UUID:String, deviceToken: String, completionHandler: @escaping (Result<Bool, Error>) -> Void)
+    public  func notificationExtention(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+        let bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
+        
+        guard let content = bestAttemptContent,
+              let attachmentURLString = content.userInfo["urlImageString"] as? String,
+              let attachmentURL = URL(string: attachmentURLString) else {
+            contentHandler(request.content)
+            return
+        }
+        
+        Utilities.downloadImageAndAttachToContent(from: attachmentURL, content: content, completion: contentHandler)
+    }
+    
+    public func createUserProfile(distinctID:String, name:String? = nil, sms:String? = nil, completionHandler: @escaping(Result<Bool,Error>) -> Void)
     {
-        if (WSID != "" && api_key != "" && integrationID != "" ){
+        
+        if distinctID == "" {
+            print("Invalid WSID, api_key, distinctID or integration ID. Please check your configuration")
+            return
+        }
+         
+        let payloadInstance = Payload(
+            distinctID: distinctID,
+            name: name ?? distinctID,
+            status: 1,
+            sms: sms ?? "",
+            pushToken: Utilities.getdeviceToken(),
+            pushIntegrationID: Utilities.getintegrationID()
+            
+        )
+        
+        if((Utilities.getUUID()).isEmpty || Utilities.getUUID() != UIDevice.current.identifierForVendor?.uuidString)
+        {
+            return
+        }
+        
+            Utilities.mergeUserProfile(payload: payloadInstance,oldUUID: Utilities.getUUID()){ result in
+            switch result {
+            case .success(let success):
+                Utilities.setUUID(UUID: distinctID)
+                completionHandler(.success(success))
+            case .failure(let error):
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    
+    public func initializeApp(WSID:String,api_key:String,integrationID:String,deviceToken:String,completionHandler:@escaping (Result<Bool,Error>) -> Void)
+    {
+        
+        
+        if (WSID != "" && api_key != "" && integrationID != "" && deviceToken != ""  ){
             Utilities.setWSID(WSID: WSID)
             Utilities.setapi_key(api_key: api_key)
-            Utilities.setUUID(UUID: UUID)
+            Utilities.setintegrationID(integrationID: integrationID)
             Utilities.setdeviceToken(deviceToken: deviceToken)
-}
+        }
+        else{
+            print("Invalid WSID, api_key, Integration ID or Device Token. Please check your configuration")
+        }
+        
+        let UUID = UIDevice.current.identifierForVendor?.uuidString
         
         
-        
-        
-        let deviceToken = Utilities.getdeviceToken()
-     
-
-        
-      
-
-        
-
         let payloadInstance = Payload(
-            distinctID: UUID,
-            name: "Shilpa Agarwal",
+            distinctID: UUID!,
+            name: UUID!,
             status: 1,
-            sms: "+919448760782",
+            sms: "",
             pushToken: deviceToken,
             pushIntegrationID:integrationID
             
         )
         
-  
-        Utilities.createUserProfile(integrationID: integrationID, payload: payloadInstance, completionHandler: completionHandler)
+        if(!(Utilities.getUUID()).isEmpty)
+        {
+            return
+        }
+        
+        Utilities.createUserProfile(payload: payloadInstance) { result in
+            switch result {
+            case .success(let success):
+                Utilities.setUUID(UUID: UUID!)
+                completionHandler(.success(success))
+            case .failure(let error):
+                completionHandler(.failure(error))
+            }
+        }
     }
-
     
-    
-}
+    public func deleteProfile(completionHandler:@escaping (Result<Bool,Error>) -> Void)
+    {
+     let UUID = UIDevice.current.identifierForVendor?.uuidString
+        
+        
+        let payloadInstance = Payload(
+            distinctID: UUID!,
+            name: UUID!,
+            status: 1,
+            sms: "",
+            pushToken: Utilities.getdeviceToken(),
+            pushIntegrationID:Utilities.getintegrationID()
+            
+        )
+        
+        if((Utilities.getUUID()).isEmpty)
+        {
+            print("Deletion operation cannot be performed, No user profile found on the system")
+            return
+        }
+        
+        Utilities.createUserProfile(payload: payloadInstance) { result in
+            switch result {
+            case .success(let success):
+                Utilities.setUUID(UUID: UUID!)
+                completionHandler(.success(success))
+            case .failure(let error):
+                completionHandler(.failure(error))
+            }
+        }
+    }
+ }
 #endif

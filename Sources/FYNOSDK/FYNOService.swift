@@ -21,7 +21,7 @@ public class FYNOService{
             contentHandler(request.content)
             return
         }
-        
+         
         Utilities.downloadImageAndAttachToContent(from: attachmentURL, content: content, completion: contentHandler)
     }
 }
