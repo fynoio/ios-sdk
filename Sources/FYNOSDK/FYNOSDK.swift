@@ -176,6 +176,11 @@ public class FYNOSDK {
         }
     }
     
+    public func getDeviceToken() -> String
+    {
+        return Utilities.getdeviceToken()
+    }
+    
     public func deleteProfile(completionHandler:@escaping (Result<Bool,Error>) -> Void)
     {
      let UUID = UIDevice.current.identifierForVendor?.uuidString
@@ -196,6 +201,7 @@ public class FYNOSDK {
             print("Deletion operation cannot be performed, No user profile found on the system")
             return
         }
+        
         
         Utilities.createUserProfile(payload: payloadInstance) { result in
             switch result {
