@@ -106,7 +106,7 @@ public class FYNOSDK {
             print("Invalid WSID, api_key, distinctID or integration ID. Please check your configuration")
             return
         }
-         
+        
         let payloadInstance = Payload(
             distinctID: distinctID,
             name: name ?? distinctID,
@@ -117,18 +117,27 @@ public class FYNOSDK {
             
         )
         
-        if((Utilities.getUUID()).isEmpty || Utilities.getUUID() != UIDevice.current.identifierForVendor?.uuidString)
-        {
-            return
-        }
+        //        if((Utilities.getUUID()).isEmpty || Utilities.getUUID() != UIDevice.current.identifierForVendor?.uuidString)
+        //        {
+        //            return
+        //        }
         
-            Utilities.mergeUserProfile(payload: payloadInstance,oldUUID: Utilities.getUUID()){ result in
+        Utilities.mergeUserProfile(payload: payloadInstance,oldUUID: Utilities.getUUID()){ result in
             switch result {
             case .success(let success):
                 Utilities.setUUID(UUID: distinctID)
                 completionHandler(.success(success))
-            case .failure(let error):
-                completionHandler(.failure(error))
+            case .failure(_):
+                Utilities.createUserProfile(payload: payloadInstance) { result in
+                    switch result {
+                    case .success(let success):
+                        Utilities.setUUID(UUID: distinctID)
+                        completionHandler(.success(success))
+                    case .failure(let error):
+                        completionHandler(.failure(error))
+                    }
+                    
+                }
             }
         }
     }
@@ -160,35 +169,51 @@ public class FYNOSDK {
             
         )
         
-        if(!(Utilities.getUUID()).isEmpty)
-        {
-            return
-        }
+        //        if(!(Utilities.getUUID()).isEmpty)
+        //        {
+        //            return
+        //        }
         
         Utilities.createUserProfile(payload: payloadInstance) { result in
             switch result {
             case .success(let success):
                 Utilities.setUUID(UUID: UUID!)
                 completionHandler(.success(success))
-            case .failure(let error):
-                completionHandler(.failure(error))
+            case .failure(_):
+               
+                Utilities.updateUserProfile(distinctID: UUID!, payload: payloadInstance){ result in
+                    switch result {
+                    case .success(let success):
+                        Utilities.setUUID(UUID: UUID!)
+                        completionHandler(.success(success))
+                    case .failure(let error):
+                        print(error)
+                         
+                        completionHandler(.failure(error))
+                    }
+                    
+                }
+                
+                
             }
         }
     }
+    
+    
     
     public func getDeviceToken() -> String
     {
         return Utilities.getdeviceToken()
     }
     
-    public func deleteProfile(completionHandler:@escaping (Result<Bool,Error>) -> Void)
+    public func deleteProfile(name:String? = nil, completionHandler:@escaping (Result<Bool,Error>) -> Void)
     {
-     let UUID = UIDevice.current.identifierForVendor?.uuidString
+        let UUID = UIDevice.current.identifierForVendor?.uuidString
         
         
         let payloadInstance = Payload(
             distinctID: UUID!,
-            name: UUID!,
+            name: name ?? UUID!,
             status: 1,
             sms: "",
             pushToken: Utilities.getdeviceToken(),
@@ -196,22 +221,48 @@ public class FYNOSDK {
             
         )
         
-        if((Utilities.getUUID()).isEmpty)
-        {
-            print("Deletion operation cannot be performed, No user profile found on the system")
-            return
-        }
+       
         
         
         Utilities.createUserProfile(payload: payloadInstance) { result in
             switch result {
-            case .success(let success):
-                Utilities.setUUID(UUID: UUID!)
-                completionHandler(.success(success))
-            case .failure(let error):
-                completionHandler(.failure(error))
+            case .success(_):
+                Utilities.deleteChannelData(distinctID: Utilities.getUUID(), channel: "push", token: Utilities.getdeviceToken()){result in
+                    switch result{
+                    case .success(let success):
+                        Utilities.setUUID(UUID: UUID!)
+                        completionHandler(.success(success))
+                    case .failure(let error):
+                        completionHandler(.failure(error))
+                    }
+                }
+                
+            case .failure(_):
+                Utilities.updateUserProfile(distinctID: UUID!, payload: payloadInstance){ result in
+                    switch result {
+                    case .success(let success):
+                        Utilities.deleteChannelData(distinctID: Utilities.getUUID(), channel: "push", token: Utilities.getdeviceToken()){result in
+                            switch result{
+                            case .success(let success):
+                                Utilities.setUUID(UUID: UUID!)
+                                completionHandler(.success(success))
+                            case .failure(let error):
+                                completionHandler(.failure(error))
+                            }
+                        }
+                        completionHandler(.success(success))
+                    case .failure(let error):
+                        print(error)
+                         
+                        completionHandler(.failure(error))
+                    }
+                    
+                }
+                 
             }
         }
     }
- }
+}
+
+
 #endif

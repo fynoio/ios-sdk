@@ -125,7 +125,125 @@ import UserNotifications
             }
             task.resume()
         }
+     
+     public static func deleteChannelData(distinctID:String, channel:String, token:String,completionHandler: @escaping(Result<Bool,Error>) -> Void){
+         
+         guard let url = URL(string: self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/profiles/channel/"+distinctID) else {
+                 completionHandler(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
+                 return
+             }
+
+             var request = URLRequest(url: url)
+             request.httpMethod = "DELETE"
+             request.addValue("dev", forHTTPHeaderField: "version")
+             request.addValue("Bearer "+getapi_key(), forHTTPHeaderField: "Authorization")
+             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+             let payload: [String: Any] =  [
+                channel : [token]
+         ]
+
+             do {
+                 let jsonData = try JSONSerialization.data(withJSONObject: payload, options: [])
+                 request.httpBody = jsonData
+             } catch {
+                 completionHandler(.failure(NSError(domain: "JSON encoding failed", code: -1, userInfo: nil)))
+                 return
+             }
+
+             let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                 // Log response and data
+                         if let data = data {
+                             let dataString = String(data: data, encoding: .utf8) ?? "Non-string data received"
+                             print("Response: \(dataString)")
+                         }
+
+                         if let error = error {
+                             completionHandler(.failure(error))
+                             return
+                         }
+
+                 guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                     completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: nil )))
+                     let httpResponse = response as? HTTPURLResponse
+                     print(httpResponse?.statusCode ?? "404")
+                     
+                     
+                     return
+                 }
+
+                 completionHandler(.success(true))
+                  
+           
+             }
+             task.resume()
+     }
     
+     
+     public static func updateUserProfile(distinctID:String, payload:Payload, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+         
+         guard let url = URL(string: self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/profiles/"+distinctID) else {
+                 completionHandler(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
+                 return
+             }
+
+             var request = URLRequest(url: url)
+             request.httpMethod = "PUT"
+             request.addValue("dev", forHTTPHeaderField: "version")
+             request.addValue("Bearer "+getapi_key(), forHTTPHeaderField: "Authorization")
+             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+             let payload: [String: Any] =  [
+                 "distinct_id": payload.distinctID,
+                 "name": payload.name,
+                 "status": payload.status,
+             "channel": [
+                 "sms": payload.sms,
+                 "push": [
+                     [
+                         "token": payload.pushToken,
+                         "integration_id": payload.pushIntegrationID
+                     ]
+                     
+                 ]
+             ]
+         ]
+
+             do {
+                 let jsonData = try JSONSerialization.data(withJSONObject: payload, options: [])
+                 request.httpBody = jsonData
+             } catch {
+                 completionHandler(.failure(NSError(domain: "JSON encoding failed", code: -1, userInfo: nil)))
+                 return
+             }
+
+             let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                 // Log response and data
+                         if let data = data {
+                             let dataString = String(data: data, encoding: .utf8) ?? "Non-string data received"
+                             print("Response: \(dataString)")
+                         }
+
+                         if let error = error {
+                             completionHandler(.failure(error))
+                             return
+                         }
+
+                 guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                     completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: nil )))
+                     let httpResponse = response as? HTTPURLResponse
+                     print(httpResponse?.statusCode ?? "404")
+                     
+                     
+                     return
+                 }
+
+                 completionHandler(.success(true))
+                  
+           
+             }
+             task.resume()
+         }
     
     
     
