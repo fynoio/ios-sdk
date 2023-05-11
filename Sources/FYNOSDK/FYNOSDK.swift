@@ -111,7 +111,6 @@ public class FYNOSDK {
             distinctID: distinctID,
             name: name ?? distinctID,
             status: 1,
-            sms: sms ?? "",
             pushToken: Utilities.getdeviceToken(),
             pushIntegrationID: Utilities.getintegrationID()
             
@@ -127,7 +126,8 @@ public class FYNOSDK {
             case .success(let success):
                 Utilities.setUUID(UUID: distinctID)
                 completionHandler(.success(success))
-            case .failure(_):
+            case .failure(let error):
+                 
                 Utilities.createUserProfile(payload: payloadInstance) { result in
                     switch result {
                     case .success(let success):
@@ -138,6 +138,7 @@ public class FYNOSDK {
                     }
                     
                 }
+                completionHandler(.failure(error))
             }
         }
     }
@@ -163,7 +164,6 @@ public class FYNOSDK {
             distinctID: UUID!,
             name: UUID!,
             status: 1,
-            sms: "",
             pushToken: deviceToken,
             pushIntegrationID:integrationID
             
@@ -215,7 +215,6 @@ public class FYNOSDK {
             distinctID: UUID!,
             name: name ?? UUID!,
             status: 1,
-            sms: "",
             pushToken: Utilities.getdeviceToken(),
             pushIntegrationID:Utilities.getintegrationID()
             

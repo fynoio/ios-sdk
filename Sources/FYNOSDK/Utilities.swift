@@ -74,13 +74,13 @@ import UserNotifications
             request.addValue("dev", forHTTPHeaderField: "version")
             request.addValue("Bearer "+getapi_key(), forHTTPHeaderField: "Authorization")
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
-            let payload: [String: Any] =  [
+        
+            let pay_load: [String: Any] =  [
                 "distinct_id": payload.distinctID,
                 "name": payload.name,
                 "status": payload.status,
             "channel": [
-                "sms": payload.sms,
+                 
                 "push": [
                     [
                         "token": payload.pushToken,
@@ -92,7 +92,7 @@ import UserNotifications
         ]
 
             do {
-                let jsonData = try JSONSerialization.data(withJSONObject: payload, options: [])
+                let jsonData = try JSONSerialization.data(withJSONObject: pay_load, options: [])
                 request.httpBody = jsonData
             } catch {
                 completionHandler(.failure(NSError(domain: "JSON encoding failed", code: -1, userInfo: nil)))
@@ -128,13 +128,13 @@ import UserNotifications
      
      public static func deleteChannelData(distinctID:String, channel:String, token:String,completionHandler: @escaping(Result<Bool,Error>) -> Void){
          
-         guard let url = URL(string: self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/profiles/channel/"+distinctID) else {
+         guard let url = URL(string: self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/profiles/"+distinctID+"/channel/delete") else {
                  completionHandler(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
                  return
              }
 
              var request = URLRequest(url: url)
-             request.httpMethod = "DELETE"
+             request.httpMethod = "POST"
              request.addValue("dev", forHTTPHeaderField: "version")
              request.addValue("Bearer "+getapi_key(), forHTTPHeaderField: "Authorization")
              request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -198,7 +198,7 @@ import UserNotifications
                  "name": payload.name,
                  "status": payload.status,
              "channel": [
-                 "sms": payload.sms,
+                  
                  "push": [
                      [
                          "token": payload.pushToken,
@@ -291,39 +291,39 @@ import UserNotifications
     
     
     public static func mergeUserProfile(payload:Payload,oldUUID:String, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
-        let urlString = self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/profiles/merge/"+oldUUID
+        let urlString = self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/"+"profiles"+"/"+oldUUID+"/"+"merge"+"/"+payload.distinctID
             guard let url = URL(string: urlString) else {
                 completionHandler(.failure(NSError(domain: "FYNOSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
                 return
             }
         
-        let payload: [String: Any] =  [
-            "distinct_id": payload.distinctID,
-            "name": payload.name,
-            "status": payload.status,
-        "channel": [
-            "sms": payload.sms,
-            "push": [
-                [
-                    "token": payload.pushToken,
-                    "integration_id": payload.pushIntegrationID
-                ]
-                
-            ]
-        ]
-    ]
+//        let payload: [String: Any] =  [
+//            "distinct_id": payload.distinctID,
+//            "name": payload.name,
+//            "status": payload.status,
+//        "channel": [
+//
+//            "push": [
+//                [
+//                    "token": payload.pushToken,
+//                    "integration_id": payload.pushIntegrationID
+//                ]
+//
+//            ]
+//        ]
+//    ]
 
-            guard let httpBody = try? JSONSerialization.data(withJSONObject: payload) else {
-                completionHandler(.failure(NSError(domain: "FYNOSDK", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON data"])))
-                return
-            }
+//            guard let httpBody = try? JSONSerialization.data(withJSONObject: payload) else {
+//                completionHandler(.failure(NSError(domain: "FYNOSDK", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON data"])))
+//                return
+//            }
 
             var request = URLRequest(url: url)
             request.httpMethod = "PATCH"
             request.addValue("dev", forHTTPHeaderField: "version")
             request.addValue("Bearer "+getapi_key(), forHTTPHeaderField: "Authorization")
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = httpBody
+//            request.httpBody = httpBody
 
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 // Log response and data
