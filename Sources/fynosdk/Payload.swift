@@ -16,6 +16,7 @@ public class Payload {
     let sms: String
     let pushToken: String
     let pushIntegrationID: String
+    private let token_prefix = "apns_token:"
     
 
     init(distinctID: String, name: String, status: Int, sms: String? = "", pushToken: String, pushIntegrationID: String) {
@@ -23,7 +24,7 @@ public class Payload {
         self.name = name
         self.status = status
         self.sms = sms ?? ""
-        self.pushToken = pushToken
+        self.pushToken = token_prefix+pushToken
         self.pushIntegrationID = pushIntegrationID
        
     }
