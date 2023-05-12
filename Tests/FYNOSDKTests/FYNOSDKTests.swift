@@ -1,11 +1,11 @@
 import XCTest
-@testable import FYNOSDK
+@testable import fynosdk
 
-final class FYNOSDKTests: XCTestCase {
+final class fynosdkTests: XCTestCase {
     func testExample() throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(FYNOSDK().text, "Hello, World!")
+        XCTAssertEqual(fynosdk().text, "Hello, World!")
     }
 }

@@ -2,7 +2,7 @@
 import UserNotifications
 import UIKit
  
-public class FYNOSDK {
+public class fynosdk{
     
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
@@ -121,26 +121,34 @@ public class FYNOSDK {
         //            return
         //        }
         
-        Utilities.mergeUserProfile(payload: payloadInstance,oldUUID: Utilities.getUUID()){ result in
+        Utilities.createUserProfile(payload: payloadInstance) { result in
             switch result {
             case .success(let success):
-                Utilities.setUUID(UUID: distinctID)
-                completionHandler(.success(success))
-            case .failure(let error):
-                 
-                Utilities.createUserProfile(payload: payloadInstance) { result in
+                Utilities.mergeUserProfile(payload: payloadInstance,oldUUID: Utilities.getUUID()){ result in
                     switch result {
                     case .success(let success):
                         Utilities.setUUID(UUID: distinctID)
                         completionHandler(.success(success))
                     case .failure(let error):
-                        completionHandler(.failure(error))
+                       completionHandler(.failure(error))
                     }
-                    
+                }
+                completionHandler(.success(success))
+            case .failure(let error):
+                Utilities.mergeUserProfile(payload: payloadInstance,oldUUID: Utilities.getUUID()){ result in
+                    switch result {
+                    case .success(let success):
+                        Utilities.setUUID(UUID: distinctID)
+                        completionHandler(.success(success))
+                    case .failure(let error):
+                       completionHandler(.failure(error))
+                    }
                 }
                 completionHandler(.failure(error))
             }
+            
         }
+        
     }
     
     public func initializeApp(WSID:String,api_key:String,integrationID:String,deviceToken:String,completionHandler:@escaping (Result<Bool,Error>) -> Void)
@@ -187,8 +195,6 @@ public class FYNOSDK {
                         Utilities.setUUID(UUID: UUID!)
                         completionHandler(.success(success))
                     case .failure(let error):
-                        print(error)
-                         
                         completionHandler(.failure(error))
                     }
                     
@@ -251,7 +257,7 @@ public class FYNOSDK {
                         }
                         completionHandler(.success(success))
                     case .failure(let error):
-                        print(error)
+                  
                          
                         completionHandler(.failure(error))
                     }
