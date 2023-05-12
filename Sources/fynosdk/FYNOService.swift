@@ -9,7 +9,7 @@
 import Foundation
 import UserNotifications
 
-public class FYNOService{
+public class fynoservice{
     public init() {}
     
     public static func handleDidReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {

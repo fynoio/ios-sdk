@@ -14,6 +14,7 @@ import UserNotifications
     private static var version:String="v1"
     private static let preferences = UserDefaults.standard
     
+    
      
     
     
@@ -108,13 +109,14 @@ import UserNotifications
 
                         if let error = error {
                             completionHandler(.failure(error))
+                             
                             return
                         }
 
                 guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 else {
                     completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: nil )))
                     let httpResponse = response as? HTTPURLResponse
-                    print(httpResponse?.statusCode ?? "404")
+                     
                     
                     return
                 }
@@ -166,7 +168,7 @@ import UserNotifications
                  guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                      completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: nil )))
                      let httpResponse = response as? HTTPURLResponse
-                     print(httpResponse?.statusCode ?? "404")
+                    // print(httpResponse?.statusCode ?? "404")
                      
                      
                      return
@@ -232,7 +234,7 @@ import UserNotifications
                  guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                      completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: nil )))
                      let httpResponse = response as? HTTPURLResponse
-                     print(httpResponse?.statusCode ?? "404")
+                    // print(httpResponse?.statusCode ?? "404")
                      
                      
                      return
@@ -250,7 +252,7 @@ import UserNotifications
     public static func checkUserProfileExists(distinctId: String, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
         let urlString = self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/profiles/"+distinctId
         guard let url = URL(string: urlString) else {
-            completionHandler(.failure(NSError(domain: "FYNOSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            completionHandler(.failure(NSError(domain: "fynosdk", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
         }
 
@@ -272,7 +274,7 @@ import UserNotifications
                     }
 
             guard let httpResponse = response as? HTTPURLResponse else {
-                completionHandler(.failure(NSError(domain: "FYNOSDK", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
+                completionHandler(.failure(NSError(domain: "fynosdk", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
                 return
             }
 
@@ -281,7 +283,7 @@ import UserNotifications
             } else if httpResponse.statusCode == 404 {
                 completionHandler(.success(false))
             } else {
-                completionHandler(.failure(NSError(domain: "FYNOSDK", code: 3, userInfo: [NSLocalizedDescriptionKey: "Unexpected status code: \(httpResponse.statusCode)"])))
+                completionHandler(.failure(NSError(domain: "fynosdk", code: 3, userInfo: [NSLocalizedDescriptionKey: "Unexpected status code: \(httpResponse.statusCode)"])))
             }
         }
         task.resume()
@@ -293,7 +295,7 @@ import UserNotifications
     public static func mergeUserProfile(payload:Payload,oldUUID:String, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
         let urlString = self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/"+"profiles"+"/"+oldUUID+"/"+"merge"+"/"+payload.distinctID
             guard let url = URL(string: urlString) else {
-                completionHandler(.failure(NSError(domain: "FYNOSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+                completionHandler(.failure(NSError(domain: "fynosdk", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
                 return
             }
         
@@ -314,7 +316,7 @@ import UserNotifications
 //    ]
 
 //            guard let httpBody = try? JSONSerialization.data(withJSONObject: payload) else {
-//                completionHandler(.failure(NSError(domain: "FYNOSDK", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON data"])))
+//                completionHandler(.failure(NSError(domain: "fynosdk", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON data"])))
 //                return
 //            }
 
@@ -329,7 +331,7 @@ import UserNotifications
                 // Log response and data
                         if let data = data {
                             let dataString = String(data: data, encoding: .utf8) ?? "Non-string data received"
-                            print("Response: \(dataString)")
+                         print("Response: \(dataString)")
                         }
 
                         if let error = error {
@@ -338,14 +340,14 @@ import UserNotifications
                         }
 
                 guard let httpResponse = response as? HTTPURLResponse else {
-                    completionHandler(.failure(NSError(domain: "FYNOSDK", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
+                    completionHandler(.failure(NSError(domain: "fynosdk", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
                     return
                 }
 
                 if httpResponse.statusCode == 200 {
                     completionHandler(.success(true))
                 } else {
-                    completionHandler(.failure(NSError(domain: "FYNOSDK", code: 4, userInfo: [NSLocalizedDescriptionKey: "Unexpected status code: \(httpResponse.statusCode)"])))
+                    completionHandler(.failure(NSError(domain: "fynosdk", code: 4, userInfo: [NSLocalizedDescriptionKey: "Unexpected status code: \(httpResponse.statusCode)"])))
                 }
             }
             task.resume()
