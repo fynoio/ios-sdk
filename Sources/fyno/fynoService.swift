@@ -9,11 +9,7 @@
 import Foundation
 import UserNotifications
 
-<<<<<<<< HEAD:Sources/fynosdk/FYNOService.swift
-public class fynoservice{
-========
 public class fynoService{
->>>>>>>> 11-bug-fix-issue-with-naming-convention-and-dynamic-images:Sources/fyno/fynoService.swift
     public init() {}
     
     public static func handleDidReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {

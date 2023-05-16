@@ -1,12 +1,9 @@
 #if os(iOS)
 import UserNotifications
 import UIKit
- 
-<<<<<<<< HEAD:Sources/fynosdk/fynosdk.swift
-public class fynosdk{
-========
+
 public class fyno{
->>>>>>>> 11-bug-fix-issue-with-naming-convention-and-dynamic-images:Sources/fyno/fyno.swift
+    
     
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
@@ -134,7 +131,7 @@ public class fyno{
                         Utilities.setUUID(UUID: distinctID)
                         completionHandler(.success(success))
                     case .failure(let error):
-                       completionHandler(.failure(error))
+                        completionHandler(.failure(error))
                     }
                 }
                 completionHandler(.success(success))
@@ -145,7 +142,7 @@ public class fyno{
                         Utilities.setUUID(UUID: distinctID)
                         completionHandler(.success(success))
                     case .failure(let error):
-                       completionHandler(.failure(error))
+                        completionHandler(.failure(error))
                     }
                 }
                 completionHandler(.failure(error))
@@ -192,7 +189,7 @@ public class fyno{
                 Utilities.setUUID(UUID: UUID!)
                 completionHandler(.success(success))
             case .failure(_):
-               
+                
                 Utilities.updateUserProfile(distinctID: UUID!, payload: payloadInstance){ result in
                     switch result {
                     case .success(let success):
@@ -230,7 +227,7 @@ public class fyno{
             
         )
         
-       
+        
         
         
         Utilities.createUserProfile(payload: payloadInstance) { result in
@@ -261,17 +258,15 @@ public class fyno{
                         }
                         completionHandler(.success(success))
                     case .failure(let error):
-                  
-                         
+                        
+                        
                         completionHandler(.failure(error))
                     }
                     
                 }
-                 
+                
             }
         }
     }
 }
-
-
 #endif
