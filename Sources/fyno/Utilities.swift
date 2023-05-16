@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import UserNotifications
  class Utilities{
     private static var url:String="https://api.dev.fyno.io"
@@ -22,37 +23,58 @@ import UserNotifications
         
     }
     
-    public static func downloadImageAndAttachToContent(from url: URL, content: UNMutableNotificationContent, completion: @escaping (UNMutableNotificationContent) -> Void) {
-        URLSession.shared.downloadTask(with: url) { (tempURL, _, error) in
-            if let error = error {
-                print("Error downloading attachment: \(error.localizedDescription)")
-                completion(content)
-                return
-            }
-            
-            guard let tempURL = tempURL else {
-                print("Temporary URL not found")
-                completion(content)
-                return
-            }
-            
-            let fileManager = FileManager.default
-            let cacheDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
-            let fileExtension = URL(fileURLWithPath: url.absoluteString).pathExtension
-            let localURL = cacheDirectory.appendingPathComponent("\(UUID().uuidString).\(fileExtension)")
-            
-            do {
-                try fileManager.moveItem(at: tempURL, to: localURL)
-                
-                let attachment = try UNNotificationAttachment(identifier: "image", url: localURL, options: nil)
-                content.attachments = [attachment]
-            } catch {
-                print("Error moving attachment to local URL: \(error.localizedDescription)")
-            }
-            
-            completion(content)
-        }.resume()
-    }
+     public static func downloadImageAndAttachToContent(from url: URL, content: UNMutableNotificationContent, completion: @escaping (UNMutableNotificationContent) -> Void) {
+         let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+             guard let data = data, let image = UIImage(data: data), let response = response else {
+                 print("Error: \(String(describing: error))")
+                 completion(content)
+                 return
+             }
+             
+             var imageData: Data?
+             var fileExtension: String?
+             
+             if response.mimeType == "image/png" {
+                 imageData = image.pngData()
+                 fileExtension = "png"
+             } else if response.mimeType == "image/jpeg" {
+                 imageData = image.jpegData(compressionQuality: 1.0)
+                 fileExtension = "jpeg"
+             } else {
+                 print("Unsupported MIME type: \(String(describing: response.mimeType))")
+                 completion(content)
+                 return
+             }
+             
+             guard let imageData = imageData, let fileExtension = fileExtension else {
+                 print("Could not convert image to data.")
+                 completion(content)
+                 return
+             }
+             
+             let fileManager = FileManager.default
+             let cacheDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
+             let fileName = url.lastPathComponent
+             let fileURL = cacheDirectory.appendingPathComponent("\(fileName).\(fileExtension)")
+             
+             do {
+                 if fileManager.fileExists(atPath: fileURL.path) {
+                     try fileManager.removeItem(at: fileURL)
+                 }
+                 try imageData.write(to: fileURL)
+                 
+                 let attachment = try UNNotificationAttachment(identifier: "\(fileName).\(fileExtension)", url: fileURL, options: nil)
+                 content.attachments = [attachment]
+             } catch {
+                 print("Error writing image data to local URL: \(error.localizedDescription)")
+             }
+             
+             completion(content)
+         }
+         task.resume()
+     }
+
+
     
     
     /******************************************************************************************/
