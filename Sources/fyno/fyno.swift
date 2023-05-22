@@ -8,8 +8,9 @@ public class fyno: NSObject, UNUserNotificationCenterDelegate{
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
     var payloadUserProfile: Payload?
+    public static let app = fyno()
     
-    public override init() {
+    private override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
     }
