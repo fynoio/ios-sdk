@@ -1,15 +1,19 @@
 #if os(iOS)
 import UserNotifications
 import UIKit
- 
-public class fynosdk{
+
+public class fyno: NSObject, UNUserNotificationCenterDelegate{
     
+   
+    public static let app = fyno()
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
     var payloadUserProfile: Payload?
     
-    public init(){
-        
+    
+    private override init() {
+        super.init()
+        UNUserNotificationCenter.current().delegate = self
     }
     
     public func requestNotificationAuthorization(completionHandler: @escaping (Bool) -> Void) {
@@ -17,8 +21,13 @@ public class fynosdk{
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             completionHandler(granted)
         }
-        let category = UNNotificationCategory(identifier: "image-notification", actions: [], intentIdentifiers: [], options: [])
+        
+        let declineAction = UNNotificationAction(identifier: "DECLINE_ACTION",
+                                                 title: "Decline",options: .destructive)
+        print("Accept Destructive")
+        let category = UNNotificationCategory(identifier: "myNotificationCategory", actions: [declineAction], intentIdentifiers: [], options: .customDismissAction)
         center.setNotificationCategories([category])
+        
     }
     
     
@@ -26,6 +35,83 @@ public class fynosdk{
     
     public func registerForRemoteNotifications() {
         UIApplication.shared.registerForRemoteNotifications()
+    }
+    
+    public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // The notification was received while the app is active. Handle here.
+        
+        
+        // If you want to show the notification while the app is active, call the completion handler with .banner or .list
+        if #available(iOS 14.0, *) {
+            completionHandler([.banner, .list])
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+    
+    public func handleRemoteNotification(userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        //print(userInfo )
+        var url : String? = nil
+        print("bg notification recieved")
+        if let alert = userInfo["extraData"] as? [String: Any] {
+            url = alert["callback"] as? String ?? ""
+        }
+        
+        if(url != nil ) {
+            Utilities.callback(url: url ?? "nil" , action: "RECEIVED", deviceDetails: Utilities.getDeviceDetails()){result in
+                switch(result)
+                {
+                case .success(let success):
+                    print(success)
+                case .failure(let failure):
+                    print(failure)
+                }
+                
+            }
+        }
+        
+    }
+    
+    public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let content = response.notification.request.content
+        var url : String? = nil
+        if let alert = content.userInfo["extraData"] as? [String: Any] {
+            url = alert["callback"] as? String ?? ""
+        }
+        if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
+            // The user clicked on the notification.
+            print("Notification Clicked")
+            if (url != nil)
+            {
+                Utilities.callback(url: url ?? "nil" , action: "CLICKED", deviceDetails: Utilities.getDeviceDetails()){result in
+                    switch(result)
+                    {
+                    case .success(let success):
+                        print(success)
+                    case .failure(let failure):
+                        print(failure)
+                    }
+                    
+                }
+            }
+        } else if response.actionIdentifier == UNNotificationDismissActionIdentifier || response.actionIdentifier == "DECLINE_ACTION"{
+            // The user dismissed the notification.
+            print("Notification Dismissed")
+            if (url != nil)
+            {
+                Utilities.callback(url: url ?? "nil" , action: "DISMISSED", deviceDetails: Utilities.getDeviceDetails()){result in
+                    switch(result)
+                    {
+                    case .success(let success):
+                        print(success)
+                    case .failure(let failure):
+                        print(failure)
+                    }
+                    
+                }
+            }
+        }
+        completionHandler()
     }
     
     @available(iOS 14.0, *)
@@ -86,6 +172,7 @@ public class fynosdk{
     }
     
     
+    
     public  func notificationExtention(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         let bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
         
@@ -130,7 +217,7 @@ public class fynosdk{
                         Utilities.setUUID(UUID: distinctID)
                         completionHandler(.success(success))
                     case .failure(let error):
-                       completionHandler(.failure(error))
+                        completionHandler(.failure(error))
                     }
                 }
                 completionHandler(.success(success))
@@ -141,7 +228,7 @@ public class fynosdk{
                         Utilities.setUUID(UUID: distinctID)
                         completionHandler(.success(success))
                     case .failure(let error):
-                       completionHandler(.failure(error))
+                        completionHandler(.failure(error))
                     }
                 }
                 completionHandler(.failure(error))
@@ -151,18 +238,50 @@ public class fynosdk{
         
     }
     
+    public func enableTestMode(testEnabled:Bool? = true)
+    {
+        if(testEnabled == true)
+        {
+            Utilities.setEnvironment(production: false)
+        }
+        else if(testEnabled == false)
+        {
+            Utilities.setEnvironment(production: true)
+        }
+    }
+    
+    
     public func initializeApp(WSID:String,api_key:String,integrationID:String,deviceToken:String,completionHandler:@escaping (Result<Bool,Error>) -> Void)
     {
+       
         
+        print("WSID) api_key) integrationID)")
+        print("\(WSID) \(api_key) \(integrationID) \(deviceToken)")
         
-        if (WSID != "" && api_key != "" && integrationID != "" && deviceToken != ""  ){
+        if (WSID != "" ){
             Utilities.setWSID(WSID: WSID)
-            Utilities.setapi_key(api_key: api_key)
-            Utilities.setintegrationID(integrationID: integrationID)
+        }
+        else{
+            print("Invalid WSID. Please check your configuration")
+        }
+        
+        if (api_key != ""){
+            Utilities.setapi_key(api_key: api_key)}
+        else{
+            print("Invalid api_key. Please check your configuration")
+        }
+        
+        if (integrationID != ""){
+            Utilities.setintegrationID(integrationID: integrationID)}
+        else{
+            print("Invalid Integration ID. Please check your configuration")
+        }
+        
+        if(deviceToken != ""  ){
             Utilities.setdeviceToken(deviceToken: deviceToken)
         }
         else{
-            print("Invalid WSID, api_key, Integration ID or Device Token. Please check your configuration")
+            print("Invalid Device Token. Please check your configuration")
         }
         
         let UUID = UIDevice.current.identifierForVendor?.uuidString
@@ -188,7 +307,7 @@ public class fynosdk{
                 Utilities.setUUID(UUID: UUID!)
                 completionHandler(.success(success))
             case .failure(_):
-               
+                
                 Utilities.updateUserProfile(distinctID: UUID!, payload: payloadInstance){ result in
                     switch result {
                     case .success(let success):
@@ -199,6 +318,8 @@ public class fynosdk{
                     }
                     
                 }
+                
+                
                 
                 
             }
@@ -226,7 +347,7 @@ public class fynosdk{
             
         )
         
-       
+        
         
         
         Utilities.createUserProfile(payload: payloadInstance) { result in
@@ -257,17 +378,15 @@ public class fynosdk{
                         }
                         completionHandler(.success(success))
                     case .failure(let error):
-                  
-                         
+                        
+                        
                         completionHandler(.failure(error))
                     }
                     
                 }
-                 
+                
             }
         }
     }
 }
-
-
 #endif
