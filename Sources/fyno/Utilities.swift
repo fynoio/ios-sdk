@@ -14,12 +14,13 @@ import UserNotifications
     private static var environment=""
     private static var version:String="v1"
     private static let preferences = UserDefaults.standard
+    private static let token_prefix = "apns_token:"
     
     
      
     
     
-    public init(){
+    private init(){
         
     }
     
@@ -164,7 +165,7 @@ import UserNotifications
              request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
              let payload: [String: Any] =  [
-                channel : [token]
+                channel : [token_prefix+token]
          ]
 
              do {
