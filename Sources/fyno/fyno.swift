@@ -4,12 +4,14 @@ import UIKit
 
 public class fyno: NSObject, UNUserNotificationCenterDelegate{
     
-    
+   
+    public static let app = fyno()
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
     var payloadUserProfile: Payload?
     
-    public override init() {
+    
+    private override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
     }
@@ -236,13 +238,22 @@ public class fyno: NSObject, UNUserNotificationCenterDelegate{
         
     }
     
-    
-    public func initializeApp(WSID:String,api_key:String,integrationID:String,deviceToken:String,testEnabled:Bool? = false, completionHandler:@escaping (Result<Bool,Error>) -> Void)
+    public func enableTestMode(testEnabled:Bool? = true)
     {
         if(testEnabled == true)
         {
             Utilities.setEnvironment(production: false)
         }
+        else if(testEnabled == false)
+        {
+            Utilities.setEnvironment(production: true)
+        }
+    }
+    
+    
+    public func initializeApp(WSID:String,api_key:String,integrationID:String,deviceToken:String,completionHandler:@escaping (Result<Bool,Error>) -> Void)
+    {
+       
         
         print("WSID) api_key) integrationID)")
         print("\(WSID) \(api_key) \(integrationID) \(deviceToken)")
