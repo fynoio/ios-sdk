@@ -1,58 +1,81 @@
 #if os(iOS)
 //
 //  File.swift
-//  
+//
 //
 //  Created by Khush Chandawat on 05/04/23.
 //
 
 import Foundation
+import UIKit
 import UserNotifications
  class Utilities{
     private static var url:String="https://api.dev.fyno.io"
-    private static var environment="test"
+    private static var environment=""
     private static var version:String="v1"
     private static let preferences = UserDefaults.standard
+    private static let token_prefix = "apns_token:"
     
     
      
     
     
-    public init(){
+    private init(){
         
     }
     
-    public static func downloadImageAndAttachToContent(from url: URL, content: UNMutableNotificationContent, completion: @escaping (UNMutableNotificationContent) -> Void) {
-        URLSession.shared.downloadTask(with: url) { (tempURL, _, error) in
-            if let error = error {
-                print("Error downloading attachment: \(error.localizedDescription)")
-                completion(content)
-                return
-            }
-            
-            guard let tempURL = tempURL else {
-                print("Temporary URL not found")
-                completion(content)
-                return
-            }
-            
-            let fileManager = FileManager.default
-            let cacheDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
-            let fileExtension = URL(fileURLWithPath: url.absoluteString).pathExtension
-            let localURL = cacheDirectory.appendingPathComponent("\(UUID().uuidString).\(fileExtension)")
-            
-            do {
-                try fileManager.moveItem(at: tempURL, to: localURL)
-                
-                let attachment = try UNNotificationAttachment(identifier: "image", url: localURL, options: nil)
-                content.attachments = [attachment]
-            } catch {
-                print("Error moving attachment to local URL: \(error.localizedDescription)")
-            }
-            
-            completion(content)
-        }.resume()
-    }
+     public static func downloadImageAndAttachToContent(from url: URL, content: UNMutableNotificationContent, completion: @escaping (UNMutableNotificationContent) -> Void) {
+         let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+             guard let data = data, let image = UIImage(data: data), let response = response else {
+                 print("Error: \(String(describing: error))")
+                 completion(content)
+                 return
+             }
+             
+             var imageData: Data?
+             var fileExtension: String?
+             
+             if response.mimeType == "image/png" {
+                 imageData = image.pngData()
+                 fileExtension = "png"
+             } else if response.mimeType == "image/jpeg" {
+                 imageData = image.jpegData(compressionQuality: 1.0)
+                 fileExtension = "jpeg"
+             } else {
+                 print("Unsupported MIME type: \(String(describing: response.mimeType))")
+                 completion(content)
+                 return
+             }
+             
+             guard let imageData = imageData, let fileExtension = fileExtension else {
+                 print("Could not convert image to data.")
+                 completion(content)
+                 return
+             }
+             
+             let fileManager = FileManager.default
+             let cacheDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
+             let fileName = url.lastPathComponent
+             let fileURL = cacheDirectory.appendingPathComponent("\(fileName).\(fileExtension)")
+             
+             do {
+                 if fileManager.fileExists(atPath: fileURL.path) {
+                     try fileManager.removeItem(at: fileURL)
+                 }
+                 try imageData.write(to: fileURL)
+                 
+                 let attachment = try UNNotificationAttachment(identifier: "\(fileName).\(fileExtension)", url: fileURL, options: nil)
+                 content.attachments = [attachment]
+             } catch {
+                 print("Error writing image data to local URL: \(error.localizedDescription)")
+             }
+             
+             completion(content)
+         }
+         task.resume()
+     }
+
+
     
     
     /******************************************************************************************/
@@ -65,7 +88,7 @@ import UserNotifications
     
     public static func createUserProfile(payload:Payload, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
         
-        guard let url = URL(string: self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/profiles") else {
+        guard let url = URL(string: self.url+"/"+self.version+"/"+getWSID()+self.environment+"/profiles") else {
                 completionHandler(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
                 return
             }
@@ -130,7 +153,7 @@ import UserNotifications
      
      public static func deleteChannelData(distinctID:String, channel:String, token:String,completionHandler: @escaping(Result<Bool,Error>) -> Void){
          
-         guard let url = URL(string: self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/profiles/"+distinctID+"/channel/delete") else {
+         guard let url = URL(string: self.url+"/"+self.version+"/"+getWSID()+self.environment+"/profiles/"+distinctID+"/channel/delete") else {
                  completionHandler(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
                  return
              }
@@ -142,7 +165,7 @@ import UserNotifications
              request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
              let payload: [String: Any] =  [
-                channel : [token]
+                channel : [token_prefix+token]
          ]
 
              do {
@@ -184,7 +207,7 @@ import UserNotifications
      
      public static func updateUserProfile(distinctID:String, payload:Payload, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
          
-         guard let url = URL(string: self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/profiles/"+distinctID) else {
+         guard let url = URL(string: self.url+"/"+self.version+"/"+getWSID()+self.environment+"/profiles/"+distinctID) else {
                  completionHandler(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
                  return
              }
@@ -250,7 +273,7 @@ import UserNotifications
     
     
     public static func checkUserProfileExists(distinctId: String, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
-        let urlString = self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/profiles/"+distinctId
+        let urlString = self.url+"/"+self.version+"/"+getWSID()+self.environment+"/profiles/"+distinctId
         guard let url = URL(string: urlString) else {
             completionHandler(.failure(NSError(domain: "fynosdk", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
@@ -293,7 +316,7 @@ import UserNotifications
     
     
     public static func mergeUserProfile(payload:Payload,oldUUID:String, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
-        let urlString = self.url+"/"+self.version+"/"+getWSID()+"/"+self.environment+"/"+"profiles"+"/"+oldUUID+"/"+"merge"+"/"+payload.distinctID
+        let urlString = self.url+"/"+self.version+"/"+getWSID()+self.environment+"/"+"profiles"+"/"+oldUUID+"/"+"merge"+"/"+payload.distinctID
             guard let url = URL(string: urlString) else {
                 completionHandler(.failure(NSError(domain: "fynosdk", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
                 return
@@ -352,6 +375,57 @@ import UserNotifications
             }
             task.resume()
         }
+     
+     public static func callback(url:String,action:String,deviceDetails: AnyHashable, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+         let urlString = url
+             guard let url = URL(string: urlString) else {
+                 completionHandler(.failure(NSError(domain: "fynosdk", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+                 return
+             }
+         
+         let payload: [String: Any] =  [
+             "status": action,
+             "message": deviceDetails,
+             "eventType": "Delivery",
+         
+     ]
+         print(payload)
+
+             guard let httpBody = try? JSONSerialization.data(withJSONObject: payload) else {
+                 completionHandler(.failure(NSError(domain: "fynosdk", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON data"])))
+                 return
+             }
+
+             var request = URLRequest(url: url)
+             request.httpMethod = "POST"
+             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+             request.httpBody = httpBody
+
+             let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                 // Log response and data
+                         if let data = data {
+                             let dataString = String(data: data, encoding: .utf8) ?? "Non-string data received"
+                          print("Response: \(dataString)")
+                         }
+
+                         if let error = error {
+                             completionHandler(.failure(error))
+                             return
+                         }
+
+                 guard let httpResponse = response as? HTTPURLResponse else {
+                     completionHandler(.failure(NSError(domain: "fynosdk", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
+                     return
+                 }
+
+                 if httpResponse.statusCode == 200 {
+                     completionHandler(.success(true))
+                 } else {
+                     completionHandler(.failure(NSError(domain: "fynosdk", code: 4, userInfo: [NSLocalizedDescriptionKey: "Unexpected status code: \(httpResponse.statusCode)"])))
+                 }
+             }
+             task.resume()
+         }
     
     
     
@@ -464,6 +538,38 @@ import UserNotifications
         }
         return ""
     }
+ 
+     /******************************************************************************************/
+     /******************************************************************************************/
+     /******************************************************************************************/
+     /********************************OS Critical Functions*******************************/
+     /******************************************************************************************/
+     /******************************************************************************************/
+     /******************************************************************************************/
+     
+    public static func getDeviceDetails() -> [String: String] {
+        let device = UIDevice.current
+        var details = [String: String]()
+        details["name"] = device.name // e.g. "John's iPhone"
+        details["model"] =  UIDevice.modelName // e.g. "iPhone"
+        details["localizedModel"] = device.localizedModel // localized version of model
+        details["systemName"] = device.systemName // e.g. "iOS"
+        details["systemVersion"] = device.systemVersion // e.g. "12.1"
+        details["identifierForVendor"] = device.identifierForVendor?.uuidString // unique identifier for the device
+        return details
+}
+     
+     public static func setEnvironment(production : Bool )
+     {
+         if production {
+             environment = ""
+         }
+         else {
+             environment = "/test"
+         }
+     }
+     
+     
     
 }
 #endif
