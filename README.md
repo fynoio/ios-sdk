@@ -246,7 +246,7 @@ The `fynosdk.enableTestMode(testEnabled:)` method allows the user to switch from
 fynosdk.enableTestMode(testEnabled: true)
 ```
 
-###Troubleshooting
+### Troubleshooting
 If you encounter issues, see our [iOS troubleshooting guide](#).
 Try the example project on our [Github repository](#).
 If stuck, contact support directly or email support@fyno.io for help.
