@@ -3,8 +3,8 @@
 The Fyno iOS SDK enables you to utilize Fyno's services within your iOS applications, offering tools to manage remote notifications, among other features. Here are the instructions to integrate the Fyno SDK with your native iOS app using Swift.
 
 ## Requirements
-- FYNO Account
-- FYNO App ID, available in Settings > Keys & IDs
+- Fyno Account
+- Fyno App ID, available in Settings > Keys & IDs
 - iOS 13+ or iPadOS 13+ device (iPhone, iPad, iPod Touch) for testing. Xcode 14+ simulator running iOS 16+ also works.
 - Mac with Xcode 12+
 - p8 Authentication Token
@@ -12,19 +12,29 @@ The Fyno iOS SDK enables you to utilize Fyno's services within your iOS applicat
 ## Installation
 
 ### Step 1: Add a Notification Service Extension
-The FYNONotificationServiceExtension enables your iOS app to receive rich notifications with images, buttons, badges, and other features. It is also essential for Fyno's analytics capabilities.
+The FynoNotificationServiceExtension enables your iOS app to receive rich notifications with images, buttons, badges, and other features. It is also essential for Fyno's analytics capabilities.
 
 1. In Xcode, select `File > New > Target...`
 2. Choose `Notification Service Extension`, then press `Next`.
 
 ![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/ffb4fc9-Screen_Shot_2022-02-02_at_1.21.41_PM.png)
 
-3. Enter the product name as `fynoNotificationServiceExtension` and press `Finish`.
+3. Enter the product name as `FynoNotificationServiceExtension` and press `Finish`.
+
+![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_4.23.45_PM.png)
+
+
 4. Select `Activate` on the ensuing dialog.
+
+![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_4.15.07_PM.png)
+
 5. Press `Cancel` on the `Activate scheme` prompt. This step keeps Xcode debugging your app, rather than the extension you just created. If you accidentally activated it, you could switch back to debug your app within Xcode (next to the play button).
-6. In the project navigator, select the top-level project directory and pick the `fynoNotificationServiceExtension` target in the project and targets list.
+
+![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_4.33.42_PM.png)
+
+6. In the project navigator, select the top-level project directory and pick the `FynoNotificationServiceExtension` target in the project and targets list.
 7. Ensure the Deployment Target is the same value as your Main Application Target. It should be set to at least iOS 10, the version of iOS that Apple released Rich Media for push. iOS versions under 10 will not support Rich Media.
-8. In the project navigator, click the `fynoNotificationServiceExtension` folder and open the `NotificationService.m` or `NotificationService.swift` and replace the entire file's contents with the provided code. Ignore any build errors at this point. We will import Fyno which will resolve these errors.
+8. In the project navigator, click the `FynoNotificationServiceExtension` folder and open the `NotificationService.m` or `NotificationService.swift` and replace the entire file's contents with the provided code. Ignore any build errors at this point. We will import Fyno which will resolve these errors.
 
 ```swift
 import UserNotifications
@@ -56,8 +66,10 @@ This step ensures that your project can receive remote notifications. Apply thes
 
 1. Select the root project > your main app target and "Signing & Capabilities".
 2. If you do not see `Push Notifications` enabled, click `+ Capability` and add `Push Notifications`.
-3. Click `+ Capability` and add `Background Modes`. Then check `Remote notifications`.
 
+![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_6.57.13_PM.png)
+3. Click `+ Capability` and add `Background Modes`. Then check `Remote notifications`.
+![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_6.59.38_PM.png)
 ### Step 4: Add the Fyno Initialization Code
 ####Direct Implementation
 Navigate to your AppDelegate file and add the Fyno initialization code.
