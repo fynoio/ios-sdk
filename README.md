@@ -17,7 +17,7 @@ The FYNONotificationServiceExtension enables your iOS app to receive rich notifi
 1. In Xcode, select `File > New > Target...`
 2. Choose `Notification Service Extension`, then press `Next`.
 
-![Alt text](file:///ffb4fc9-Screen_Shot_2022-02-02_at_1.21.41_PM.png)
+![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/ffb4fc9-Screen_Shot_2022-02-02_at_1.21.41_PM.png)
 
 3. Enter the product name as `fynoNotificationServiceExtension` and press `Finish`.
 4. Select `Activate` on the ensuing dialog.
