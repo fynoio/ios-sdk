@@ -24,7 +24,7 @@ The FynoNotificationServiceExtension enables your iOS app to receive rich notifi
 ![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_4.23.45_PM.png)
 
 
-4. Select `Activate` on the ensuing dialog.
+4. Do not Select `Activate` on the ensuing dialog.
 
 ![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_4.15.07_PM.png)
 
