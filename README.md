@@ -71,7 +71,7 @@ This step ensures that your project can receive remote notifications. Apply thes
 3. Click `+ Capability` and add `Background Modes`. Then check `Remote notifications`.
 ![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_6.59.38_PM.png)
 ### Step 4: Add the Fyno Initialization Code
-####Direct Implementation
+#### Direct Implementation
 Navigate to your AppDelegate file and add the Fyno initialization code.
 
 ```swift
@@ -108,7 +108,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 }
 ```
 
-#### Fyno iOS SDK Implementation Guide
+#### Fyno iOS SDK Implementation Step by Step Guide
 
 The Fyno iOS SDK allows you to leverage Fyno's services in your iOS applications. It provides you with a set of tools to handle remote notifications, among other features.
 
