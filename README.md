@@ -222,7 +222,7 @@ This function is crucial to connect with our Fyno application. It needs to be ca
         // Send the device token to fynoServer
         let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
         
-         <pre> <b>fynosdk.initializeApp(WSID: YOUR_WORKSPACE_ID,api_key: YOUR_API_KEY, integrationID: YOUR_INTEGRATION_ID, deviceToken: token)</b></pre> {
+         fynosdk.initializeApp(WSID: YOUR_WORKSPACE_ID,api_key: YOUR_API_KEY, integrationID: YOUR_INTEGRATION_ID, deviceToken: token){
                     result in
                     switch result{
                     case .success(_)
@@ -246,7 +246,7 @@ The `createUserProfile(payload:completionHandler:)` method creates a user profil
                     result in
                     switch result{
                     case .success(_):
-                        **self.fynosdk.createUserProfile(distinctID: "Testing-Khush",name: "Test Man")**{result in
+                         self.fynosdk.createUserProfile(distinctID: "Testing-Khush",name: "Test Man"){result in
                                             switch result{
                                             case .success(let success):
                                             print(success)
