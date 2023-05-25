@@ -27,8 +27,8 @@ The FynoNotificationServiceExtension enables your iOS app to receive rich notifi
 <img width="261" alt="Screenshot 2023-05-24 at 4 23 45 PM" src="https://github.com/fynoio/ios-sdk/assets/24733594/777f266c-44a2-4bd6-a0a7-0fb334ef14c2">
 
 5. Press `Cancel` on the `Activate scheme` prompt. This step keeps Xcode debugging your app, rather than the extension you just created. If you accidentally activated it, you could switch back to debug your app within Xcode (next to the play button).
+<img width="1512" alt="Screenshot 2023-05-24 at 4 33 42 PM" src="https://github.com/fynoio/ios-sdk/assets/24733594/5f2a1483-8b49-4336-9524-91bcda92cac6">
 
-![Uploading Screenshot 2023-05-24 at 4.33.42 PM.png…]()
 
 6. In the project navigator, select the top-level project directory and pick the `FynoNotificationServiceExtension` target in the project and targets list.
 7. Ensure the Deployment Target is the same value as your Main Application Target. It should be set to at least iOS 10, the version of iOS that Apple released Rich Media for push. iOS versions under 10 will not support Rich Media.
