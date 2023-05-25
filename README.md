@@ -8,6 +8,7 @@ The Fyno iOS SDK enables you to utilize Fyno's services within your iOS applicat
 - iOS 13+ or iPadOS 13+ device (iPhone, iPad, iPod Touch) for testing. Xcode 14+ simulator running iOS 16+ also works.
 - Mac with Xcode 12+
 - p8 Authentication Token
+- Your XCode Project Should can target any Apple Device excluding the Mac
 
 ## Installation
 
@@ -57,7 +58,13 @@ class NotificationService: UNNotificationServiceExtension {
 ```
 
 ### Step 2: Import the Fyno SDK into your Xcode project
+#### Step 1
 The fyno SDK can be added as a Swift Package (compatible with Objective-C as well). Check out the [instructions](#) on how to import the SDK directly from Xcode using Swift Package Manager.
+
+#### Step 2: 
+Add the Fyno SDK under Fyno Extention Service in order to enable for Fyno SDK to be handle and handle background/rich Push notifications via the service extention.
+
+<img width="1512" alt="Screenshot 2023-05-25 at 6 54 36 PM" src="https://github.com/fynoio/ios-sdk/assets/24733594/18778808-5789-4fe0-8cee-140e7a14f82a">
 
 ### Step 3: Add Required Capabilities
 This step ensures that your project can receive remote notifications. Apply these steps only to the main application target and not for the Notification Service Extension.
@@ -71,7 +78,7 @@ This step ensures that your project can receive remote notifications. Apply thes
 
 ### Step 4: Add the Fyno Initialization Code
 #### Direct Implementation
-Navigate to your AppDelegate file and add the Fyno initialization code.
+Navigate/Create to your AppDelegate file and add the Fyno initialization code.
 
 ```swift
 import Foundation
@@ -98,12 +105,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        apnsRichNotification.handleRemoteNotification(userInfo: userInfo, fetchCompletionHandler: completionHandler)
+        fynosdk.handleRemoteNotification(userInfo: userInfo, fetchCompletionHandler: completionHandler)
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Failed to register for remote notifications: \(error.localizedDescription)")
     }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Send the device token to fynoServer
+        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
+        
+        fynosdk.initializeApp(WSID: YOUR_WORKSPACE_ID,api_key: YOUR_API_KEY, integrationID: YOUR_INTEGRATION_ID, deviceToken: token){
+                    result in
+                    switch result{
+                    case .success(_):
+                        self.fynosdk.createUserProfile(distinctID: "Testing-Khush",name: "Test Man"){result in
+                                            switch result{
+                                            case .success(let success):
+                                            print(success)
+                                            case .failure(let error):
+                                            print(error)
+                                            }
+                                        }
+                        
+                    case .failure(let error):
+                        print(error)
+                         
+                    }
+                }
+            }
+    
 }
 ```
 
@@ -130,7 +162,6 @@ import UIKit
 
 ```swift
 let fynoInstance = fyno.app
-UNUserNotificationCenter.current().delegate = fynoInstance
 ```
 
 ##### Request Notification Authorization
@@ -183,45 +214,53 @@ fynoInstance.userNotificationCenter(center, didReceive: response) {
 }
 ```
 
-##### Utilities
-
-The SDK also provides a Utilities class with the following static methods:
-
-1. `downloadImageAndAttachToContent(from:content:completion:)`: This method downloads an image from a URL, attaches it to a `UNMutableNotificationContent` instance, and calls a completion handler with the updated content.
-
-2. `createUserProfile(payload:completionHandler:)`: This method creates a user profile using a `Payload` instance and sends a POST request to the server. It calls a completion handler with the result.
-
-
 #### Step 5: Initialize/Connect Fyno sdk
 This function is crucial to connect with our Fyno application. It needs to be called before creating a profile when the app is starting up with the following configuration:
 
 ```swift
-fynosdk.initializeApp(WSID: WSID,api_key: api_key, integrationID: integrationID, deviceToken: AppDelegate.device_token){
-            result in
-            switch result{
-            case .success(let success):
-                print(success)
-                CompletionHandler(.success(success))
-            case .failure(let error):
-                print(error)
-                CompletionHandler(.failure(error))
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Send the device token to fynoServer
+        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
+        
+         <pre> <b>fynosdk.initializeApp(WSID: YOUR_WORKSPACE_ID,api_key: YOUR_API_KEY, integrationID: YOUR_INTEGRATION_ID, deviceToken: token)</b></pre> {
+                    result in
+                    switch result{
+                    case .success(_)
+                        
+                    case .failure(let error):
+                        print(error)
+                         
+                    }
+                }
             }
-        }
-    }
 ```
 
 #### Step 6: Create user profile for targeting
 The `createUserProfile(payload:completionHandler:)` method creates a user profile using a `Payload` instance and sends a POST request to the server. It calls a completion handler with the result.
 
 ```swift
-fynosdk.createUserProfile(distinctID: (result?.user.email)!,name: (result?.user.displayName)!){result in
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Send the device token to fynoServer
+        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
+       fynosdk.initializeApp(WSID: YOUR_WORKSPACE_ID,api_key: YOUR_API_KEY, integrationID: YOUR_INTEGRATION_ID, deviceToken: token){
+                    result in
                     switch result{
-                    case .success(let success):
-                    print(success)
+                    case .success(_):
+                        <pre> <b>self.fynosdk.createUserProfile(distinctID: "Testing-Khush",name: "Test Man")</b></pre>{result in
+                                            switch result{
+                                            case .success(let success):
+                                            print(success)
+                                            case .failure(let error):
+                                            print(error)
+                                            }
+                                        }
+                        
                     case .failure(let error):
-                    print(error)
+                        print(error)
+                         
                     }
                 }
+            }
 ```
 
 #### Step 7: Delete user profile 
