@@ -246,7 +246,7 @@ The `createUserProfile(payload:completionHandler:)` method creates a user profil
                     result in
                     switch result{
                     case .success(_):
-                        <pre> <b>self.fynosdk.createUserProfile(distinctID: "Testing-Khush",name: "Test Man")</b></pre>{result in
+                        **self.fynosdk.createUserProfile(distinctID: "Testing-Khush",name: "Test Man")**{result in
                                             switch result{
                                             case .success(let success):
                                             print(success)
