@@ -16,21 +16,19 @@ The FynoNotificationServiceExtension enables your iOS app to receive rich notifi
 
 1. In Xcode, select `File > New > Target...`
 2. Choose `Notification Service Extension`, then press `Next`.
-
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/ffb4fc9-Screen_Shot_2022-02-02_at_1.21.41_PM.png)
+<img width="736" alt="ffb4fc9-Screen_Shot_2022-02-02_at_1 21 41_PM" src="https://github.com/fynoio/ios-sdk/assets/24733594/a54bb53e-6ef8-483d-a013-ae342feb02b0">
 
 3. Enter the product name as `FynoNotificationServiceExtension` and press `Finish`.
 
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_4.23.45_PM.png)
-
+<img width="731" alt="Screenshot 2023-05-24 at 4 15 07 PM" src="https://github.com/fynoio/ios-sdk/assets/24733594/861380ea-79f7-412d-836c-02c6b88fb4c4">
 
 4. Do not Select `Activate` on the ensuing dialog.
 
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_4.15.07_PM.png)
+<img width="261" alt="Screenshot 2023-05-24 at 4 23 45 PM" src="https://github.com/fynoio/ios-sdk/assets/24733594/777f266c-44a2-4bd6-a0a7-0fb334ef14c2">
 
 5. Press `Cancel` on the `Activate scheme` prompt. This step keeps Xcode debugging your app, rather than the extension you just created. If you accidentally activated it, you could switch back to debug your app within Xcode (next to the play button).
 
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_4.33.42_PM.png)
+![Uploading Screenshot 2023-05-24 at 4.33.42 PM.png…]()
 
 6. In the project navigator, select the top-level project directory and pick the `FynoNotificationServiceExtension` target in the project and targets list.
 7. Ensure the Deployment Target is the same value as your Main Application Target. It should be set to at least iOS 10, the version of iOS that Apple released Rich Media for push. iOS versions under 10 will not support Rich Media.
@@ -66,10 +64,11 @@ This step ensures that your project can receive remote notifications. Apply thes
 
 1. Select the root project > your main app target and "Signing & Capabilities".
 2. If you do not see `Push Notifications` enabled, click `+ Capability` and add `Push Notifications`.
+<img width="1512" alt="Screenshot 2023-05-24 at 6 57 13 PM" src="https://github.com/fynoio/ios-sdk/assets/24733594/e8ca84e0-f6b2-473c-ad4d-5fd3a59751db">
 
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_6.57.13_PM.png)
 3. Click `+ Capability` and add `Background Modes`. Then check `Remote notifications`.
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_6.59.38_PM.png)
+<img width="1512" alt="Screenshot 2023-05-24 at 6 59 38 PM" src="https://github.com/fynoio/ios-sdk/assets/24733594/1fcadb3a-fcd1-44b2-95ff-07fba2759431">
+
 ### Step 4: Add the Fyno Initialization Code
 #### Direct Implementation
 Navigate to your AppDelegate file and add the Fyno initialization code.
