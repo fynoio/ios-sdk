@@ -56,6 +56,7 @@ class NotificationService: UNNotificationServiceExtension {
     }
 }
 ```
+This code represents a 'NotificationService' class, which is an 'UNNotificationServiceExtension'. An 'UNNotificationServiceExtension' is used to intercept and modify incoming remote push notifications before they're displayed to the user. This is especially useful when you need to add rich content to notifications, such as media attachments, or decrypt encrypted notification content.
 
 ### Step 2: Import the Fyno SDK into your Xcode project
 #### Step 1
