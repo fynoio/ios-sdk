@@ -87,6 +87,68 @@ import fyno
 
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate  {
     let fynosdk  =  fyno.app
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        fynosdk.requestNotificationAuthorization { granted in
+            if granted {
+                DispatchQueue.main.async {
+                    self.fynosdk.registerForRemoteNotifications()
+                }
+            }
+        }
+       fynosdk.enableTestMode(testEnabled: false)
+       return true
+    }
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        fynosdk.handleRemoteNotification(userInfo: userInfo, fetchCompletionHandler: completionHandler)
+    }
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Failed to register for remote notifications: \(error.localizedDescription)")
+    }
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Send the device token to fynoServer
+        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
+        fynosdk.initializeApp(WSID: YOUR_WORKSPACE_ID,api_key: YOUR_API_KEY, integrationID: YOUR_INTEGRATION_ID, deviceToken: token){
+                    result in
+                    switch result{
+                    case .success(_):
+                        self.fynosdk.createUserProfile(distinctID: "your_database_unique_identifier",name: "John Doe"){result in
+                                            switch result{
+                                            case .success(let success):
+                                            print(success)
+                                            case .failure(let error):
+                                            print(error)
+                                            }
+                                        }
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+            }
+  // DELETE USER PROFILE
+  //SIGNOUT
+  /**
+  fynosdk.deleteProfile(name: anonymous_profile_name){result in
+                switch result{
+                case .success(let success):
+                    print(success)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+  **/
+}
+
+
+
+
+
+12:20
+import Foundation
+import UIKit
+import fyno
+
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate  {
+    let fynosdk  =  fyno.app
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         fynosdk.requestNotificationAuthorization { granted in
@@ -100,9 +162,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
        return true
     }
 
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        // Send the device token to fynoServer
-    }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         fynosdk.handleRemoteNotification(userInfo: userInfo, fetchCompletionHandler: completionHandler)
@@ -120,7 +179,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                     result in
                     switch result{
                     case .success(_):
-                        self.fynosdk.createUserProfile(distinctID: "Testing-Khush",name: "Test Man"){result in
+                        self.fynosdk.createUserProfile(distinctID: "your_database_unique_identifier",name: "John Doe"){result in
                                             switch result{
                                             case .success(let success):
                                             print(success)
@@ -135,6 +194,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                     }
                 }
             }
+  
+  // DELETE USER PROFILE
+  //SIGNOUT
+  /**
+  fynosdk.deleteProfile(name: anonymous_profile_name){result in
+                switch result{
+                case .success(let success):
+                    print(success)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+  **/
+  
     
 }
 ```
@@ -151,11 +224,11 @@ The SDK can be found at the following GitHub repository:
 
 ##### Initial Setup
 
-1. Import `UserNotifications`, `UIKit` in the Swift file where you want to use the Fyno SDK.
+1. Import `fyno`, `UIKit` in the Application Delegate Swift file.
 
 ```swift
-import UserNotifications
 import UIKit
+import fyno
 ```
 
 2. Initialize an instance of the Fyno class and set it as the delegate for the User Notification Center.
