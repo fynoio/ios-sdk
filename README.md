@@ -8,6 +8,7 @@ The Fyno iOS SDK enables you to utilize Fyno's services within your iOS applicat
 - iOS 13+ or iPadOS 13+ device (iPhone, iPad, iPod Touch) for testing. Xcode 14+ simulator running iOS 16+ also works.
 - Mac with Xcode 12+
 - p8 Authentication Token
+- Your Xcode Project Should can target any Apple Device excluding the Mac
 
 ## Installation
 
@@ -17,20 +18,20 @@ The FynoNotificationServiceExtension enables your iOS app to receive rich notifi
 1. In Xcode, select `File > New > Target...`
 2. Choose `Notification Service Extension`, then press `Next`.
 
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/ffb4fc9-Screen_Shot_2022-02-02_at_1.21.41_PM.png)
+![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_1.png)
 
 3. Enter the product name as `FynoNotificationServiceExtension` and press `Finish`.
 
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_4.23.45_PM.png)
+![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_2.png)
 
 
 4. Do not Select `Activate` on the ensuing dialog.
 
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_4.15.07_PM.png)
+![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_3.png)
 
 5. Press `Cancel` on the `Activate scheme` prompt. This step keeps Xcode debugging your app, rather than the extension you just created. If you accidentally activated it, you could switch back to debug your app within Xcode (next to the play button).
 
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_4.33.42_PM.png)
+![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_4.png)
 
 6. In the project navigator, select the top-level project directory and pick the `FynoNotificationServiceExtension` target in the project and targets list.
 7. Ensure the Deployment Target is the same value as your Main Application Target. It should be set to at least iOS 10, the version of iOS that Apple released Rich Media for push. iOS versions under 10 will not support Rich Media.
@@ -57,9 +58,13 @@ class NotificationService: UNNotificationServiceExtension {
     }
 }
 ```
+This code represents a 'NotificationService' class, which is an 'UNNotificationServiceExtension'. An 'UNNotificationServiceExtension' is used to intercept and modify incoming remote push notifications before they're displayed to the user. This is especially useful when you need to add rich content to notifications, such as media attachments, or decrypt encrypted notification content.
 
 ### Step 2: Import the Fyno SDK into your Xcode project
-The fyno SDK can be added as a Swift Package (compatible with Objective-C as well). Check out the [instructions](#) on how to import the SDK directly from Xcode using Swift Package Manager.
+- The fyno SDK can be added as a Swift Package (compatible with Objective-C as well). Check out the instructions on how to import the SDK directly from Xcode using Swift Package Manager.
+- Add the Fyno SDK under Fyno Extension Service in order to enable for Fyno SDK to be handle and handle background/rich Push notifications via the service extension.
+
+![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_5.png)
 
 ### Step 3: Add Required Capabilities
 This step ensures that your project can receive remote notifications. Apply these steps only to the main application target and not for the Notification Service Extension.
@@ -67,9 +72,9 @@ This step ensures that your project can receive remote notifications. Apply thes
 1. Select the root project > your main app target and "Signing & Capabilities".
 2. If you do not see `Push Notifications` enabled, click `+ Capability` and add `Push Notifications`.
 
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_6.57.13_PM.png)
+![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_6.png)
 3. Click `+ Capability` and add `Background Modes`. Then check `Remote notifications`.
-![Alt text](https://gitlab.com/fyno-app/ios-sdk/-/raw/main/Images/Screenshot_2023-05-24_at_6.59.38_PM.png)
+![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_7.png)
 ### Step 4: Add the Fyno Initialization Code
 #### Direct Implementation
 Navigate to your AppDelegate file and add the Fyno initialization code.
@@ -94,17 +99,53 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
        return true
     }
 
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        // Send the device token to fynoServer
-    }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        apnsRichNotification.handleRemoteNotification(userInfo: userInfo, fetchCompletionHandler: completionHandler)
+        fynosdk.handleRemoteNotification(userInfo: userInfo, fetchCompletionHandler: completionHandler)
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Failed to register for remote notifications: \(error.localizedDescription)")
     }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Send the device token to fynoServer
+        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
+        
+        fynosdk.initializeApp(WSID: YOUR_WORKSPACE_ID,api_key: YOUR_API_KEY, integrationID: YOUR_INTEGRATION_ID, deviceToken: token){
+                    result in
+                    switch result{
+                    case .success(_):
+                        self.fynosdk.createUserProfile(distinctID: "your_database_unique_identifier",name: "John Doe"){result in
+                                            switch result{
+                                            case .success(let success):
+                                            print(success)
+                                            case .failure(let error):
+                                            print(error)
+                                            }
+                                        }
+                        
+                    case .failure(let error):
+                        print(error)
+                         
+                    }
+                }
+            }
+  
+  // DELETE USER PROFILE
+  //SIGNOUT
+  /**
+  fynosdk.deleteProfile(name: anonymous_profile_name){result in
+                switch result{
+                case .success(let success):
+                    print(success)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+  **/
+  
+    
 }
 ```
 
@@ -253,3 +294,4 @@ If stuck, contact support directly or email support@fyno.io for help.
 For faster assistance, please provide:
 - Your Fyno secret key
 - Details, logs, and/or screenshots of the issue.
+
