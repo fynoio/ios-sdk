@@ -5,7 +5,7 @@ The Fyno iOS SDK enables you to utilize Fyno's services within your iOS applicat
 ## Requirements
 - Fyno Account
 - Fyno App ID, available in Settings > Keys & IDs
-- iOS 13+ or iPadOS 13+ device (iPhone, iPad, iPod Touch) for testing. Xcode 14+ simulator running iOS 16+ also works.
+- iOS 14+ or iPadOS 14+ device (iPhone, iPad, iPod Touch) for testing. Xcode 14+ simulator running iOS 16+ also works.
 - Mac with Xcode 12+
 - p8 Authentication Token
 - Your Xcode Project Should can target any Apple Device excluding the Mac
@@ -286,6 +286,51 @@ The `fynosdk.enableTestMode(testEnabled:)` method allows the user to switch from
 ```swift
 fynosdk.enableTestMode(testEnabled: true)
 ```
+
+
+# How to Implement Fyno Inapp in an iOS Application
+
+This guide provides step-by-step instructions on how to integrate the Fyno Inapp service into an iOS application using SwiftUI. In this example, we'll be working with a simple application named `demo-ios-sdk-1`.
+
+### Steps to Implement Fyno Inapp
+
+1. **Import the Fyno Inapp SDK**: In your SwiftUI file, typically `ContentView.swift`, import the Fyno Inapp SDK at the top of your file. This is done with the line `import fyno`.
+
+```swift
+import SwiftUI
+import fyno
+```
+
+2. **Initialize the Fyno Inapp instance**: Next, within your view struct (in this case, `struct ContentView: View`), initialize the Fyno Inapp instance. For this, you'll need to provide:
+
+    - `inappUserId`: This is the unique identifier for the user in your application.
+    - `integrationToken`: This is the token provided by Fyno Inapp for integration purposes.
+
+```swift
+struct ContentView: View {
+    let fynoinapp = fynoInapp(inappUserId: "kchandawat-1", integrationToken: "e214cf26-4b04-4be3-b0b7-dac2fd3dfa78")
+    ...
+}
+```
+
+3. **Use the Fyno Inapp instance**: Now that the Fyno Inapp instance is set up, you can use it in your views. In this example, we are passing the `fynoinapp` instance to a `NotificationList` view which would handle the in-app notifications.
+
+```swift
+var body: some View {
+    NotificationList(inappManager: fynoinapp)
+}
+```
+
+4. **Preview your content view**: You can preview your content view using the `PreviewProvider` protocol.
+
+```swift
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+```
+
 
 ### Troubleshooting
 If you encounter issues, see our [iOS troubleshooting guide](#).

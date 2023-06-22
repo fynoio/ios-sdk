@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import UserNotifications
+import CommonCrypto
  class Utilities{
     private static var url:String="https://api.fyno.io"
     private static var environment=""
@@ -138,7 +139,7 @@ import UserNotifications
 
                 guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 else {
                     completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: nil )))
-                    let httpResponse = response as? HTTPURLResponse
+                    //let httpResponse = response as? HTTPURLResponse
                      
                     
                     return
@@ -190,7 +191,7 @@ import UserNotifications
 
                  guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                      completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: nil )))
-                     let httpResponse = response as? HTTPURLResponse
+                     //let httpResponse = response as? HTTPURLResponse
                     // print(httpResponse?.statusCode ?? "404")
                      
                      
@@ -256,7 +257,7 @@ import UserNotifications
 
                  guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                      completionHandler(.failure(NSError(domain: "Invalid status code", code: -1, userInfo: nil )))
-                     let httpResponse = response as? HTTPURLResponse
+                     //let httpResponse = response as? HTTPURLResponse
                     // print(httpResponse?.statusCode ?? "404")
                      
                      
@@ -568,6 +569,21 @@ import UserNotifications
              environment = "/test"
          }
      }
+     
+     public static func hmacSha256(for data: String, key: String) -> String? {
+             let keyData = key.data(using: .utf8)!
+             let data = data.data(using: .utf8)!
+             
+             var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+             data.withUnsafeBytes { dataBytes in
+                 keyData.withUnsafeBytes { keyBytes in
+                     CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA256), keyBytes.baseAddress, keyBytes.count, dataBytes.baseAddress, dataBytes.count, &digest)
+                 }
+             }
+             
+             let output = digest.map { String(format: "%02x", $0) }.joined()
+             return output
+         }
      
      
     
