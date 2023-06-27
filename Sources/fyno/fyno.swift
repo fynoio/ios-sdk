@@ -39,17 +39,21 @@ public class fyno: NSObject, UNUserNotificationCenterDelegate{
     
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // The notification was received while the app is active. Handle here.
-        
-        
-        // If you want to show the notification while the app is active, call the completion handler with .banner or .list
-        if #available(iOS 14.0, *) {
-            completionHandler([.banner, .list])
-        } else {
-            // Fallback on earlier versions
-        }
+        if WebSocketManager.shared.isConnected && UIApplication.shared.applicationState == .active {
+               // If both conditions are true, simply return and ignore the notification
+               completionHandler([])
+           } else {
+               // If you want to show the notification while the app is active, call the completion handler with .banner or .list
+               if #available(iOS 14.0, *) {
+                   completionHandler([.banner, .list])
+               } else {
+                   // Fallback on earlier versions
+               }
+           }
     }
     
     public func handleRemoteNotification(userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+       
         //print(userInfo )
         var url : String? = nil
         print("bg notification recieved")
@@ -388,5 +392,12 @@ public class fyno: NSObject, UNUserNotificationCenterDelegate{
             }
         }
     }
+    
+    
+    
+    
+   
+
+    
 }
 #endif
