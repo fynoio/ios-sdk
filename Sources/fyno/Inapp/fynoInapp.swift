@@ -7,6 +7,7 @@
 
 
 import UIKit
+import RealmSwift
 import UserNotifications
 import CoreData
 import SocketIO
@@ -16,7 +17,7 @@ import SocketIO
 public class fynoInapp: ObservableObject {
     let socketURL:URL
     let userID:String
-    let integrationToken:String
+    let signature:String
     private var manager: SocketManager?
     private var socket: SocketIOClient?
     
@@ -33,10 +34,10 @@ public class fynoInapp: ObservableObject {
     @Published var count: Int = 0
     @Published var isConnected: Bool = false
     
-    public init(socketURL: URL, inappUserId: String, integrationToken: String) {
+    public init(socketURL:URL? = URL(string: "https://inapp.dev.fyno.io"), inappUserId: String, signature: String) {
         
-        self.socketURL = socketURL
-        self.integrationToken = integrationToken
+        self.socketURL = socketURL!
+        self.signature = signature
         self.userID = inappUserId
         
         
@@ -48,7 +49,7 @@ public class fynoInapp: ObservableObject {
     }
     
      func connect() {
-        if(Utilities.getWSID() == "" || Utilities.getintegrationID() == "" || Utilities.getUUID() == "" ){
+        if(Utilities.getWSID() == "" || Utilities.getintegrationID() == ""){
             print("iOS SDK is not initialized, please call the init method")
             return
         }
@@ -57,8 +58,7 @@ public class fynoInapp: ObservableObject {
         
         let wsid = Utilities.getWSID()
         let integrationID = Utilities.getintegrationID()
-        let key = wsid + self.integrationToken
-        let  signature = Utilities.hmacSha256(for: self.userID, key: key) ?? ""
+        let signature = self.signature
         let config: SocketIOClientConfiguration = [
             .extraHeaders([
                 
@@ -190,6 +190,42 @@ public class fynoInapp: ObservableObject {
         }
     
     func handleIncomingMessage(message: NotificationPayload) {
+        let db = NotificationPayloadDB()
+        if let objectId = try? ObjectId(string: message.id) {
+            db.id = objectId
+        } else {
+            print("Invalid ObjectId string: \(message.id)")
+        }
+        db.isRead = message.isRead
+        db.ws_id = message.ws_id
+        db.to = message.to
+        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: message.notification_content!, options: [])
+            let string = String(data: data, encoding: .utf8)
+            db.notification_content = string // Optional("{\"key\":\"value\"}")
+        } catch {
+            print("Error converting dictionary to JSON string: \(error)")
+        }
+        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: message.notification_setting!, options: [])
+            let string = String(data: data, encoding: .utf8)
+            db.notification_settings = string // Optional("{\"key\":\"value\"}")
+        } catch {
+            print("Error converting dictionary to JSON string: \(error)")
+        }
+        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: message.statuses!, options: [])
+            let string = String(data: data, encoding: .utf8)
+            db.status = string // Optional("{\"key\":\"value\"}")
+        } catch {
+            print("Error converting dictionary to JSON string: \(error)")
+        }
+        db.createdAt = message.createdAt
+        db.updatedAt = message.updatedAt
+        db.saveNotification(db)
         
         notifications.insert(message,  at: 0)
         count += 1
