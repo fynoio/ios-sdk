@@ -11,7 +11,7 @@ import UIKit
 import UserNotifications
 import CommonCrypto
  class Utilities{
-    private static var url:String="https://api.fyno.io"
+    private static var url:String="https://api.dev.fyno.io"
     private static var environment=""
     private static var version:String="v1"
     private static let preferences = UserDefaults.standard
