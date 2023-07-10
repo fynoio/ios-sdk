@@ -308,7 +308,7 @@ import fyno
 
 ```swift
 struct ContentView: View {
-    let fynoinapp = fynoInapp(inappUserId: "kchandawat-1", integrationToken: "e214cf26-4b04-4be3-b0b7-dac2fd3dfa78")
+    let fynoinapp = fynoInapp(inappUserId: "kchandawat-1", signature: "e214cf26-4b04-4be3-b0b7-dac2fd3dfa78")
     ...
 }
 ```

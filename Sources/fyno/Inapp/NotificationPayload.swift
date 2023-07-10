@@ -10,12 +10,17 @@ import Foundation
 public struct NotificationPayload {
     public var id: String
     public var title: String
+    public var notification_content: [String: Any]? = nil
+    public var notification_setting: [String: Any]? = nil
     public var body: String
+    public var ws_id: String
+    public var createdAt: String? = nil
+    public var updatedAt: String? = nil
     public var date: Date
     public var to: String
     public var isRead: Bool = false
     public var userInfo: [String: Any] // 'userInfo' will hold the whole notification content
-    public var statuses: [[String: Any]] // 'statuses' seems to be a list of dictionaries
+    public var statuses: [[String: Any]]? = nil // 'statuses' seems to be a list of dictionaries
     
     init?(data: [String: Any]) {
         guard let id = data["_id"] as? String,
@@ -23,8 +28,11 @@ public struct NotificationPayload {
               let notificationContent = data["notification_content"] as? [String: Any],
               let title = notificationContent["title"] as? String,
               let body = notificationContent["body"] as? String,
+              let notification_setting = data["notification_settings"] as? [String: Any],
               let statuses = data["status"] as? [[String: Any]],
+              let ws_id = data["ws_id"] as? String,
               let createdAt = data["createdAt"] as? String,
+              let updatedAt = data["updatedAt"] as? String,
               let date = Date(iso8601: createdAt) else {
             return nil
         }
@@ -33,9 +41,14 @@ public struct NotificationPayload {
         self.title = title
         self.body = body
         self.date = date
+        self.notification_content = notificationContent
         self.to = to
         self.userInfo = notificationContent
         self.statuses = statuses
+        self.ws_id = ws_id
+        self.notification_setting = notification_setting
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
     mutating func markAsRead()
     {

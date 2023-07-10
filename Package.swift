@@ -12,7 +12,8 @@ let package = Package(
             targets: ["fyno"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/socketio/socket.io-client-swift", from: "16.0.0")
+        .package(url: "https://github.com/socketio/socket.io-client-swift", from: "16.0.0"),
+        .package(url: "https://github.com/realm/realm-swift", from: "10.40.2")
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],
@@ -21,7 +22,8 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "fyno",
-            dependencies: [.product(name: "SocketIO", package: "socket.io-client-swift")]),
+            dependencies: [.product(name: "SocketIO", package: "socket.io-client-swift"),
+                           .product(name: "RealmSwift",package: "realm-swift")]),
         .testTarget(
             name: "fynoTests",
             dependencies: ["fyno"]),
