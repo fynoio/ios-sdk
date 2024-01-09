@@ -12,8 +12,9 @@ let package = Package(
             targets: ["fyno"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/socketio/socket.io-client-swift", from: "16.0.0"),
-        .package(url: "https://github.com/realm/realm-swift", from: "10.40.2")
+        .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", from: "5.0.0"),
+        .package(url: "https://github.com/ccgus/fmdb", from: "2.7.8"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "8.0.0"),
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],
@@ -22,8 +23,12 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "fyno",
-            dependencies: [.product(name: "SocketIO", package: "socket.io-client-swift"),
-                           .product(name: "RealmSwift",package: "realm-swift")]),
+            dependencies: [
+                "SwiftyJSON",
+                .product(name: "FMDB", package: "FMDB"),
+                .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
+            ]),
         .testTarget(
             name: "fynoTests",
             dependencies: ["fyno"]),
