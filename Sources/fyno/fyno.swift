@@ -172,27 +172,42 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             return
         }
         
-        Utilities.mergeUserProfile(newDistinctId: newDistinctId) { result in
-            switch result {
-            case .success(_):
-                print("merge successful")
-            case .failure(let error):
-                completionHandler(.failure(error))
-            }
-        }
-        
-        if userName != "" {
-            Utilities.updateUserName(distinctID: newDistinctId, userName: userName) { result in
+        if !newDistinctId.isEmpty {
+            Utilities.mergeUserProfile(newDistinctId: newDistinctId) { result in
                 switch result {
-                case .success(let success):
-                    completionHandler(.success(success))
+                case .success(_):
+                    print("merge successful")
+                    if userName != "" {
+                        Utilities.updateUserName(distinctID: newDistinctId, userName: userName) { result in
+                            switch result {
+                            case .success(let success):
+                                completionHandler(.success(success))
+                            case .failure(let error):
+                                completionHandler(.failure(error))
+                            }
+                        }
+                    } else {
+                        completionHandler(.success(true))
+                    }
                 case .failure(let error):
                     completionHandler(.failure(error))
                 }
             }
         } else {
-            completionHandler(.success(true))
+            if userName != "" {
+                Utilities.updateUserName(distinctID: Utilities.getDistinctID(), userName: userName) { result in
+                    switch result {
+                    case .success(let success):
+                        completionHandler(.success(success))
+                    case .failure(let error):
+                        completionHandler(.failure(error))
+                    }
+                }
+            } else {
+                completionHandler(.success(true))
+            }
         }
+        
     }
     
     public func mergeProfile(newDistinctId: String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
@@ -298,7 +313,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
     public func registerForRemoteNotifications() {
         UIApplication.shared.registerForRemoteNotifications()
     }
-            
+    
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // The notification was received while the app is active. Handle here.
         
