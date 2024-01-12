@@ -57,8 +57,9 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             return
         }
         
-        Utilities.setFynoInitialized()
-        Utilities.setDistinctID(distinctID: UIDevice.current.identifierForVendor!.uuidString)
+        let myUUID = UUID()
+        
+        Utilities.setDistinctID(distinctID: myUUID.uuidString)
         
         if !distinctId.isEmpty {
             Utilities.setDistinctID(distinctID: distinctId)
@@ -68,14 +69,16 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             distinctID: Utilities.getDistinctID(),
             status: 1
         )
-        
+                
         Utilities.createUserProfile(payload: payloadInstance) { result in
             switch result {
-            case .success(let success):
-                print("Fyno instance initialized successfully")
-                completionHandler(.success(success))
             case .failure(let error):
                 completionHandler(.failure(error))
+                return
+            case .success(let success):
+                print("Fyno instance initialized successfully")
+                Utilities.setFynoInitialized()
+                completionHandler(.success(success))
                 return
             }
         }
@@ -169,27 +172,42 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             return
         }
         
-        Utilities.mergeUserProfile(newDistinctId: newDistinctId) { result in
-            switch result {
-            case .success(_):
-                print("merge successful")
-            case .failure(let error):
-                completionHandler(.failure(error))
-            }
-        }
-        
-        if userName != "" {
-            Utilities.updateUserName(distinctID: newDistinctId, userName: userName) { result in
+        if !newDistinctId.isEmpty {
+            Utilities.mergeUserProfile(newDistinctId: newDistinctId) { result in
                 switch result {
-                case .success(let success):
-                    completionHandler(.success(success))
+                case .success(_):
+                    print("merge successful")
+                    if userName != "" {
+                        Utilities.updateUserName(distinctID: newDistinctId, userName: userName) { result in
+                            switch result {
+                            case .success(let success):
+                                completionHandler(.success(success))
+                            case .failure(let error):
+                                completionHandler(.failure(error))
+                            }
+                        }
+                    } else {
+                        completionHandler(.success(true))
+                    }
                 case .failure(let error):
                     completionHandler(.failure(error))
                 }
             }
         } else {
-            completionHandler(.success(true))
+            if userName != "" {
+                Utilities.updateUserName(distinctID: Utilities.getDistinctID(), userName: userName) { result in
+                    switch result {
+                    case .success(let success):
+                        completionHandler(.success(success))
+                    case .failure(let error):
+                        completionHandler(.failure(error))
+                    }
+                }
+            } else {
+                completionHandler(.success(true))
+            }
         }
+        
     }
     
     public func mergeProfile(newDistinctId: String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
@@ -236,22 +254,22 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             completionHandler(.failure(error))
             return
         }
-                
+        
         Utilities.deleteChannelData(){result in
             switch result{
             case .success(let success):
                 print("success delete channel")
                 completionHandler(.success(success))
-                let uuid = UIDevice.current.identifierForVendor!.uuidString
+                let myUUID = UUID()
                 let payloadInstance = Payload(
-                    distinctID: uuid
+                    distinctID: myUUID.uuidString
                 )
                 
                 Utilities.createUserProfile(payload: payloadInstance) { result in
                     switch result {
                     case .success(let success):
                         print("success create user")
-                        Utilities.setDistinctID(distinctID: uuid)
+                        Utilities.setDistinctID(distinctID: myUUID.uuidString)
                         let payload = Payload(
                             integrationId: Utilities.getintegrationID()
                         )
@@ -302,10 +320,10 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
     public func registerForRemoteNotifications() {
         UIApplication.shared.registerForRemoteNotifications()
     }
-            
+    
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // The notification was received while the app is active. Handle here.
-                
+        
         if WebSocketManager.shared.isConnected && UIApplication.shared.applicationState == .active {
             // If both conditions are true, simply return and ignore the notification
             completionHandler([])
@@ -324,7 +342,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             contentHandler(request.content)
             return
         }
-                
+        
         var callbackUrl : String = ""
         print("Notification recieved")
         
@@ -340,7 +358,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                 callbackUrl = alert["callback"] as? String ?? ""
             }
         }
-               
+        
         if !callbackUrl.isEmpty {
             Utilities.callback(url: callbackUrl, action: "RECEIVED", deviceDetails: Utilities.getDeviceDetails()){result in
                 switch(result)
@@ -352,7 +370,8 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                 }
             }
         }
-                
+        
+        
         Utilities.addImageAndActionButtons(bestAttemptContent: bestAttemptContent, completion: contentHandler)
     }
             
@@ -384,8 +403,6 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             print("Notification Dismissed")
             action = "DISMISSED"
         }
-        
-        print(content)
         
         if !callbackUrl.isEmpty
         {

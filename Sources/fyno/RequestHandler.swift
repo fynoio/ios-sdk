@@ -34,20 +34,24 @@ class RequestHandler {
                 SQLHelper.shared.insertRequest(request: request, tableName: "callbacks")
                 self.processCBRequests(caller: "PerformRequest") {result in
                     switch result{
-                    case .success(let success):
-                        completionHandler(.success(success))
                     case .failure(let error):
                         completionHandler(.failure(error))
+                        return
+                    case .success(let success):
+                        completionHandler(.success(success))
+                        return
                     }
                 }
             } else {
                 SQLHelper.shared.insertRequest(request: request, tableName: "requests")
                 self.processRequests(caller: "PerformRequest") {result in
                     switch result{
-                    case .success(let success):
-                        completionHandler(.success(success))
                     case .failure(let error):
                         completionHandler(.failure(error))
+                        return
+                    case .success(let success):
+                        completionHandler(.success(success))
+                        return
                     }
                 }
             }
@@ -56,12 +60,13 @@ class RequestHandler {
     
     public func processRequests(caller: String? = "", completion: @escaping (Result<Bool, Error>) -> Void) {
         let dispatchGroup = DispatchGroup()
-        var success = true
         var requestCursor: FMResultSet? = nil
         
         defer {
             requestCursor?.close()
         }
+        
+        var shouldBreakOuterLoop = false
         
         outerLoop: do {
             while true {
@@ -102,9 +107,7 @@ class RequestHandler {
                         }
                     }
                     
-                    
                     let request = Request(url: url, payload: payload, method: method)
-                    
                     self.handleRetries(for: request, withID: id) { result in
                         defer {
                             dispatchGroup.leave() // Leave the dispatch group when the asynchronous operation is completed
@@ -112,24 +115,26 @@ class RequestHandler {
                         
                         switch result {
                         case .failure(let error):
-                            self.handleFailedRequest(request: request, id: id)
-                            success = false
+                            shouldBreakOuterLoop = true
                             completion(.failure(NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])))
                         case .success(_):
-                            self.handleSuccessResponse(request: request, id: id)
+                            print("request successful")
                         }
                     }
                 } else {
-                    completion(.success(success))
+                    completion(.success(true))
                     break
                 }
                 
                 dispatchGroup.wait() // Wait for the current iteration to finish before proceeding to the next one
+                
+                if shouldBreakOuterLoop {
+                    break outerLoop
+                }
             }
         }
     }
 
-    
     public func processCBRequests(caller:String? = "", completion: @escaping (Result<Bool, Error>) -> Void) {
         var cbRequestCursor: FMResultSet? = nil
         
@@ -177,9 +182,9 @@ class RequestHandler {
                     handleRetries(for:request,withID: id) {result in
                         switch result{
                         case .success(_):
-                            self.handleSuccessResponse(request: request, id: id)
+                            print("request successful")
                         case .failure(_):
-                            self.handleFailedRequest(request: request, id: id)
+                            print("request failed")
                         }
                     }
                 } else {
@@ -193,33 +198,28 @@ class RequestHandler {
         return min(Int64(pow(4.0, Double(retryCount)) * 1000), RequestHandler.MAX_BACKOFF_DELAY)
     }
     
-    private func performRequest(request: Request, id: Int, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
-        doRequest(request: request, id: id) { result, error in
-            if let error = error {
-                print("Request failed: \(error.localizedDescription)")
-                completionHandler(.failure(error))
-            } else {
-                completionHandler(.success(result))
-            }
-        }
-    }
-
-    
     private func handleRetries(for request: Request, withID id: Int, completion: @escaping (Result<Bool, Error>) -> Void) {
         print("request:", request)
         var retries = 0
 
         func retry() {
             guard retries < RequestHandler.MAX_RETRIES else {
+                self.handleFailedRequest(request: request, id: id)
                 completion(.failure(RequestError.failedWithResponseCode(-1)))
                 return
             }
-
-            performRequest(request: request, id: id) { result in
-                switch result {
-                case .success:
-                    completion(.success(true))
-                case .failure(_):
+            
+            doRequest(request: request, id: id) { result, error in
+                if result {
+                    self.handleSuccessResponse(request: request, id: id)
+                    if error != nil {
+                        completion(.failure(error!))
+                        return
+                    } else {
+                        completion(.success(true))
+                        return
+                    }
+                } else if error != nil {
                     print("Request failed \(retries), retrying...")
                     let delayMillis = self.calculateDelay(retryCount: retries)
                     usleep(useconds_t(delayMillis * 1000))
@@ -252,9 +252,7 @@ class RequestHandler {
         urlRequest.httpMethod = request.method
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        if Utilities.isFynoInitialized() {
-            urlRequest.addValue("Bearer " + Utilities.getapi_key(), forHTTPHeaderField: "Authorization")
-        }
+        urlRequest.addValue("Bearer " + Utilities.getapi_key(), forHTTPHeaderField: "Authorization")
         
         if let payload = request.payload {
             do {
@@ -268,7 +266,7 @@ class RequestHandler {
         
         let backgroundTaskID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
         let session = URLSession(configuration: .default)
-                
+        
         let task = session.dataTask(with: urlRequest) { data,response,error in
             defer {
                 DispatchQueue.main.async {
@@ -290,12 +288,25 @@ class RequestHandler {
                 let statusCode = httpResponse.statusCode
                 
                 switch statusCode {
-                case 200..<300, 400..<500:
+                case 200..<300:
                     print("Response code: \(statusCode)")
                     completionHandler(true, nil)
+                    return
+                case 400..<500:
+                    print("Request failed with response code: \(statusCode)")
+                    if let responseData = data,
+                       let json = try? JSONSerialization.jsonObject(with: responseData, options: []) as? [String: Any],
+                       let errorMessage = json["_message"] as? String {
+                        completionHandler(true, NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
+                        return
+                    } else {
+                        completionHandler(true,  NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Error deserializing JSON"]))
+                        return
+                    }
                 default:
                     print("Request failed with response code: \(statusCode)")
                     completionHandler(false, RequestError.failedWithResponseCode(statusCode))
+                    return
                 }
             }
         }

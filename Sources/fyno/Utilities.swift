@@ -8,56 +8,49 @@ import SwiftyJSON
 
 class Utilities{
     private static let preferences = UserDefaults.standard
-
-    public static func addActionButtons(content: UNMutableNotificationContent) -> UNMutableNotificationContent {
-        let declineAction = UNNotificationAction(identifier: "DECLINE_ACTION", title: "Decline", options: .destructive)
-
-        let categoryIdentifier = content.userInfo["category"] as! String
-
-        content.categoryIdentifier = categoryIdentifier
         
-        guard let actions = content.userInfo[AnyHashable("actions")] as? [[AnyHashable: Any]] else {
-            let category = UNNotificationCategory(identifier: categoryIdentifier, actions: [declineAction], intentIdentifiers: [], options: .customDismissAction)
-
-            UNUserNotificationCenter.current().getNotificationCategories { categories in
-                UNUserNotificationCenter.current().setNotificationCategories(categories.union(Set([category])))
-            }
-            
-            return content
-        }
-
-        let notificationActions = actions.compactMap { actionDict -> UNNotificationAction? in
+    public static func addImageAndActionButtons(bestAttemptContent: UNMutableNotificationContent, completion: @escaping (UNMutableNotificationContent) -> Void) {
+        let declineAction = UNNotificationAction(identifier: "DECLINE_ACTION", title: "Decline", options: .destructive)
+        
+        let categoryIdentifier = bestAttemptContent.userInfo["category"] as! String
+        
+        bestAttemptContent.categoryIdentifier = categoryIdentifier
+        
+        let actions = bestAttemptContent.userInfo[AnyHashable("actions")] as? [[AnyHashable: Any]]
+        
+        let notificationActions = actions?.compactMap { actionDict -> UNNotificationAction? in
             guard let link = actionDict["link"] as? String, let title = actionDict["title"] as? String else {
                 return nil
             }
-
+            
             return UNNotificationAction(identifier: link, title: title)
         }
-
-        let categoryActions = notificationActions + [declineAction]
-                
+        
+        var categoryActions = [declineAction]
+        
+        if let notificationActions = notificationActions, !notificationActions.isEmpty {
+            categoryActions.insert(contentsOf: notificationActions, at: 0)
+        }
+        
         let category = UNNotificationCategory(identifier: categoryIdentifier, actions: categoryActions, intentIdentifiers: [], options: .customDismissAction)
-
+        
         UNUserNotificationCenter.current().getNotificationCategories { categories in
             UNUserNotificationCenter.current().setNotificationCategories(categories.union(Set([category])))
         }
         
-        return content
-    }
-
-    public static func addImageAndActionButtons(bestAttemptContent:  UNMutableNotificationContent, completion: @escaping (UNMutableNotificationContent) -> Void) {
-        let newContent = addActionButtons(content: bestAttemptContent)
- 
-        guard let attachmentURLString = newContent.userInfo["urlImageString"] as? String,
+        // added this sleep as there are issues in rendering notifications with action buttons but no image
+        Thread.sleep(forTimeInterval: 0.01)
+        
+        guard let attachmentURLString = bestAttemptContent.userInfo["urlImageString"] as? String,
               let attachmentURL = URL(string: attachmentURLString) else {
-            completion(newContent)
+            completion(bestAttemptContent)
             return
         }
         
         let task = URLSession.shared.dataTask(with: attachmentURL) { (data, response, error) in
             guard let data = data, let image = UIImage(data: data), let response = response else {
                 print("Error: \(String(describing: error))")
-                completion(newContent)
+                completion(bestAttemptContent)
                 return
             }
             
@@ -72,13 +65,13 @@ class Utilities{
                 fileExtension = "jpeg"
             } else {
                 print("Unsupported MIME type: \(String(describing: response.mimeType))")
-                completion(newContent)
+                completion(bestAttemptContent)
                 return
             }
             
             guard let imageData = imageData, let fileExtension = fileExtension else {
                 print("Could not convert image to data.")
-                completion(newContent)
+                completion(bestAttemptContent)
                 return
             }
             
@@ -94,12 +87,12 @@ class Utilities{
                 try imageData.write(to: fileURL)
                 
                 let attachment = try UNNotificationAttachment(identifier: "\(fileName).\(fileExtension)", url: fileURL, options: nil)
-                newContent.attachments = [attachment]
+                bestAttemptContent.attachments = [attachment]
             } catch {
                 print("Error writing image data to local URL: \(error.localizedDescription)")
             }
             
-            completion(newContent)
+            completion(bestAttemptContent)
         }
         task.resume()
     }
@@ -111,11 +104,12 @@ class Utilities{
         ]
         
         RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "create_profile"), method: "POST", payload: payload){ result in
-            switch result {
-            case .success(let success):
-                completionHandler(.success(success))
-            case .failure(let error):
+            if case .failure(let error) = result {
                 completionHandler(.failure(error))
+                return
+            } else if case .success(let success) = result {
+                completionHandler(.success(success))
+                return
             }
         }
     }
@@ -274,7 +268,6 @@ class Utilities{
         }
         
         let payloadInstance: JSON =  [
-            "distinct_id": distinctID,
             "name": userName
         ]
 
