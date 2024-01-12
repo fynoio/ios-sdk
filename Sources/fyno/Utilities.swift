@@ -254,7 +254,7 @@ class Utilities{
             "status": updatedAction,
             "message": deviceDetails,
             "eventType": "Delivery",
-            "timestamp": "\(action) at \(formattedDate)"
+            "timestamp": "\(updatedAction) at \(formattedDate)"
         ]
         
         RequestHandler.shared.PerformRequest(url: url, method: "POST", payload: payload){ result in

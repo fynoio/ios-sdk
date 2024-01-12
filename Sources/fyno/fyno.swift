@@ -387,14 +387,13 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         
         var action: String = ""
         
-        if response.actionIdentifier == UNNotificationDefaultActionIdentifier || response.actionIdentifier.contains("/") {
-            // The user clicked on the notification.
-            print("Notification Clicked")
-            action = "CLICKED"
-        } else if response.actionIdentifier == UNNotificationDismissActionIdentifier || response.actionIdentifier == "DECLINE_ACTION"{
+        if response.actionIdentifier == UNNotificationDismissActionIdentifier || response.actionIdentifier == "DECLINE_ACTION"{
             // The user dismissed the notification.
             print("Notification Dismissed")
             action = "DISMISSED"
+        } else {
+            print("Notification Clicked")
+            action = "CLICKED"
         }
         
         if !callbackUrl.isEmpty
@@ -410,7 +409,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             }
         }
         
-        if response.actionIdentifier.contains("/") {
+        if response.actionIdentifier != UNNotificationDismissActionIdentifier && response.actionIdentifier != "DECLINE_ACTION" {
             guard let url = URL(string: response.actionIdentifier) else {
                 completionHandler()
                 return
