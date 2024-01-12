@@ -1,33 +1,17 @@
-//
-//  File.swift
-//
-//
-//  Created by Khush Chandawat on 10/04/23.
-//
-
 import Foundation
 
- 
-
 public class Payload {
-    let distinctID: String
-    let name: String
-    let status: Int
-    let sms: String
-    let pushToken: String
-    let pushIntegrationID: String
-    private let token_prefix = "apns_token:"
-    
+    let distinctID: String?
+    let status: Int?
+    var pushToken:String?
+    let integrationId:String?
+    let name:String?
 
-    init(distinctID: String, name: String, status: Int, sms: String? = "", pushToken: String, pushIntegrationID: String) {
+    init(distinctID: String? = "", status: Int? = 1, pushToken: String? = "", integrationId: String? = "", name:String? = "") {
         self.distinctID = distinctID
-        self.name = name
         self.status = status
-        self.sms = sms ?? ""
-        self.pushToken = token_prefix+pushToken
-        self.pushIntegrationID = pushIntegrationID
-       
+        self.pushToken = pushToken
+        self.integrationId = integrationId
+        self.name = name
     }
 }
-
-
