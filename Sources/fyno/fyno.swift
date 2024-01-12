@@ -229,13 +229,6 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
     }
     
     public func updateStatus(callbackUrl: String, status: String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
-        if !Utilities.isFynoInitialized() {
-            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
-            print(error.localizedDescription)
-            completionHandler(.failure(error))
-            return
-        }
-        
         Utilities.callback(url: callbackUrl, action: status, deviceDetails: Utilities.getDeviceDetails()){ result in
             switch result {
             case .success(let success):
