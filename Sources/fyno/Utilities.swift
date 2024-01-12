@@ -244,8 +244,14 @@ class Utilities{
             formattedDate = Date()
         }
         
+        var updatedAction = action.uppercased()
+        
+        if !["RECEIVED", "CLICKED", "DISMISSED"].contains(updatedAction) {
+            updatedAction = "UNKNOWN"
+        }
+        
         let payload: JSON =  [
-            "status": action,
+            "status": updatedAction,
             "message": deviceDetails,
             "eventType": "Delivery",
             "timestamp": "\(action) at \(formattedDate)"
