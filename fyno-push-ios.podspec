@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |spec|
     spec.name         = "fyno-push-ios"
-    spec.version      = "1.1.0"
+    spec.version      = "1.1.1"
     spec.summary      = "Fyno's iOS SDK."
   
     spec.description  = <<-DESC
