@@ -172,42 +172,26 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             return
         }
         
-        if !newDistinctId.isEmpty {
-            Utilities.mergeUserProfile(newDistinctId: newDistinctId) { result in
-                switch result {
-                case .success(_):
-                    print("merge successful")
-                    if userName != "" {
-                        Utilities.updateUserName(distinctID: newDistinctId, userName: userName) { result in
-                            switch result {
-                            case .success(let success):
-                                completionHandler(.success(success))
-                            case .failure(let error):
-                                completionHandler(.failure(error))
-                            }
+        Utilities.mergeUserProfile(newDistinctId: newDistinctId) { result in
+            switch result {
+            case .success(_):
+                print("merge successful")
+                if userName != "" {
+                    Utilities.updateUserName(distinctID: newDistinctId, userName: userName) { result in
+                        switch result {
+                        case .success(let success):
+                            completionHandler(.success(success))
+                        case .failure(let error):
+                            completionHandler(.failure(error))
                         }
-                    } else {
-                        completionHandler(.success(true))
                     }
-                case .failure(let error):
-                    completionHandler(.failure(error))
+                } else {
+                    completionHandler(.success(true))
                 }
-            }
-        } else {
-            if userName != "" {
-                Utilities.updateUserName(distinctID: Utilities.getDistinctID(), userName: userName) { result in
-                    switch result {
-                    case .success(let success):
-                        completionHandler(.success(success))
-                    case .failure(let error):
-                        completionHandler(.failure(error))
-                    }
-                }
-            } else {
-                completionHandler(.success(true))
+            case .failure(let error):
+                completionHandler(.failure(error))
             }
         }
-        
     }
     
     public func mergeProfile(newDistinctId: String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
@@ -409,7 +393,9 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             }
         }
         
-        if response.actionIdentifier != UNNotificationDismissActionIdentifier && response.actionIdentifier != "DECLINE_ACTION" {
+        if response.actionIdentifier != UNNotificationDismissActionIdentifier &&
+           response.actionIdentifier != "DECLINE_ACTION" &&
+           response.actionIdentifier != UNNotificationDefaultActionIdentifier {
             guard let url = URL(string: response.actionIdentifier) else {
                 completionHandler()
                 return
