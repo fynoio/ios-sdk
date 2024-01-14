@@ -1,4 +1,4 @@
-# fyno.podspec
+# fyno-push-ios.podspec
 
 Pod::Spec.new do |spec|
     spec.name         = "fyno-push-ios"
