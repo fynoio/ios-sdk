@@ -1,44 +1,56 @@
 # Fyno iOS SDK
 
-The Fyno iOS SDK enables you to utilize Fyno's services within your iOS applications, offering tools to manage remote notifications, among other features. Here are the instructions to integrate the Fyno SDK with your native iOS app using Swift.
+Fyno's iOS Push Notification SDK offers a comprehensive set of notification features within your app. It's designed to efficiently deliver messages, ensuring optimal performance and user experience.
 
-## Requirements
-- Fyno Account
-- Fyno App ID, available in Settings > Keys & IDs
-- iOS 14+ or iPadOS 14+ device (iPhone, iPad, iPod Touch) for testing. Xcode 14+ simulator running iOS 16+ also works.
-- Mac with Xcode 12+
-- p8 Authentication Token
-- Your Xcode Project Should can target any Apple Device excluding the Mac
+## Prerequisites
 
-## Installation
+In order to get started, there are a few prerequisites that needs to be in place:
 
-### Step 1: Add a Notification Service Extension
-The FynoNotificationServiceExtension enables your iOS app to receive rich notifications with images, buttons, badges, and other features. It is also essential for Fyno's analytics capabilities.
+1. **Fyno account:** A valid Fyno workspace with at least one active API Key. For more info, refer [Workspace Docs](https://docs.fyno.io/docs/workspace-settings).
+2. **Configuration:** Configure your Fyno Push provider in [Fyno App](https://app.fyno.io/integrations).
+3. **Swift iOS application:** A working Swift iOS application in which you want to integrate the SDK.
+4. **Apple developer account:** Required details are mentioned in [APNs Docs](https://docs.fyno.io/docs/push-apns).
 
-1. In Xcode, select `File > New > Target...`
-2. Choose `Notification Service Extension`, then press `Next`.
+## SDK Setup to enable Push Notifications
 
-![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_1.png)
+### Step 1: Install the SDK
+Add ```pod 'fyno-push-ios', '~> 1.1'``` similar to the following to your Podfile:
 
-3. Enter the product name as `FynoNotificationServiceExtension` and press `Finish`.
+```
+target 'MyApp' do
+  pod 'fyno-push-ios', '~> 1.1'
+end
+```
 
-![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_2.png)
+Then run a ```pod install``` inside your terminal to download and install the fyno push sdk for iOS.
 
+### Step 2: Add Required Capabilities
+1. Inside Targets select signing and capabilities.
+2. Click on +capabilities and add Push Notifications and Background Modes capabilities to your application.
 
-4. Do not Select `Activate` on the ensuing dialog.
+![alt text](assets/APNS1.jpeg)
 
-![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_3.png)
+![alt text](assets/APNS2.jpeg)
 
-5. Press `Cancel` on the `Activate scheme` prompt. This step keeps Xcode debugging your app, rather than the extension you just created. If you accidentally activated it, you could switch back to debug your app within Xcode (next to the play button).
+3. In Background Modes, select Remote Notifications option. We use background notifications to receive delivery reports when your app is in quit and background state. Refer [doc](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_background_updates_to_your_app) to know more about background notifications.
 
-![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_4.png)
+![alt text](assets/APNS3.png)
 
-6. In the project navigator, select the top-level project directory and pick the `FynoNotificationServiceExtension` target in the project and targets list.
-7. Ensure the Deployment Target is the same value as your Main Application Target. It should be set to at least iOS 10, the version of iOS that Apple released Rich Media for push. iOS versions under 10 will not support Rich Media.
-8. In the project navigator, click the `FynoNotificationServiceExtension` folder and open the `NotificationService.m` or `NotificationService.swift` and replace the entire file's contents with the provided code. Ignore any build errors at this point. We will import Fyno which will resolve these errors.
+### Step 3: Add Notification Service Extension to your application
 
-```swift
+1. In Xcode go to **File** > **New** > **Target**.
+2. Select `Notification Service Extension` from the template list.
+3. Then in Next popup give it any product name, select your team, select swift language and click finish.
+
+![alt text](assets/APNS4.png)
+
+![alt text](assets/APNS5.png)
+
+4. After clicking on "Finish", a folder will be created with your given product name. Replace the contents of the **NotificationService.swift** file with the below code.
+
+```
 import UserNotifications
+import UIKit
 import fyno
 
 class NotificationService: UNNotificationServiceExtension {
@@ -46,9 +58,7 @@ class NotificationService: UNNotificationServiceExtension {
     var bestAttemptContent: UNMutableNotificationContent?
 
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
-        self.contentHandler = contentHandler
-        bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
-        fynoService.handleDidReceive(request, withContentHandler: contentHandler)
+        fyno.app.handleDidReceive(request, withContentHandler: contentHandler)
     }
 
     override func serviceExtensionTimeWillExpire() {
@@ -58,36 +68,40 @@ class NotificationService: UNNotificationServiceExtension {
     }
 }
 ```
-This code represents a 'NotificationService' class, which is an 'UNNotificationServiceExtension'. An 'UNNotificationServiceExtension' is used to intercept and modify incoming remote push notifications before they're displayed to the user. This is especially useful when you need to add rich content to notifications, such as media attachments, or decrypt encrypted notification content.
 
-### Step 2: Import the Fyno SDK into your Xcode project
-- The fyno SDK can be added as a Swift Package (compatible with Objective-C as well). Check out the instructions on how to import the SDK directly from Xcode using Swift Package Manager.
-- Add the Fyno SDK under Fyno Extension Service in order to enable for Fyno SDK to be handle and handle background/rich Push notifications via the service extension.
+5. In order for the **Notification Service Extension** to be able to access the fyno SDK, you will have to import it by following the below steps:
 
-![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_5.png)
+![alt text](assets/APNS6.png)
 
-### Step 3: Add Required Capabilities
-This step ensures that your project can receive remote notifications. Apply these steps only to the main application target and not for the Notification Service Extension.
+![alt text](assets/APNS7.png)
 
-1. Select the root project > your main app target and "Signing & Capabilities".
-2. If you do not see `Push Notifications` enabled, click `+ Capability` and add `Push Notifications`.
+Search for `https://github.com/fynoio/ios-sdk` in the text box. Select and add the package named **ios-sdk**.
 
-![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_6.png)
-3. Click `+ Capability` and add `Background Modes`. Then check `Remote notifications`.
-![Alt text](https://fynodocs.s3.ap-south-1.amazonaws.com/images/APNS_7.png)
-### Step 4: Add the Fyno Initialization Code
-#### Direct Implementation
-Navigate to your AppDelegate file and add the Fyno initialization code.
+![alt text](assets/APNS8.png)
 
-```swift
+Select the Target as the Notification Service Extension you had created and click on `Add Package`.
+
+![alt text](assets/APNS9.png)
+
+### Step 4: Register for push notification in AppDelegate.swift file
+
+1. Add the below code in your **AppDelegate.swift** file.
+
+> 🚧 Add the FCM integration code if you want to use FCM in iOS (we recommend to register with APNs)
+
+```
+// without FCM
+
 import Foundation
 import UIKit
-import fyno
+import fyno_push_ios
 
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate  {
     let fynosdk  =  fyno.app
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+       UNUserNotificationCenter.current().delegate = fynosdk
+
         fynosdk.requestNotificationAuthorization { granted in
             if granted {
                 DispatchQueue.main.async {
@@ -95,13 +109,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                 }
             }
         }
-       fynosdk.enableTestMode(testEnabled: false)
-       return true
-    }
-
-
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        fynosdk.handleRemoteNotification(userInfo: userInfo, fetchCompletionHandler: completionHandler)
+        
+        return true
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
@@ -110,233 +119,159 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         // Send the device token to fynoServer
-        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
-        
-        fynosdk.initializeApp(WSID: YOUR_WORKSPACE_ID,api_key: YOUR_API_KEY, integrationID: YOUR_INTEGRATION_ID, deviceToken: token){
-                    result in
-                    switch result{
-                    case .success(_):
-                        self.fynosdk.createUserProfile(distinctID: "your_database_unique_identifier",name: "John Doe"){result in
-                                            switch result{
-                                            case .success(let success):
-                                            print(success)
-                                            case .failure(let error):
-                                            print(error)
-                                            }
-                                        }
-                        
-                    case .failure(let error):
-                        print(error)
-                         
-                    }
-                }
-            }
-  
-  // DELETE USER PROFILE
-  //SIGNOUT
-  /**
-  fynosdk.deleteProfile(name: anonymous_profile_name){result in
-                switch result{
-                case .success(let success):
-                    print(success)
-                case .failure(let error):
-                    print(error)
-                }
-            }
-  **/
-  
-    
-}
-```
-
-#### Fyno iOS SDK Implementation Step by Step Guide
-
-The Fyno iOS SDK allows you to leverage Fyno's services in your iOS applications. It provides you with a set of tools to handle remote notifications, among other features.
-
-##### Installation
-
-The SDK can be found at the following GitHub repository:
-
-`https://github.com/fynoio/ios-sdk.git`
-
-##### Initial Setup
-
-1. Import `UserNotifications`, `UIKit` in the Swift file where you want to use the Fyno SDK.
-
-```swift
-import UserNotifications
-import UIKit
-```
-
-2. Initialize an instance of the Fyno class and set it as the delegate for the User Notification Center.
-
-```swift
-let fynoInstance = fyno.app
-UNUserNotificationCenter.current().delegate = fynoInstance
-```
-
-##### Request Notification Authorization
-
-Use the `requestNotificationAuthorization` method to ask the user for notification permissions. This function accepts a closure that takes a Boolean parameter, which indicates whether permission was granted.
-
-```swift
-fynoInstance.requestNotificationAuthorization { (granted) in
-    if granted {
-        // Permission granted
-    } else {
-        // Permission not granted
+        fynosdk.setdeviceToken(deviceToken: deviceToken)
     }
 }
 ```
 
-##### Register for Remote Notifications
-
-Use the `registerForRemoteNotifications` function to register the app for receiving remote notifications.
-
-```swift
-fynoInstance.registerForRemoteNotifications()
 ```
+// with FCM
 
-##### Handle Notifications
+import Foundation
+import UIKit
+import fyno_push_ios
 
-The SDK provides several methods to handle notifications:
+// imports required for FCM integration
+import FirebaseCore
+import FirebaseMessaging
 
-1. `handleRemoteNotification`: This method is used to handle a remote notification. It accepts the notification's user info and a completion handler.
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate  {
+    let fynosdk  =  fyno.app
 
-```swift
-fynoInstance.handleRemoteNotification(userInfo: userInfo) { (fetchResult) in
-    // Handle fetch result
-}
-```
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+       UNUserNotificationCenter.current().delegate = fynosdk
 
-2. `userNotificationCenter(_:willPresent:withCompletionHandler:)`: This method is called when a notification is received while the app is active.
-
-```swift
-fynoInstance.userNotificationCenter(center, willPresent: notification) { (options) in
-    // Handle presentation options
-}
-```
-
-3. `userNotificationCenter(_:didReceive:withCompletionHandler:)`: This method is called when a user interacts with a notification, such as clicking or dismissing it.
-
-```swift
-fynoInstance.userNotificationCenter(center, didReceive: response) { 
-    // Handle user response
-}
-```
-
-##### Utilities
-
-The SDK also provides a Utilities class with the following static methods:
-
-1. `downloadImageAndAttachToContent(from:content:completion:)`: This method downloads an image from a URL, attaches it to a `UNMutableNotificationContent` instance, and calls a completion handler with the updated content.
-
-2. `createUserProfile(payload:completionHandler:)`: This method creates a user profile using a `Payload` instance and sends a POST request to the server. It calls a completion handler with the result.
-
-
-#### Step 5: Initialize/Connect Fyno sdk
-This function is crucial to connect with our Fyno application. It needs to be called before creating a profile when the app is starting up with the following configuration:
-
-```swift
-fynosdk.initializeApp(WSID: WSID,api_key: api_key, integrationID: integrationID, deviceToken: AppDelegate.device_token){
-            result in
-            switch result{
-            case .success(let success):
-                print(success)
-                CompletionHandler(.success(success))
-            case .failure(let error):
-                print(error)
-                CompletionHandler(.failure(error))
+        fynosdk.requestNotificationAuthorization { granted in
+            if granted {
+                DispatchQueue.main.async {
+                    self.fynosdk.registerForRemoteNotifications()
+                }
             }
         }
+        
+        FirebaseApp.configure() // add only if FCM has been integrated
+        
+        return true
     }
-```
 
-#### Step 6: Create user profile for targeting
-The `createUserProfile(payload:completionHandler:)` method creates a user profile using a `Payload` instance and sends a POST request to the server. It calls a completion handler with the result.
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Failed to register for remote notifications: \(error.localizedDescription)")
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Send the device token to fynoServer
+        fynosdk.setdeviceToken(deviceToken: deviceToken)
 
-```swift
-fynosdk.createUserProfile(distinctID: (result?.user.email)!,name: (result?.user.displayName)!){result in
-                    switch result{
-                    case .success(let success):
-                    print(success)
-                    case .failure(let error):
-                    print(error)
-                    }
-                }
-```
-
-#### Step 7: Delete user profile 
-The `deleteProfile()` method deletes an existing profile using a `Payload` instance and sends a POST request to the server. It calls a completion handler with the result.
-
-```swift
-fynosdk.deleteProfile(name: currentUser){result in
-                switch result{
-                case .success(let success):
-                    print(success)
-                case .failure(let error):
-                    print(error)
-                }
-            }
-```
-
-#### Step 8: Switch to test Environment
-The `fynosdk.enableTestMode(testEnabled:)` method allows the user to switch from the default 'live' environment to 'test' mode within the Fyno application.
-
-```swift
-fynosdk.enableTestMode(testEnabled: true)
-```
-
-
-# How to Implement Fyno Inapp in an iOS Application
-
-This guide provides step-by-step instructions on how to integrate the Fyno Inapp service into an iOS application using SwiftUI. In this example, we'll be working with a simple application named `demo-ios-sdk-1`.
-
-### Steps to Implement Fyno Inapp
-
-1. **Import the Fyno Inapp SDK**: In your SwiftUI file, typically `ContentView.swift`, import the Fyno Inapp SDK at the top of your file. This is done with the line `import fyno`.
-
-```swift
-import SwiftUI
-import fyno
-```
-
-2. **Initialize the Fyno Inapp instance**: Next, within your view struct (in this case, `struct ContentView: View`), initialize the Fyno Inapp instance. For this, you'll need to provide:
-
-    - `inappUserId`: This is the unique identifier for the user in your application.
-    - `integrationToken`: This is the token provided by Fyno Inapp for integration purposes.
-
-```swift
-struct ContentView: View {
-    let fynoinapp = fynoInapp(inappUserId: "kchandawat-1", signature: "e214cf26-4b04-4be3-b0b7-dac2fd3dfa78")
-    ...
-}
-```
-
-3. **Use the Fyno Inapp instance**: Now that the Fyno Inapp instance is set up, you can use it in your views. In this example, we are passing the `fynoinapp` instance to a `NotificationList` view which would handle the in-app notifications.
-
-```swift
-var body: some View {
-    NotificationList(inappManager: fynoinapp)
-}
-```
-
-4. **Preview your content view**: You can preview your content view using the `PreviewProvider` protocol.
-
-```swift
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+        Messaging.messaging().apnsToken = deviceToken // add only if FCM has been integrated
     }
 }
 ```
 
+> 👍 You have successfully configured the iOS SDK for receiving push notifications.
 
-### Troubleshooting
-If you encounter issues, see our [iOS troubleshooting guide](#).
-Try the example project on our [Github repository](#).
-If stuck, contact support directly or email support@fyno.io for help.
-For faster assistance, please provide:
-- Your Fyno secret key
-- Details, logs, and/or screenshots of the issue.
+## Usage
 
+### Initialising the SDK (should be called on app launch)
+
+- Workspace ID(Mandatory) - Fyno's unique workspace ID, which you will see at the top of the **Workspace Settings** page.
+- API Key(Mandatory) - An API (Application Programming Interface) key is a code used to identify and authenticate an application or user. Create an API Key by following [API Keys](https://docs.fyno.io/docs/api-keys).
+- Distinct ID(Optional) - Unique identifier for your user (An [uuid](https://en.wikipedia.org/wiki/Universally_unique_identifier) is automatically generated if no value is passed).
+- Version(Optional) - Indicates the environment in which the user has to be created. Could be either **test** or **live**. (Default value is "live").
+
+```Text swift
+fyno.app.initializeApp(
+    workspaceID: workspaceId,
+    apiKey: apiKey,
+    distinctId: userId,
+    version: version
+){
+    initResult in
+    switch initResult {
+    case .success(_):
+        print("Initialization successful")
+    case .failure(let error):
+        print(error)
+    }
+}
+```
+
+### Identifying the User (should be called when you want to update previously created distinct ID or user name)
+
+- Distinct ID(Mandatory) - The distinct ID you want to identify the user with.
+- User Name(Optional) - The name you want to assign to the user.
+
+```Text swift
+fyno.app.identify(newDistinctId: distinctID, userName: userName) { identifyResult in
+    switch identifyResult{
+    case .success(_):
+        print("Identify successful")
+    case .failure(let error):
+        print(error)
+    }
+}
+```
+
+### Registering Push Notifications with APNs or Google FCM
+
+- Integration ID(Mandatory) - The ID of the integration created in [Fyno Integrations](https://app.fyno.io/integrations).
+- isAPNs(Mandatory) - Use **true** if [APNs](https://docs.fyno.io/docs/push-apns) is configured, **false** if [Google FCM](https://docs.fyno.io/docs/push-fcm) is configured in the integration.
+
+```Text swift
+fyno.app.registerPush(integrationID: integrationId,isAPNs: isAPNs){
+    registerPushResult in
+    switch registerPushResult{
+    case .success(_):
+        print("registerPush successful")
+    case .failure(let error):
+        print(error)
+    }
+}
+```
+
+### Merging User Profiles
+
+- Old Distinct ID(Mandatory).
+- New Distinct ID(Mandatory).
+
+```Text swift
+fyno.app.mergeProfile(newDistinctId:newDistinctId){
+    mergeResult in
+    switch mergeResult{
+    case .success(_):
+        print("mergeProfile successful")
+    case .failure(let error):
+        print(error)
+    }
+}
+```
+
+### Updating Message Status
+
+- Callback URL(Mandatory) - You can get the Callback URL from the notification additional payload if the notification was triggered from Fyno.
+- Status(Mandatory) - The status of the notification (one of **RECEIVED**, **CLICKED** or **DISMISSED**).
+
+```Text swift
+fyno.app.updateStatus(callbackUrl: callbackUrl, status: status){
+    updateStatusResult in
+    switch updateStatusResult{
+    case .success(_):
+        print("updateStatus successful")
+    case .failure(let error):
+        print(error)
+    }
+}
+```
+
+### Resetting User Information
+
+```Text swift
+fyno.app.resetUser() {
+    resetUserResult in
+    switch resetUserResult{
+    case .success(_):
+        print("resetUser successful")
+    case .failure(let error):
+        print(error)
+    }
+}
+```

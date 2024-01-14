@@ -117,32 +117,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                     completionHandler(.failure(error))
                 }
             }
-        } else {
-            if !Utilities.getFCMToken().isEmpty {
-                print("FCM has been initialized already")
-                payloadInstance.pushToken = Utilities.getFCMToken()
-                Utilities.addChannelData(payload: payloadInstance) { result in
-                    switch result {
-                    case .success(let success):
-                        completionHandler(.success(success))
-                    case .failure(let error):
-                        completionHandler(.failure(error))
-                    }
-                }
-                
-                return
-            }
-            
-            FirebaseApp.configure()
-    
-            guard let deviceTokenData = Utilities.getDeviceTokenData() else {
-                print("Error: Unable to obtain device token data.")
-                completionHandler(.failure(NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unable to obtain device token data."])))
-                return
-            }
-            
-            Messaging.messaging().apnsToken = deviceTokenData
-            
+        } else {            
             Messaging.messaging().token {token, error in
                 if let error = error {
                     print("Error fetching FCM registration token: \(error)")
@@ -154,6 +129,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                     Utilities.addChannelData(payload: payloadInstance) { result in
                         switch result {
                         case .success(let success):
+                            Utilities.setFCMToken(fcmToken: token)
                             completionHandler(.success(success))
                         case .failure(let error):
                             completionHandler(.failure(error))
