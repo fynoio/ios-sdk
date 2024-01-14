@@ -262,7 +262,7 @@ fyno.app.updateStatus(callbackUrl: callbackUrl, status: status){
 }
 ```
 
-### Resetting User Information
+### Resetting User Information (You can call this function when user logs out from your application)
 
 ```Text swift
 fyno.app.resetUser() {
