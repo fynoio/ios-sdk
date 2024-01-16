@@ -266,6 +266,18 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
     public func requestNotificationAuthorization(completionHandler: @escaping (Bool) -> Void) {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            
+            if !Utilities.getintegrationID().isEmpty {
+                self.registerPush(integrationID: Utilities.getintegrationID(), isAPNs: Utilities.getFCMToken().isEmpty) { result in
+                    switch result {
+                    case .success(let success):
+                        print(success)
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+            }
+            
             completionHandler(granted)
         }
     }
