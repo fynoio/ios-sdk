@@ -101,16 +101,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
        UNUserNotificationCenter.current().delegate = fynosdk
-
-        fynosdk.requestNotificationAuthorization { granted in
-            if granted {
-                DispatchQueue.main.async {
-                    self.fynosdk.registerForRemoteNotifications()
-                }
-            }
-        }
-        
-        return true
+       
+       self.fynosdk.registerForRemoteNotifications()
+       fynosdk.requestNotificationAuthorization{ _ in}
+       
+       return true
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
@@ -141,16 +136,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
        UNUserNotificationCenter.current().delegate = fynosdk
 
-        fynosdk.requestNotificationAuthorization { granted in
-            if granted {
-                DispatchQueue.main.async {
-                    self.fynosdk.registerForRemoteNotifications()
-                }
-            }
-        }
-        
+        self.fynosdk.registerForRemoteNotifications()
+
         FirebaseApp.configure() // add only if FCM has been integrated
         
+        fynosdk.requestNotificationAuthorization{ _ in}        
         return true
     }
 
