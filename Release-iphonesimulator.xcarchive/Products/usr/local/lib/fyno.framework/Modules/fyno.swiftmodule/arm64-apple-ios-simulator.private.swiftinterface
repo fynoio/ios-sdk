@@ -1,0 +1,41 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.9.2 (swiftlang-5.9.2.2.56 clang-1500.1.0.2.5)
+// swift-module-flags: -target arm64-apple-ios12.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name fyno
+import CommonCrypto
+import FMDB
+import FirebaseCore
+import FirebaseMessaging
+import Foundation
+import Swift
+import SwiftyJSON
+import SystemConfiguration
+import UIKit
+import UserNotifications
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+@_hasMissingDesignatedInitializers public class Payload {
+  @objc deinit
+}
+extension UIKit.UIDevice {
+  @_Concurrency.MainActor(unsafe) public static let modelName: Swift.String
+}
+@_inheritsConvenienceInitializers @objc public class fyno : UserNotifications.UNNotificationServiceExtension, UserNotifications.UNUserNotificationCenterDelegate, FirebaseMessaging.MessagingDelegate {
+  @objc public static let app: fyno.fyno
+  @objc override dynamic public init()
+  @objc deinit
+  public func initializeApp(workspaceID: Swift.String, apiKey: Swift.String, distinctId: Swift.String, version: Swift.String = "live", completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  @objc public func setdeviceToken(deviceToken: Foundation.Data)
+  public func registerPush(integrationID: Swift.String, isAPNs: Swift.Bool, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func identify(newDistinctId: Swift.String, userName: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func mergeProfile(newDistinctId: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func updateStatus(callbackUrl: Swift.String, status: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func resetUser(completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func requestNotificationAuthorization(completionHandler: @escaping (Swift.Bool) -> Swift.Void)
+  @objc public func registerForRemoteNotifications()
+  @objc public func userNotificationCenter(_ center: UserNotifications.UNUserNotificationCenter, willPresent notification: UserNotifications.UNNotification, withCompletionHandler completionHandler: @escaping (UserNotifications.UNNotificationPresentationOptions) -> Swift.Void)
+  @objc public func handleDidReceive(_ request: UserNotifications.UNNotificationRequest, withContentHandler contentHandler: @escaping (UserNotifications.UNNotificationContent) -> Swift.Void)
+  @objc public func userNotificationCenter(_ center: UserNotifications.UNUserNotificationCenter, didReceive response: UserNotifications.UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Swift.Void)
+  @available(iOS 14.0, *)
+  public func handleNotification(userInfo: [Swift.AnyHashable : Any], completionHandler: @escaping (UserNotifications.UNNotificationPresentationOptions) -> Swift.Void)
+}

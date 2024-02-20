@@ -6,10 +6,11 @@ import UserNotifications
 import CommonCrypto
 import SwiftyJSON
 
-class Utilities{
+@objc
+class Utilities : NSObject{
     private static let preferences = UserDefaults.standard
         
-    public static func addImageAndActionButtons(bestAttemptContent: UNMutableNotificationContent, completion: @escaping (UNMutableNotificationContent) -> Void) {
+    @objc public static func addImageAndActionButtons(bestAttemptContent: UNMutableNotificationContent, completion: @escaping (UNMutableNotificationContent) -> Void) {
         let declineAction = UNNotificationAction(identifier: "DECLINE_ACTION", title: "Decline", options: .destructive)
         
         let categoryIdentifier = bestAttemptContent.userInfo["category"] as! String

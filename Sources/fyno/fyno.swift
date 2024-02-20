@@ -4,12 +4,15 @@ import SwiftyJSON
 import FirebaseCore
 import FirebaseMessaging
 
+@objc
 public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelegate, MessagingDelegate {
-    public static let app = fyno()
+    
+    @objc public static let app = fyno()
+    
     var contentHandler: ((UNNotificationContent) -> Void)?
     var modifiedNotificationContent: UNMutableNotificationContent?
     
-    private override init() {
+    @objc public override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
         
@@ -84,7 +87,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         }
     }
     
-    public func setdeviceToken (deviceToken: Data) -> Void {
+    @objc public func setdeviceToken (deviceToken: Data) -> Void {
         let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
         print("registered for remote notifications with token:\(token)")
         Utilities.setdeviceToken(deviceToken: token)
@@ -282,11 +285,11 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         }
     }
     
-    public func registerForRemoteNotifications() {
+    @objc public func registerForRemoteNotifications() {
         UIApplication.shared.registerForRemoteNotifications()
     }
     
-    public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    @objc public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // The notification was received while the app is active. Handle here.
         
         if WebSocketManager.shared.isConnected && UIApplication.shared.applicationState == .active {
@@ -302,7 +305,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         }
     }
           
-    public func handleDidReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+    @objc public func handleDidReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         guard let bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent) else{
             contentHandler(request.content)
             return
@@ -340,7 +343,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         Utilities.addImageAndActionButtons(bestAttemptContent: bestAttemptContent, completion: contentHandler)
     }
             
-    public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    @objc public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let content = response.notification.request.content
         var callbackUrl : String = ""
         
