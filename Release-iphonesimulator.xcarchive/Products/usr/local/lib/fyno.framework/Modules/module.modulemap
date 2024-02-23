@@ -1,0 +1,11 @@
+framework module fyno {
+    umbrella header "fyno.h"
+    
+    export *
+    module * { export * }
+}
+    
+module fyno.Swift {
+    header "fyno-Swift.h"
+    requires objc
+}
