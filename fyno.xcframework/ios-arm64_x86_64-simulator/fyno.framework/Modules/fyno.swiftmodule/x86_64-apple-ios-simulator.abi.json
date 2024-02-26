@@ -264,12 +264,18 @@
           {
             "kind": "Function",
             "name": "initializeApp",
-            "printedName": "initializeApp(workspaceID:apiKey:distinctId:version:completionHandler:)",
+            "printedName": "initializeApp(workspaceID:integrationID:hmacSignature:distinctId:version:completionHandler:)",
             "children": [
               {
                 "kind": "TypeNominal",
                 "name": "Void",
                 "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
               },
               {
                 "kind": "TypeNominal",
@@ -330,8 +336,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:4fynoAAC13initializeApp11workspaceID6apiKey10distinctId7version17completionHandlerySS_S3Sys6ResultOySbs5Error_pGctF",
-            "mangledName": "$s4fynoAAC13initializeApp11workspaceID6apiKey10distinctId7version17completionHandlerySS_S3Sys6ResultOySbs5Error_pGctF",
+            "usr": "s:4fynoAAC13initializeApp11workspaceID011integrationE013hmacSignature10distinctId7version17completionHandlerySS_S4Sys6ResultOySbs5Error_pGctF",
+            "mangledName": "$s4fynoAAC13initializeApp11workspaceID011integrationE013hmacSignature10distinctId7version17completionHandlerySS_S4Sys6ResultOySbs5Error_pGctF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -369,18 +375,12 @@
           {
             "kind": "Function",
             "name": "registerPush",
-            "printedName": "registerPush(integrationID:isAPNs:completionHandler:)",
+            "printedName": "registerPush(isAPNs:completionHandler:)",
             "children": [
               {
                 "kind": "TypeNominal",
                 "name": "Void",
                 "printedName": "()"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "String",
-                "printedName": "Swift.String",
-                "usr": "s:SS"
               },
               {
                 "kind": "TypeNominal",
@@ -422,8 +422,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:4fynoAAC12registerPush13integrationID6isAPNs17completionHandlerySS_Sbys6ResultOySbs5Error_pGctF",
-            "mangledName": "$s4fynoAAC12registerPush13integrationID6isAPNs17completionHandlerySS_Sbys6ResultOySbs5Error_pGctF",
+            "usr": "s:4fynoAAC12registerPush6isAPNs17completionHandlerySb_ys6ResultOySbs5Error_pGctF",
+            "mangledName": "$s4fynoAAC12registerPush6isAPNs17completionHandlerySb_ys6ResultOySbs5Error_pGctF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -1194,371 +1194,371 @@
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 189,
-      "length": 6,
-      "value": "\"test\""
+      "offset": 284,
+      "length": 29,
+      "value": "\"http:\/\/192.168.0.38:4001\/v1\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 304,
+      "offset": 362,
       "length": 6,
       "value": "\"live\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 336,
-      "length": 60,
+      "offset": 394,
+      "length": 66,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 359,
+      "offset": 417,
+      "length": 1,
+      "value": "\"\/track\/\""
+    },
+    {
+      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
+      "kind": "StringLiteral",
+      "offset": 434,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 370,
-      "length": 1,
-      "value": "\"\/\""
-    },
-    {
-      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
-      "kind": "StringLiteral",
-      "offset": 395,
+      "offset": 459,
       "length": 1,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 442,
+      "offset": 506,
       "length": 16,
       "value": "\"create_profile\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 479,
+      "offset": 543,
       "length": 31,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 495,
+      "offset": 559,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 509,
+      "offset": 573,
       "length": 1,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 524,
+      "offset": 588,
       "length": 13,
       "value": "\"get_profile\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 558,
+      "offset": 622,
       "length": 48,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 574,
+      "offset": 638,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 588,
+      "offset": 652,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 602,
+      "offset": 666,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 605,
+      "offset": 669,
       "length": 1,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 620,
+      "offset": 684,
       "length": 15,
       "value": "\"merge_profile\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 656,
+      "offset": 720,
       "length": 69,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 672,
+      "offset": 736,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 686,
+      "offset": 750,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 700,
+      "offset": 764,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 703,
+      "offset": 767,
       "length": 1,
       "value": "\"\/merge\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 721,
+      "offset": 785,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 724,
+      "offset": 788,
       "length": 1,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 739,
+      "offset": 803,
       "length": 16,
       "value": "\"upsert_profile\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 776,
+      "offset": 840,
       "length": 48,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 792,
+      "offset": 856,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 806,
+      "offset": 870,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 820,
+      "offset": 884,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 823,
+      "offset": 887,
       "length": 1,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 838,
+      "offset": 902,
       "length": 16,
       "value": "\"update_channel\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 875,
+      "offset": 939,
       "length": 56,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 891,
+      "offset": 955,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 905,
+      "offset": 969,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 919,
+      "offset": 983,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 922,
+      "offset": 986,
       "length": 1,
       "value": "\"\/channel\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 945,
+      "offset": 1009,
       "length": 16,
       "value": "\"delete_channel\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 982,
+      "offset": 1046,
       "length": 63,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 998,
+      "offset": 1062,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1012,
+      "offset": 1076,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1026,
+      "offset": 1090,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1029,
+      "offset": 1093,
       "length": 1,
       "value": "\"\/channel\/delete\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1059,
+      "offset": 1123,
       "length": 15,
       "value": "\"event_trigger\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1095,
+      "offset": 1159,
       "length": 79,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1111,
+      "offset": 1175,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1134,
+      "offset": 1198,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1145,
+      "offset": 1209,
       "length": 1,
       "value": "\"\/\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1173,
+      "offset": 1237,
       "length": 1,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1211,
+      "offset": 1275,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1286,
+      "offset": 1350,
       "length": 28,
       "value": "\"https:\/\/api.dev.fyno.io\/v1\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1346,
+      "offset": 1410,
       "length": 24,
       "value": "\"https:\/\/api.fyno.io\/v1\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1396,
-      "length": 10,
-      "value": "\"profiles\""
+      "offset": 1460,
+      "length": 9,
+      "value": "\"profile\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
       "kind": "StringLiteral",
-      "offset": 1435,
+      "offset": 1498,
       "length": 7,
       "value": "\"event\""
     },
@@ -2090,224 +2090,231 @@
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 11509,
-      "length": 9,
-      "value": "\"Bearer \""
+      "offset": 11551,
+      "length": 13,
+      "value": "\"x-fn-app-id\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 11565,
-      "length": 15,
-      "value": "\"Authorization\""
+      "offset": 11644,
+      "length": 14,
+      "value": "\"verify_token\""
+    },
+    {
+      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
+      "kind": "StringLiteral",
+      "offset": 11738,
+      "length": 13,
+      "value": "\"integration\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "BooleanLiteral",
-      "offset": 11807,
+      "offset": 11978,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 12361,
+      "offset": 12532,
       "length": 7,
       "value": "\"error\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "BooleanLiteral",
-      "offset": 12411,
+      "offset": 12582,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 12602,
+      "offset": 12773,
       "length": 16,
       "value": "\"Response Body:\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "IntegerLiteral",
-      "offset": 12857,
+      "offset": 13028,
       "length": 3,
       "value": "200"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "IntegerLiteral",
-      "offset": 12863,
+      "offset": 13034,
       "length": 3,
       "value": "300"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 12894,
+      "offset": 13065,
       "length": 30,
       "value": "\"Response code: \""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 12923,
+      "offset": 13094,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "BooleanLiteral",
-      "offset": 12964,
+      "offset": 13135,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "IntegerLiteral",
-      "offset": 13023,
+      "offset": 13194,
       "length": 3,
       "value": "400"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "IntegerLiteral",
-      "offset": 13029,
+      "offset": 13200,
       "length": 3,
       "value": "500"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 13060,
+      "offset": 13231,
       "length": 50,
       "value": "\"Request failed with response code: \""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 13109,
+      "offset": 13280,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "Array",
-      "offset": 13257,
+      "offset": 13428,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 13327,
+      "offset": 13498,
       "length": 10,
       "value": "\"_message\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "BooleanLiteral",
-      "offset": 13394,
+      "offset": 13565,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 13416,
+      "offset": 13587,
       "length": 9,
       "value": "\"FynoSDK\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "IntegerLiteral",
-      "offset": 13433,
+      "offset": 13604,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "BooleanLiteral",
-      "offset": 13592,
+      "offset": 13763,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 13615,
+      "offset": 13786,
       "length": 9,
       "value": "\"FynoSDK\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "IntegerLiteral",
-      "offset": 13632,
+      "offset": 13803,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 13673,
+      "offset": 13844,
       "length": 26,
       "value": "\"Error deserializing JSON\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 13807,
+      "offset": 13978,
       "length": 50,
       "value": "\"Request failed with response code: \""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 13856,
+      "offset": 14027,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "BooleanLiteral",
-      "offset": 13897,
+      "offset": 14068,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 14243,
+      "offset": 14414,
       "length": 11,
       "value": "\"callbacks\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 14339,
+      "offset": 14510,
       "length": 10,
       "value": "\"requests\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "BooleanLiteral",
-      "offset": 14547,
+      "offset": 14718,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 14571,
-      "length": 18,
-      "value": "\"callback.fyno.io\""
+      "offset": 14742,
+      "length": 22,
+      "value": "\"callback.dev.fyno.io\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "BooleanLiteral",
-      "offset": 14594,
+      "offset": 14769,
       "length": 5,
       "value": "false"
     },
@@ -5051,203 +5058,231 @@
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 14107,
-      "length": 13,
-      "value": "\"deviceToken\""
+      "offset": 14102,
+      "length": 15,
+      "value": "\"hmacSignature\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 14378,
-      "length": 13,
-      "value": "\"deviceToken\""
+      "offset": 14320,
+      "length": 15,
+      "value": "\"hmacSignature\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 14522,
+      "offset": 14466,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 14550,
+      "offset": 14494,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 14661,
+      "offset": 14615,
+      "length": 13,
+      "value": "\"deviceToken\""
+    },
+    {
+      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
+      "kind": "StringLiteral",
+      "offset": 14886,
+      "length": 13,
+      "value": "\"deviceToken\""
+    },
+    {
+      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
+      "kind": "StringLiteral",
+      "offset": 15030,
+      "length": 2,
+      "value": "\"\""
+    },
+    {
+      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
+      "kind": "StringLiteral",
+      "offset": 15058,
+      "length": 2,
+      "value": "\"\""
+    },
+    {
+      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
+      "kind": "StringLiteral",
+      "offset": 15169,
       "length": 11,
       "value": "\"apnsToken\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 14697,
+      "offset": 15205,
       "length": 13,
       "value": "\"apns_token:\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 14842,
+      "offset": 15350,
       "length": 11,
       "value": "\"apnsToken\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 14984,
+      "offset": 15492,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 15012,
+      "offset": 15520,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 15121,
+      "offset": 15629,
       "length": 10,
       "value": "\"fcmToken\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 15156,
+      "offset": 15664,
       "length": 12,
       "value": "\"fcm_token:\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 15298,
+      "offset": 15806,
       "length": 10,
       "value": "\"fcmToken\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 15439,
+      "offset": 15947,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 15467,
+      "offset": 15975,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 15578,
+      "offset": 16086,
       "length": 17,
       "value": "\"deviceTokenData\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 15758,
+      "offset": 16266,
       "length": 17,
       "value": "\"deviceTokenData\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 16022,
+      "offset": 16530,
       "length": 12,
       "value": "\"distinctID\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 16231,
+      "offset": 16739,
       "length": 12,
       "value": "\"distinctID\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 16374,
+      "offset": 16882,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 16402,
+      "offset": 16910,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 16499,
+      "offset": 17007,
       "length": 17,
       "value": "\"fynoInitialized\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "BooleanLiteral",
-      "offset": 16544,
+      "offset": 17052,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 16711,
+      "offset": 17219,
       "length": 17,
       "value": "\"fynoInitialized\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 16960,
+      "offset": 17468,
       "length": 6,
       "value": "\"name\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 16998,
+      "offset": 17506,
       "length": 7,
       "value": "\"model\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 17045,
+      "offset": 17553,
       "length": 16,
       "value": "\"localizedModel\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 17103,
+      "offset": 17611,
       "length": 12,
       "value": "\"systemName\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 17153,
+      "offset": 17661,
       "length": 15,
       "value": "\"systemVersion\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "StringLiteral",
-      "offset": 17209,
+      "offset": 17717,
       "length": 21,
       "value": "\"identifierForVendor\""
     },
@@ -5282,588 +5317,588 @@
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 1589,
+      "offset": 1619,
       "length": 6,
       "value": "\"live\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 1760,
+      "offset": 1823,
       "length": 9,
       "value": "\"FynoSDK\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "IntegerLiteral",
-      "offset": 1777,
+      "offset": 1840,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 1818,
+      "offset": 1881,
       "length": 76,
       "value": "\"workspaceID and\/or apiKey cannot be empty. Please check your configuration\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "BooleanLiteral",
-      "offset": 2325,
+      "offset": 2472,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "IntegerLiteral",
-      "offset": 2701,
+      "offset": 2848,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 3006,
+      "offset": 3153,
       "length": 40,
       "value": "\"Fyno instance initialized successfully\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 3326,
+      "offset": 3473,
       "length": 8,
       "value": "\"%.2hhx\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 3365,
+      "offset": 3512,
       "length": 57,
       "value": "\"registered for remote notifications with token:\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 3421,
+      "offset": 3568,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 3764,
+      "offset": 3888,
       "length": 9,
       "value": "\"FynoSDK\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "IntegerLiteral",
-      "offset": 3781,
+      "offset": 3905,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 3822,
+      "offset": 3946,
       "length": 31,
       "value": "\"fyno instance not initialized\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 4824,
+      "offset": 4898,
       "length": 49,
       "value": "\"Error fetching FCM registration token: \""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 4872,
+      "offset": 4946,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 5002,
+      "offset": 5076,
       "length": 34,
       "value": "\"FCM registration token: \""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 5035,
+      "offset": 5109,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 5898,
+      "offset": 5972,
       "length": 9,
       "value": "\"FynoSDK\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "IntegerLiteral",
-      "offset": 5915,
+      "offset": 5989,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 5956,
+      "offset": 6030,
       "length": 31,
       "value": "\"fyno instance not initialized\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 6278,
+      "offset": 6352,
       "length": 18,
       "value": "\"merge successful\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 6329,
+      "offset": 6403,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "BooleanLiteral",
-      "offset": 6828,
+      "offset": 6902,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 7172,
+      "offset": 7246,
       "length": 9,
       "value": "\"FynoSDK\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "IntegerLiteral",
-      "offset": 7189,
+      "offset": 7263,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 7230,
+      "offset": 7304,
       "length": 31,
       "value": "\"fyno instance not initialized\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 8377,
+      "offset": 8451,
       "length": 9,
       "value": "\"FynoSDK\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "IntegerLiteral",
-      "offset": 8394,
+      "offset": 8468,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 8435,
+      "offset": 8509,
       "length": 31,
       "value": "\"fyno instance not initialized\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 8737,
+      "offset": 8811,
       "length": 24,
       "value": "\"success delete channel\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 9180,
+      "offset": 9254,
       "length": 21,
       "value": "\"success create user\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 9810,
+      "offset": 9884,
       "length": 24,
       "value": "\"addChannelData success\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 10464,
+      "offset": 10538,
       "length": 24,
       "value": "\"addChannelData success\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "Array",
-      "offset": 12501,
+      "offset": 12530,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 13232,
+      "offset": 13261,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 13249,
+      "offset": 13278,
       "length": 23,
       "value": "\"Notification recieved\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 13331,
+      "offset": 13360,
       "length": 10,
       "value": "\"provider\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 13386,
+      "offset": 13415,
       "length": 5,
       "value": "\"fcm\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 13464,
+      "offset": 13493,
       "length": 11,
       "value": "\"extraData\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 13522,
+      "offset": 13551,
       "length": 10,
       "value": "\"callback\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 13588,
+      "offset": 13617,
       "length": 6,
       "value": "\"apns\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 13649,
+      "offset": 13678,
       "length": 11,
       "value": "\"extraData\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 13718,
+      "offset": 13747,
       "length": 10,
       "value": "\"callback\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 13744,
+      "offset": 13773,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 13871,
+      "offset": 13900,
       "length": 10,
       "value": "\"RECEIVED\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 14621,
+      "offset": 14650,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 14673,
+      "offset": 14702,
       "length": 10,
       "value": "\"provider\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 14728,
+      "offset": 14757,
       "length": 5,
       "value": "\"fcm\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 14798,
+      "offset": 14827,
       "length": 11,
       "value": "\"extraData\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 14856,
+      "offset": 14885,
       "length": 10,
       "value": "\"callback\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 14922,
+      "offset": 14951,
       "length": 6,
       "value": "\"apns\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 14975,
+      "offset": 15004,
       "length": 11,
       "value": "\"extraData\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 15044,
+      "offset": 15073,
       "length": 10,
       "value": "\"callback\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 15070,
+      "offset": 15099,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 15135,
+      "offset": 15164,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 15257,
+      "offset": 15286,
       "length": 16,
       "value": "\"DECLINE_ACTION\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 15345,
+      "offset": 15374,
       "length": 24,
       "value": "\"Notification Dismissed\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 15392,
+      "offset": 15421,
       "length": 11,
       "value": "\"DISMISSED\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 15439,
+      "offset": 15468,
       "length": 22,
       "value": "\"Notification Clicked\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 15484,
+      "offset": 15513,
       "length": 9,
       "value": "\"CLICKED\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 16054,
+      "offset": 16083,
       "length": 16,
       "value": "\"DECLINE_ACTION\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 16604,
+      "offset": 16633,
       "length": 5,
       "value": "\"aps\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "Array",
-      "offset": 16672,
+      "offset": 16701,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 16719,
+      "offset": 16748,
       "length": 23,
       "value": "\"recieved notification\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 16842,
+      "offset": 16871,
       "length": 7,
       "value": "\"alert\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 16905,
+      "offset": 16934,
       "length": 7,
       "value": "\"title\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 16928,
+      "offset": 16957,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 16968,
+      "offset": 16997,
       "length": 10,
       "value": "\"subtitle\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 16994,
+      "offset": 17023,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 17030,
+      "offset": 17059,
       "length": 6,
       "value": "\"body\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 17052,
+      "offset": 17081,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 17101,
+      "offset": 17130,
       "length": 7,
       "value": "\"badge\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 17205,
+      "offset": 17234,
       "length": 7,
       "value": "\"sound\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 17376,
+      "offset": 17405,
       "length": 13,
       "value": "\"attachments\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "Array",
-      "offset": 17473,
+      "offset": 17502,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 17583,
+      "offset": 17612,
       "length": 12,
       "value": "\"identifier\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 17652,
+      "offset": 17681,
       "length": 5,
       "value": "\"url\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 17769,
+      "offset": 17798,
       "length": 6,
       "value": "\"type\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "Array",
-      "offset": 17842,
+      "offset": 17871,
       "length": 17,
       "value": "[\"image\", \"icon\"]"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 17932,
+      "offset": 17961,
       "length": 13,
       "value": "\"image found\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 18034,
+      "offset": 18063,
       "length": 6,
       "value": "\"icon\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "BooleanLiteral",
-      "offset": 18133,
+      "offset": 18162,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 18512,
+      "offset": 18541,
       "length": 50,
       "value": "\"Error creating notification attachment: \""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 18561,
+      "offset": 18590,
       "length": 2,
       "value": "\"\""
     }

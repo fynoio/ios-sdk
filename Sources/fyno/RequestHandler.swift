@@ -251,8 +251,9 @@ class RequestHandler {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = request.method
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        urlRequest.addValue("Bearer " + Utilities.getapi_key(), forHTTPHeaderField: "Authorization")
+        urlRequest.addValue(Bundle.main.bundleIdentifier!, forHTTPHeaderField: "x-fn-app-id")
+        urlRequest.addValue(Utilities.getHMACSignature(), forHTTPHeaderField: "verify_token")
+        urlRequest.addValue(Utilities.getintegrationID(), forHTTPHeaderField: "integration")
         
         if let payload = request.payload {
             do {
@@ -327,7 +328,7 @@ class RequestHandler {
     }
     
     private func isCallBackRequest(url: String?) -> Bool {
-        return !(url?.isEmpty ?? true) && (url?.contains("callback.fyno.io") ?? false)
+        return !(url?.isEmpty ?? true) && (url?.contains("callback.dev.fyno.io") ?? false)
     }
 }
 
