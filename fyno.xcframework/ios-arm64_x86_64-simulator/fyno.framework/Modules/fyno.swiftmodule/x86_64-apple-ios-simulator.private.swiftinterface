@@ -24,9 +24,9 @@ extension UIKit.UIDevice {
   @objc public static let app: fyno.fyno
   @objc override dynamic public init()
   @objc deinit
-  public func initializeApp(workspaceID: Swift.String, apiKey: Swift.String, distinctId: Swift.String, version: Swift.String = "live", completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func initializeApp(workspaceID: Swift.String, integrationID: Swift.String, hmacSignature: Swift.String, distinctId: Swift.String, version: Swift.String = "live", completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   @objc public func setdeviceToken(deviceToken: Foundation.Data)
-  public func registerPush(integrationID: Swift.String, isAPNs: Swift.Bool, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func registerPush(isAPNs: Swift.Bool, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   public func identify(newDistinctId: Swift.String, userName: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   public func mergeProfile(newDistinctId: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   public func updateStatus(callbackUrl: Swift.String, status: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)

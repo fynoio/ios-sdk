@@ -4,7 +4,7 @@ class FynoUtils {
     func getEndpoint(event: String, env: String? = "live", profile: String? = nil, newId: String? = nil) -> String {
         let baseEndpoint = (env == "test") ? FynoConstants.DEV_ENDPOINT : FynoConstants.PROD_ENDPOINT
         let version = Utilities.getVersion() ?? "live"
-        let commonPath = "\(Utilities.getWSID())/\(version)/\(FynoConstants.PROFILE)"
+        let commonPath = "\(Utilities.getWSID())/track/\(version)/\(FynoConstants.PROFILE)"
         
         switch event {
         case "create_profile":
@@ -30,6 +30,6 @@ class FynoUtils {
 struct FynoConstants {
     static let DEV_ENDPOINT = "https://api.dev.fyno.io/v1"
     static let PROD_ENDPOINT = "https://api.fyno.io/v1"
-    static let PROFILE = "profiles"
+    static let PROFILE = "profile"
     static let EVENT_PATH = "event"
 }

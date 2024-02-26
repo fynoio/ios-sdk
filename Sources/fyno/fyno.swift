@@ -41,9 +41,9 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         }
     }
     
-    public func initializeApp(workspaceID: String, apiKey: String, distinctId: String, version: String = "live", completionHandler: @escaping (Result<Bool, Error>) -> Void) {
-        guard !workspaceID.isEmpty && !apiKey.isEmpty else {
-            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "workspaceID and/or apiKey cannot be empty. Please check your configuration"])
+    public func initializeApp(workspaceID: String, integrationID: String, hmacSignature: String, distinctId: String, version: String = "live", completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+        guard !workspaceID.isEmpty && !integrationID.isEmpty && !hmacSignature.isEmpty else {
+            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "workspaceID, integrationID and/or hmacSignature cannot be empty. Please check your configuration"])
             print(error.localizedDescription)
             completionHandler(.failure(error))
             return
@@ -52,7 +52,8 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         SQLHelper.shared.updateAllRequestsToNotProcessed()
         
         Utilities.setWSID(WSID: workspaceID)
-        Utilities.setapi_key(api_key: apiKey)
+        Utilities.setintegrationID(integrationID: integrationID)
+        Utilities.setHMACSignature(hmacSignature: hmacSignature)
         Utilities.setVersion(Version: version)
         
         if Utilities.isFynoInitialized() {
@@ -94,7 +95,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         Utilities.setDeviceTokenData(deviceTokenData: deviceToken)
     }
     
-    public func registerPush(integrationID: String, isAPNs:Bool, completionHandler:@escaping (Result<Bool,Error>) -> Void) {
+    public func registerPush(isAPNs:Bool, completionHandler:@escaping (Result<Bool,Error>) -> Void) {
         if !Utilities.isFynoInitialized() {
             let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
             print(error.localizedDescription)
@@ -102,9 +103,8 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             return
         }
         
-        Utilities.setintegrationID(integrationID: integrationID)
         let payloadInstance = Payload(
-            integrationId: integrationID
+            integrationId: Utilities.getintegrationID()
         )
         
         if isAPNs {
@@ -271,7 +271,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             
             if !Utilities.getintegrationID().isEmpty {
-                self.registerPush(integrationID: Utilities.getintegrationID(), isAPNs: Utilities.getFCMToken().isEmpty) { result in
+                self.registerPush(isAPNs: Utilities.getFCMToken().isEmpty) { result in
                     switch result {
                     case .success(let success):
                         print(success)

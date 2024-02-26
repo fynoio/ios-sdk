@@ -335,22 +335,6 @@ class Utilities : NSObject{
         return nil
     }
     
-    public static func setapi_key (api_key:String)->Void
-    {
-        let currentLevelKey = "api_key"
-        let currentLevel = api_key
-        preferences.set(currentLevel, forKey: currentLevelKey)
-    }
-    
-    public static func getapi_key ()-> String
-    {
-        let currentLevelKey = "api_key"
-        if preferences.object(forKey: currentLevelKey) != nil {
-            return preferences.string(forKey: currentLevelKey) ?? ""
-        }
-        return ""
-    }
-    
     public static func setintegrationID(integrationID:String)->Void
     {
         let currentLevelKey = "integrationID"
@@ -366,7 +350,22 @@ class Utilities : NSObject{
         }
         return ""
     }
-       
+    
+    public static func setHMACSignature(hmacSignature:String)->Void{
+        let currentLevelKey = "hmacSignature"
+        let currentLevel = hmacSignature
+        preferences.set(currentLevel, forKey: currentLevelKey)
+    }
+    
+    public static func getHMACSignature ()->String
+    {
+        let currentLevelKey = "hmacSignature"
+        if preferences.object(forKey: currentLevelKey) != nil {
+            return preferences.string(forKey: currentLevelKey) ?? ""
+        }
+        return ""
+    }
+          
     public static func setdeviceToken (deviceToken:String)->Void
     {
         let currentLevelKey = "deviceToken"
