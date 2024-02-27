@@ -96,46 +96,48 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
     }
     
     public func registerPush(isAPNs:Bool, completionHandler:@escaping (Result<Bool,Error>) -> Void) {
-        if !Utilities.isFynoInitialized() {
-            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
-            print(error.localizedDescription)
-            completionHandler(.failure(error))
-            return
-        }
-        
-        let payloadInstance = Payload(
-            integrationId: Utilities.getintegrationID()
-        )
-        
-        if isAPNs {
-            Utilities.setAPNsToken(apnsToken: Utilities.getdeviceToken())
-            
-            payloadInstance.pushToken = Utilities.getAPNsToken()
-            
-            Utilities.addChannelData(payload: payloadInstance) { result in
-                switch result {
-                case .success(let success):
-                    completionHandler(.success(success))
-                case .failure(let error):
-                    completionHandler(.failure(error))
-                }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {           
+            if !Utilities.isFynoInitialized() {
+                let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
+                print(error.localizedDescription)
+                completionHandler(.failure(error))
+                return
             }
-        } else {            
-            Messaging.messaging().token {token, error in
-                if let error = error {
-                    print("Error fetching FCM registration token: \(error)")
-                    completionHandler(.failure(error))
-                } else if let token = token {
-                    print("FCM registration token: \(token)")
-                    Utilities.setFCMToken(fcmToken: token)
-                    payloadInstance.pushToken = Utilities.getFCMToken()
-                    Utilities.addChannelData(payload: payloadInstance) { result in
-                        switch result {
-                        case .success(let success):
-                            Utilities.setFCMToken(fcmToken: token)
-                            completionHandler(.success(success))
-                        case .failure(let error):
-                            completionHandler(.failure(error))
+            
+            let payloadInstance = Payload(
+                integrationId: Utilities.getintegrationID()
+            )
+            
+            if isAPNs {
+                Utilities.setAPNsToken(apnsToken: Utilities.getdeviceToken())
+                
+                payloadInstance.pushToken = Utilities.getAPNsToken()
+                
+                Utilities.addChannelData(payload: payloadInstance) { result in
+                    switch result {
+                    case .success(let success):
+                        completionHandler(.success(success))
+                    case .failure(let error):
+                        completionHandler(.failure(error))
+                    }
+                }
+            } else {
+                Messaging.messaging().token {token, error in
+                    if let error = error {
+                        print("Error fetching FCM registration token: \(error)")
+                        completionHandler(.failure(error))
+                    } else if let token = token {
+                        print("FCM registration token: \(token)")
+                        Utilities.setFCMToken(fcmToken: token)
+                        payloadInstance.pushToken = Utilities.getFCMToken()
+                        Utilities.addChannelData(payload: payloadInstance) { result in
+                            switch result {
+                            case .success(let success):
+                                Utilities.setFCMToken(fcmToken: token)
+                                completionHandler(.success(success))
+                            case .failure(let error):
+                                completionHandler(.failure(error))
+                            }
                         }
                     }
                 }
