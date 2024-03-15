@@ -41,9 +41,9 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         }
     }
     
-    public func initializeApp(workspaceID: String, integrationID: String, hmacSignature: String, distinctId: String, version: String = "live", completionHandler: @escaping (Result<Bool, Error>) -> Void) {
-        guard !workspaceID.isEmpty && !integrationID.isEmpty && !hmacSignature.isEmpty else {
-            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "workspaceID, integrationID and/or hmacSignature cannot be empty. Please check your configuration"])
+    public func initializeApp(workspaceID: String, integrationID: String, distinctId: String, version: String = "live", completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+        guard !workspaceID.isEmpty && !integrationID.isEmpty else {
+            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "workspaceID and/or integrationID cannot be empty. Please check your configuration"])
             print(error.localizedDescription)
             completionHandler(.failure(error))
             return
@@ -53,7 +53,6 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         
         Utilities.setWSID(WSID: workspaceID)
         Utilities.setintegrationID(integrationID: integrationID)
-        Utilities.setHMACSignature(hmacSignature: hmacSignature)
         Utilities.setVersion(Version: version)
         
         if Utilities.isFynoInitialized() {
@@ -74,16 +73,25 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             status: 1
         )
                 
-        Utilities.createUserProfile(payload: payloadInstance) { result in
+        JWTRequestHandler().getAndSetJWTToken(distinctID: distinctId){ result in
             switch result {
             case .failure(let error):
                 completionHandler(.failure(error))
                 return
-            case .success(let success):
-                print("Fyno instance initialized successfully")
-                Utilities.setFynoInitialized()
-                completionHandler(.success(success))
-                return
+            case .success(_):
+                print("JWT Token set successfully")
+                Utilities.createUserProfile(payload: payloadInstance) { result in
+                    switch result {
+                    case .failure(let error):
+                        completionHandler(.failure(error))
+                        return
+                    case .success(let success):
+                        print("Fyno instance initialized successfully")
+                        Utilities.setFynoInitialized()
+                        completionHandler(.success(success))
+                        return
+                    }
+                }
             }
         }
     }
@@ -157,6 +165,15 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             switch result {
             case .success(_):
                 print("merge successful")
+                JWTRequestHandler().getAndSetJWTToken(distinctID: newDistinctId){ result in
+                    switch result {
+                    case .failure(let error):
+                        completionHandler(.failure(error))
+                        return
+                    case .success(_):
+                        print("JWT Token set successfully")
+                    }
+                }
                 if userName != "" {
                     Utilities.updateUserName(distinctID: newDistinctId, userName: userName) { result in
                         switch result {
@@ -223,43 +240,52 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                     distinctID: myUUID.uuidString
                 )
                 
-                Utilities.createUserProfile(payload: payloadInstance) { result in
+                JWTRequestHandler().getAndSetJWTToken(distinctID: payloadInstance.distinctID!){ result in
                     switch result {
-                    case .success(let success):
-                        print("success create user")
-                        Utilities.setDistinctID(distinctID: myUUID.uuidString)
-                        let payload = Payload(
-                            integrationId: Utilities.getintegrationID()
-                        )
-                        
-                        if !Utilities.getAPNsToken().isEmpty{
-                            payload.pushToken = Utilities.getAPNsToken()
-                            Utilities.addChannelData(payload: payload) { result in
-                                switch result {
-                                case .success(_):
-                                    print("addChannelData success")
-                                case .failure(let error):
-                                    print(error.localizedDescription)
-                                }
-                            }
-                        }
-                        
-                        if !Utilities.getFCMToken().isEmpty{
-                            payload.pushToken = Utilities.getFCMToken()
-                            
-                            Utilities.addChannelData(payload: payload) { result in
-                                switch result {
-                                case .success(_):
-                                    print("addChannelData success")
-                                case .failure(let error):
-                                    print(error.localizedDescription)
-                                }
-                            }
-                        }
-                        completionHandler(.success(success))
                     case .failure(let error):
                         completionHandler(.failure(error))
                         return
+                    case .success(_):
+                        print("JWT Token set successfully")
+                        Utilities.createUserProfile(payload: payloadInstance) { result in
+                            switch result {
+                            case .success(let success):
+                                print("success create user")
+                                Utilities.setDistinctID(distinctID: myUUID.uuidString)
+                                let payload = Payload(
+                                    integrationId: Utilities.getintegrationID()
+                                )
+                                
+                                if !Utilities.getAPNsToken().isEmpty{
+                                    payload.pushToken = Utilities.getAPNsToken()
+                                    Utilities.addChannelData(payload: payload) { result in
+                                        switch result {
+                                        case .success(_):
+                                            print("addChannelData success")
+                                        case .failure(let error):
+                                            print(error.localizedDescription)
+                                        }
+                                    }
+                                }
+                                
+                                if !Utilities.getFCMToken().isEmpty{
+                                    payload.pushToken = Utilities.getFCMToken()
+                                    
+                                    Utilities.addChannelData(payload: payload) { result in
+                                        switch result {
+                                        case .success(_):
+                                            print("addChannelData success")
+                                        case .failure(let error):
+                                            print(error.localizedDescription)
+                                        }
+                                    }
+                                }
+                                completionHandler(.success(success))
+                            case .failure(let error):
+                                completionHandler(.failure(error))
+                                return
+                            }
+                        }
                     }
                 }
             case .failure(let error):

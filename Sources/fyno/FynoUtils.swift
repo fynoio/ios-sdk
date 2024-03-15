@@ -28,8 +28,10 @@ class FynoUtils {
 }
 
 struct FynoConstants {
-    static let DEV_ENDPOINT = "https://api.dev.fyno.io/v1"
-    static let PROD_ENDPOINT = "https://api.fyno.io/v1"
+    static let DEV_ENDPOINT = "https://api.dev.fyno.io/v2"
+    static let PROD_ENDPOINT = "https://api.fyno.io/v2"
     static let PROFILE = "profile"
     static let EVENT_PATH = "event"
+    static let DEV_CALLBACK = "callback.dev.fyno.io"
+    static let PROD_CALLBACK = "callback.fyno.io"
 }
