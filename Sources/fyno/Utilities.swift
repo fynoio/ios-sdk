@@ -350,16 +350,15 @@ class Utilities : NSObject{
         }
         return ""
     }
-    
-    public static func setHMACSignature(hmacSignature:String)->Void{
-        let currentLevelKey = "hmacSignature"
-        let currentLevel = hmacSignature
+        
+    public static func setJWTToken(jwtToken:String)->Void{
+        let currentLevelKey = "jwtToken"
+        let currentLevel = jwtToken
         preferences.set(currentLevel, forKey: currentLevelKey)
     }
     
-    public static func getHMACSignature ()->String
-    {
-        let currentLevelKey = "hmacSignature"
+    public static func getJWTToken()->String{
+        let currentLevelKey = "jwtToken"
         if preferences.object(forKey: currentLevelKey) != nil {
             return preferences.string(forKey: currentLevelKey) ?? ""
         }

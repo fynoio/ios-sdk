@@ -252,8 +252,8 @@ class RequestHandler {
         urlRequest.httpMethod = request.method
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.addValue(Bundle.main.bundleIdentifier!, forHTTPHeaderField: "x-fn-app-id")
-        urlRequest.addValue(Utilities.getHMACSignature(), forHTTPHeaderField: "verify_token")
         urlRequest.addValue(Utilities.getintegrationID(), forHTTPHeaderField: "integration")
+        urlRequest.addValue(Utilities.getJWTToken(), forHTTPHeaderField: "verify_token")
         
         if let payload = request.payload {
             do {
@@ -295,6 +295,27 @@ class RequestHandler {
                     return
                 case 400..<500:
                     print("Request failed with response code: \(statusCode)")
+                    if statusCode == 401 {
+                        if let responseData = data,
+                           let json = try? JSONSerialization.jsonObject(with: responseData, options: []) as? [String: Any],
+                           let errorMessage = json["_message"] as? String {
+                            if errorMessage == "jwt_expired" {
+                                JWTRequestHandler().getAndSetJWTToken(distinctID: Utilities.getDistinctID()){ result in
+                                    switch result {
+                                    case .failure(let error):
+                                        completionHandler(false, error)
+                                    case .success(_):
+                                        print("JWT Token set successfully")
+                                        self.doRequest(request: request, id: id, completionHandler: completionHandler)
+                                    }
+                                }
+                                return
+                            }
+                        } else {
+                            completionHandler(true,  NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Error deserializing JSON"]))
+                            return
+                        }
+                    }
                     if let responseData = data,
                        let json = try? JSONSerialization.jsonObject(with: responseData, options: []) as? [String: Any],
                        let errorMessage = json["_message"] as? String {
@@ -328,7 +349,7 @@ class RequestHandler {
     }
     
     private func isCallBackRequest(url: String?) -> Bool {
-        return !(url?.isEmpty ?? true) && (url?.contains("callback.dev.fyno.io") ?? false)
+        return !(url?.isEmpty ?? true) && (url?.contains(FynoConstants.PROD_CALLBACK) ?? false)
     }
 }
 
