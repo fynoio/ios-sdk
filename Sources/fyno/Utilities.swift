@@ -454,6 +454,20 @@ class Utilities : NSObject{
         return preferences.bool(forKey: currentLevelKey)
     }
         
+    public static func setIntegrationIdForInapp (integrationIdForInApp:String)->Void{
+        let currentLevelKey = "integrationIdForInApp"
+        let currentLevel = integrationIdForInApp + "_" + Utilities.getDistinctID()
+        preferences.set(currentLevel, forKey: currentLevelKey)
+    }
+    
+    public static func getIntegrationIdForInapp()->String{
+        let currentLevelKey = "integrationIdForInApp"
+        if preferences.object(forKey: currentLevelKey) != nil {
+            return preferences.string(forKey: currentLevelKey) ?? ""
+        }
+        return ""
+    }
+
     public static func getDeviceDetails() -> [String: String] {
         let device = UIDevice.current
         var details = [String: String]()

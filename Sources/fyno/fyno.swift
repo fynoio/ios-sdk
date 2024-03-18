@@ -54,8 +54,9 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         Utilities.setWSID(WSID: workspaceID)
         Utilities.setintegrationID(integrationID: integrationID)
         Utilities.setVersion(Version: version)
+        Utilities.setFynoInitialized()
         
-        if Utilities.isFynoInitialized() {
+        if !Utilities.getDistinctID().isEmpty {
             completionHandler(.success(true))
             return
         }
@@ -87,7 +88,6 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                         return
                     case .success(let success):
                         print("Fyno instance initialized successfully")
-                        Utilities.setFynoInitialized()
                         completionHandler(.success(success))
                         return
                     }
@@ -149,6 +149,42 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                         }
                     }
                 }
+            }
+        }
+    }
+    
+    public func registerInapp(integrationID: String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
+        if !Utilities.isFynoInitialized() {
+            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
+            print(error.localizedDescription)
+            completionHandler(.failure(error))
+            return
+        }
+        
+        if Utilities.getIntegrationIdForInapp() == integrationID + "_" + Utilities.getDistinctID() {
+            completionHandler(.success(true))
+            return
+        }
+        
+        let payloadInstance: JSON =  [
+            "channel": [
+                "inapp": [
+                    [
+                        "token": Utilities.getDistinctID(),
+                        "integration_id": integrationID,
+                        "status": 1
+                    ]
+                ]
+            ]
+        ]
+        
+        RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "update_channel", profile: Utilities.getDistinctID()), method: "PATCH", payload: payloadInstance){ result in
+            switch result {
+            case .success(let success):
+                Utilities.setIntegrationIdForInapp(integrationIdForInApp: integrationID)
+                completionHandler(.success(success))
+            case .failure(let error):
+                completionHandler(.failure(error))
             }
         }
     }
