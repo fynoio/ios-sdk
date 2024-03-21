@@ -448,6 +448,23 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             }
         }
         
+        // To call URL on notification click
+        if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
+            if let destinationURLString = content.userInfo["destination_url"] as? String {
+                guard let url = URL(string: destinationURLString) else {
+                    completionHandler()
+                    return
+                }
+
+                UIApplication.shared.open(url) { (result) in
+                    if result {
+                        print("successfully opened deeplink")
+                    }
+                }
+            }
+        }
+        
+        // To call URL on button click
         if response.actionIdentifier != UNNotificationDismissActionIdentifier &&
            response.actionIdentifier != "DECLINE_ACTION" &&
            response.actionIdentifier != UNNotificationDefaultActionIdentifier {
