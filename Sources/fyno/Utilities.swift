@@ -193,6 +193,11 @@ class Utilities : NSObject{
                 print("unknown status")
             }
             
+            if isNotificationPermissionEnabled == getPushPermission() && getDistinctID() == getPushDistinctID() {
+                completionHandler(.success(true))
+                return
+            }
+            
             let payloadInstance: JSON =  [
                 "channel": [
                     "push": [
@@ -208,12 +213,36 @@ class Utilities : NSObject{
             RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "update_channel", profile: Utilities.getDistinctID()), method: "PATCH", payload: payloadInstance){ result in
                 switch result {
                 case .success(let success):
+                    setPushPermission(isNotificationPermissionEnabled: isNotificationPermissionEnabled)
+                    setPushDistinctID(fynoPushDistinctID: getDistinctID())
                     completionHandler(.success(success))
                 case .failure(let error):
                     completionHandler(.failure(error))
                 }
             }
         }
+    }
+    
+    public static func setPushPermission(isNotificationPermissionEnabled:Int)->Void {
+        let currentLevelKey = "isNotificationPermissionEnabled"
+        let currentLevel = isNotificationPermissionEnabled
+        preferences.set(currentLevel, forKey: currentLevelKey)
+    }
+    
+    public static func getPushPermission ()->Int {
+        let currentLevelKey = "isNotificationPermissionEnabled"
+        return preferences.integer(forKey: currentLevelKey)
+    }
+    
+    public static func setPushDistinctID(fynoPushDistinctID:String)->Void {
+        let currentLevelKey = "fyno_push_distinct_id"
+        let currentLevel = fynoPushDistinctID
+        preferences.set(currentLevel, forKey: currentLevelKey)
+    }
+    
+    public static func getPushDistinctID ()->String {
+        let currentLevelKey = "fyno_push_distinct_id"
+        return preferences.string(forKey: currentLevelKey) ?? ""
     }
     
     public static func mergeUserProfile(newDistinctId:String, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
