@@ -13,7 +13,7 @@ class JWTRequestHandler {
     }
     
     func getAndSetJWTToken(distinctID:String,  completionHandler: @escaping (Result<Bool, Error>) -> Void){
-        let request = JWTRequest(url: "\(FynoConstants.PROD_ENDPOINT)/\(Utilities.getWSID())/\(Utilities.getDistinctID())/token")
+        let request = JWTRequest(url: "\(FynoConstants.PROD_ENDPOINT)/\(Utilities.getWSID())/\(distinctID)/token")
         guard let url = URL(string: request.url) else {
             completionHandler(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
             return
