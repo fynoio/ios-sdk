@@ -248,6 +248,24 @@ class RequestHandler {
             return
         }
         
+        // fetch JWT token if it is a create profile call
+        if request.method == "POST" && request.url.hasSuffix("/profile") {
+            JWTRequestHandler().getAndSetJWTToken(distinctID: (request.payload?["distinct_id"].string)!){ result in
+                switch result {
+                case .failure(let error):
+                    completionHandler(false, error)
+                case .success(_):
+                    print("JWT Token set successfully")
+                    
+                    self.apiCall(url: url, request: request, id: id, completionHandler: completionHandler)
+                }
+            }
+        } else {
+            apiCall(url: url, request: request, id: id, completionHandler: completionHandler)
+        }
+    }
+    
+    private func apiCall(url:URL, request:Request, id:Int, completionHandler: @escaping (Bool, Error?) -> Void){
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = request.method
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -291,7 +309,23 @@ class RequestHandler {
                 switch statusCode {
                 case 200..<300:
                     print("Response code: \(statusCode)")
-                    completionHandler(true, nil)
+                    
+                    // fetch JWT token if it is a merge profile call
+                    if request.url.contains("/merge/") {
+                        JWTRequestHandler().getAndSetJWTToken(distinctID: request.url.components(separatedBy: "/merge/").last!){ result in
+                            switch result {
+                            case .failure(let error):
+                                completionHandler(false, error)
+                                return
+                            case .success(_):
+                                print("JWT Token set successfully")
+                                completionHandler(true, nil)
+                                return
+                            }
+                        }
+                    } else{
+                        completionHandler(true, nil)
+                    }
                     return
                 case 400..<500:
                     print("Request failed with response code: \(statusCode)")
@@ -349,7 +383,11 @@ class RequestHandler {
     }
     
     private func isCallBackRequest(url: String?) -> Bool {
-        return !(url?.isEmpty ?? true) && (url?.contains(FynoConstants.PROD_CALLBACK) ?? false)
+        guard let url = url, !url.isEmpty else {
+            return false
+        }
+
+        return FynoConstants.CALLBACK_URLS.contains { url.contains($0) }
     }
 }
 

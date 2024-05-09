@@ -1252,17 +1252,10 @@
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
-      "kind": "StringLiteral",
-      "offset": 1478,
-      "length": 22,
-      "value": "\"callback.dev.fyno.io\""
-    },
-    {
-      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/FynoUtils.swift",
-      "kind": "StringLiteral",
-      "offset": 1532,
-      "length": 18,
-      "value": "\"callback.fyno.io\""
+      "kind": "Array",
+      "offset": 1479,
+      "length": 132,
+      "value": "[\"callback.dev.fyno.io\", \"callback.fyno.io\", \"callback.dev.eu.fyno.io\", \"callback.eu.fyno.io\"]"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Payload.swift",
