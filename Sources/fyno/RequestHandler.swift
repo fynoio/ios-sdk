@@ -6,6 +6,9 @@ import FMDB
 class RequestHandler {
     static let shared = RequestHandler() // Singleton instance
     
+    // Create a background queue
+    static let backgroundQueue = DispatchQueue.global(qos: .background)
+    
     static let TIMEOUT = 6000
     static let MAX_BACKOFF_DELAY:Int64 = 60000
     static let MAX_RETRIES = 3
@@ -25,11 +28,8 @@ class RequestHandler {
     func PerformRequest(url: String, method: String,payload: JSON? = nil, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
         let request = Request(url: url, payload: payload, method: method)
         
-        // Create a background queue
-        let backgroundQueue = DispatchQueue.global(qos: .background)
-        
         // Dispatch the task to the background queue
-        backgroundQueue.async {
+        RequestHandler.backgroundQueue.async {
             if self.isCallBackRequest(url: url) {
                 SQLHelper.shared.insertRequest(request: request, tableName: "callbacks")
                 self.processCBRequests(caller: "PerformRequest") {result in
@@ -122,6 +122,7 @@ class RequestHandler {
                         }
                     }
                 } else {
+                    requestCursor?.close()
                     completion(.success(true))
                     break
                 }
@@ -188,6 +189,7 @@ class RequestHandler {
                         }
                     }
                 } else {
+                    cbRequestCursor?.close()
                     break
                 }
             }
