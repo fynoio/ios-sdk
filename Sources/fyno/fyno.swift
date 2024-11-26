@@ -398,13 +398,27 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         }
         
         var action: String = ""
+        var additionalDataString = "{}"
+        
+        if let additionalData = content.userInfo["extraData"] as? [String: Any] {
+            let json = JSON(additionalData)
+            if let jsonString = json.rawString() {
+                additionalDataString = jsonString
+            } else {
+                print("Failed to convert dictionary to JSON string")
+            }
+        } else {
+            print("extraData is not a valid dictionary")
+        }
         
         if response.actionIdentifier == UNNotificationDismissActionIdentifier || response.actionIdentifier == "DECLINE_ACTION"{
             // The user dismissed the notification.
             print("Notification Dismissed")
+            NotificationCenter.default.post(name: NSNotification.Name("onNotificationDismissed"), object: additionalDataString)
             action = "DISMISSED"
         } else {
             print("Notification Clicked")
+            NotificationCenter.default.post(name: NSNotification.Name("onNotificationClicked"), object: additionalDataString)
             action = "CLICKED"
         }
         
