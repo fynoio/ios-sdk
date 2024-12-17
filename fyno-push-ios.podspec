@@ -25,7 +25,7 @@ Pod::Spec.new do |spec|
     spec.source_files = "Sources/**/*.swift"
     # Adjust the source file path accordingly.
   
-    spec.ios.deployment_target = "12.0"
+    spec.ios.deployment_target = "13.0"
     # Adjust the deployment target as needed.
   
     spec.dependency "FMDB", "~> 2.7.5"
