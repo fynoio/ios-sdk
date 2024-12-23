@@ -195,13 +195,6 @@
       },
       {
         "kind": "Import",
-        "name": "FirebaseCore",
-        "printedName": "FirebaseCore",
-        "declKind": "Import",
-        "moduleName": "fyno"
-      },
-      {
-        "kind": "Import",
         "name": "FirebaseMessaging",
         "printedName": "FirebaseMessaging",
         "declKind": "Import",
@@ -2993,7 +2986,7 @@
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 1596,
+      "offset": 1576,
       "length": 6,
       "value": "\"live\""
     }

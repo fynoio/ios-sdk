@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |spec|
     spec.name         = "fyno-push-ios"
-    spec.version      = "3.2.3"
+    spec.version      = "3.3.0"
     spec.summary      = "Fyno's iOS SDK."
   
     spec.description  = <<-DESC
@@ -30,7 +30,6 @@ Pod::Spec.new do |spec|
   
     spec.dependency "FMDB", "~> 2.7.5"
     spec.dependency 'SwiftyJSON', '~> 5.0'
-    spec.dependency 'Firebase/Core', '11.4.0'
     spec.dependency 'Firebase/Messaging', '11.4.0'
 
     spec.vendored_frameworks = "fyno.xcframework"
