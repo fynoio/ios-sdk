@@ -398,6 +398,27 @@
           },
           {
             "kind": "Function",
+            "name": "getPushNotificationToken",
+            "printedName": "getPushNotificationToken()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:4fynoAAC24getPushNotificationTokenSSyF",
+            "mangledName": "$s4fynoAAC24getPushNotificationTokenSSyF",
+            "moduleName": "fyno",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "registerPush",
             "printedName": "registerPush(isAPNs:completionHandler:)",
             "children": [

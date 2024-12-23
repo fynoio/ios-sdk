@@ -93,6 +93,10 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         Utilities.setdeviceToken(deviceToken: token)
         Utilities.setDeviceTokenData(deviceTokenData: deviceToken)
     }
+
+    public func getPushNotificationToken () -> String {
+        return Utilities.getdeviceToken()
+    }
     
     public func registerPush(isAPNs:Bool, completionHandler:@escaping (Result<Bool,Error>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {           
