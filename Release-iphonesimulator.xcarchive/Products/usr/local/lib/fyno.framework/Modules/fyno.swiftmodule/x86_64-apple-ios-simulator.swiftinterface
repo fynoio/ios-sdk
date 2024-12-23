@@ -27,6 +27,7 @@ extension UIKit.UIDevice {
   @objc deinit
   public func initializeApp(workspaceID: Swift.String, integrationID: Swift.String, distinctId: Swift.String, version: Swift.String = "live", completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   @objc public func setdeviceToken(deviceToken: Foundation.Data)
+  public func getPushNotificationToken() -> Swift.String
   public func registerPush(isAPNs: Swift.Bool, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   public func registerInapp(integrationID: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   public func identify(newDistinctId: Swift.String, userName: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
