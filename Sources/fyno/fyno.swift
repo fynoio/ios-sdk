@@ -95,7 +95,16 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
     }
 
     public func getPushNotificationToken () -> String {
-        return Utilities.getdeviceToken()
+        var token = Utilities.getAPNsToken()
+        if token == "" {
+            token = Utilities.getFCMToken()
+        }
+        
+        if token == "" {
+            return token
+        }
+        
+        return String(token.split(separator: ":", maxSplits: 1)[1])
     }
     
     public func registerPush(isAPNs:Bool, completionHandler:@escaping (Result<Bool,Error>) -> Void) {
