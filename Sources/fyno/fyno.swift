@@ -1,7 +1,6 @@
 import UserNotifications
 import UIKit
 import SwiftyJSON
-import FirebaseCore
 import FirebaseMessaging
 
 @objc
