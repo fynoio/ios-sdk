@@ -205,7 +205,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             case .success(_):
                 print("merge successful")
                 if userName != "" {
-                    Utilities.updateUserName(distinctID: newDistinctId, userName: userName) { result in
+                    Utilities.updateUserName(userName: userName) { result in
                         switch result {
                         case .success(let success):
                             completionHandler(.success(success))
@@ -216,6 +216,24 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                 } else {
                     completionHandler(.success(true))
                 }
+            case .failure(let error):
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    
+    public func updateName(userName: String, completionHandler:@escaping (Result<Bool,Error>) -> Void) {
+        if !Utilities.isFynoInitialized() {
+            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
+            print(error.localizedDescription)
+            completionHandler(.failure(error))
+            return
+        }
+        
+        Utilities.updateUserName(userName: userName) { result in
+            switch result {
+            case .success(let success):
+                completionHandler(.success(success))
             case .failure(let error):
                 completionHandler(.failure(error))
             }

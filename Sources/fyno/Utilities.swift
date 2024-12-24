@@ -193,34 +193,48 @@ class Utilities : NSObject{
                 print("unknown status")
             }
             
-            if isNotificationPermissionEnabled == getPushPermission() && getDistinctID() == getPushDistinctID() {
-                completionHandler(.success(true))
-                return
-            }
-            
-            let payloadInstance: JSON =  [
-                "channel": [
-                    "push": [
-                        [
-                            "token": payload.pushToken as Any,
-                            "integration_id": payload.integrationId as Any,
-                            "status": isNotificationPermissionEnabled
+            if isNotificationPermissionEnabled != getPushPermission()
+                || getDistinctID() != getPushDistinctID()
+                || getPushPermissionFirstTime() == false {
+                let payloadInstance: JSON =  [
+                    "channel": [
+                        "push": [
+                            [
+                                "token": payload.pushToken as Any,
+                                "integration_id": payload.integrationId as Any,
+                                "status": isNotificationPermissionEnabled
+                            ]
                         ]
                     ]
                 ]
-            ]
-            
-            RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "update_channel", profile: Utilities.getDistinctID()), method: "PATCH", payload: payloadInstance){ result in
-                switch result {
-                case .success(let success):
-                    setPushPermission(isNotificationPermissionEnabled: isNotificationPermissionEnabled)
-                    setPushDistinctID(fynoPushDistinctID: getDistinctID())
-                    completionHandler(.success(success))
-                case .failure(let error):
-                    completionHandler(.failure(error))
+                
+                RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "update_channel", profile: Utilities.getDistinctID()), method: "PATCH", payload: payloadInstance){ result in
+                    switch result {
+                    case .success(let success):
+                        setPushPermission(isNotificationPermissionEnabled: isNotificationPermissionEnabled)
+                        setPushDistinctID(fynoPushDistinctID: getDistinctID())
+                        setPushPermissionFirstTime(value: true)
+                        completionHandler(.success(success))
+                    case .failure(let error):
+                        completionHandler(.failure(error))
+                    }
                 }
+            } else {
+                completionHandler(.success(true))
+                return
             }
         }
+    }
+    
+    public static func setPushPermissionFirstTime(value:Bool) -> Void {
+        let currentLevelKey = "pushPermissionFirstTime"
+        let currentLevel = value
+        preferences.set(currentLevel, forKey: currentLevelKey)
+    }
+    
+    public static func getPushPermissionFirstTime() -> Bool {
+        let currentLevelKey = "pushPermissionFirstTime"
+        return preferences.bool(forKey: currentLevelKey)
     }
     
     public static func setPushPermission(isNotificationPermissionEnabled:Int)->Void {
@@ -297,7 +311,7 @@ class Utilities : NSObject{
         }
     }
     
-    public static func updateUserName(distinctID:String, userName:String, completionHandler: @escaping (Result<Bool,Error>) -> Void) {
+    public static func updateUserName(userName:String, completionHandler: @escaping (Result<Bool,Error>) -> Void) {
         if getUserName() == userName {
             completionHandler(.success(true))
             return
@@ -307,7 +321,7 @@ class Utilities : NSObject{
             "name": userName
         ]
 
-        RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "upsert_profile", profile: distinctID), method: "PUT", payload: payloadInstance){ result in
+        RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "upsert_profile", profile: getDistinctID()), method: "PUT", payload: payloadInstance){ result in
             switch result {
             case .success(let success):
                 setUserName(userName: userName)
