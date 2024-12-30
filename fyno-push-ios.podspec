@@ -30,7 +30,8 @@ Pod::Spec.new do |spec|
   
     spec.dependency "FMDB", "~> 2.7.5"
     spec.dependency 'SwiftyJSON', '~> 5.0'
-    spec.dependency 'Firebase/Messaging', '11.4.0'
+    spec.dependency 'Firebase/Core', '~> 10.22'
+    spec.dependency 'Firebase/Messaging', '~> 10.22'
 
     spec.vendored_frameworks = "fyno.xcframework"
   end
