@@ -194,13 +194,6 @@
         "moduleName": "fyno"
       },
       {
-        "kind": "Import",
-        "name": "FirebaseMessaging",
-        "printedName": "FirebaseMessaging",
-        "declKind": "Import",
-        "moduleName": "fyno"
-      },
-      {
         "kind": "TypeDecl",
         "name": "fyno",
         "printedName": "fyno",
@@ -462,6 +455,32 @@
             "declKind": "Func",
             "usr": "s:4fynoAAC12registerPush6isAPNs17completionHandlerySb_ys6ResultOySbs5Error_pGctF",
             "mangledName": "$s4fynoAAC12registerPush6isAPNs17completionHandlerySb_ys6ResultOySbs5Error_pGctF",
+            "moduleName": "fyno",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setFCMToken",
+            "printedName": "setFCMToken(fcmToken:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:4fynoAAC11setFCMToken8fcmTokenySS_tF",
+            "mangledName": "$s4fynoAAC11setFCMToken8fcmTokenySS_tF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -3044,7 +3063,7 @@
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 1576,
+      "offset": 1532,
       "length": 6,
       "value": "\"live\""
     }

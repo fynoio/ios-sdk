@@ -4,7 +4,6 @@
 // swift-module-flags-ignorable: -no-verify-emitted-module-interface
 import CommonCrypto
 import FMDB
-import FirebaseMessaging
 import Foundation
 import Swift
 import SwiftyJSON
@@ -20,7 +19,7 @@ import _SwiftConcurrencyShims
 extension UIKit.UIDevice {
   @_Concurrency.MainActor @preconcurrency public static let modelName: Swift.String
 }
-@_inheritsConvenienceInitializers @objc public class fyno : UserNotifications.UNNotificationServiceExtension, UserNotifications.UNUserNotificationCenterDelegate, FirebaseMessaging.MessagingDelegate {
+@_inheritsConvenienceInitializers @objc public class fyno : UserNotifications.UNNotificationServiceExtension, UserNotifications.UNUserNotificationCenterDelegate {
   @objc public static let app: fyno.fyno
   @objc override dynamic public init()
   @objc deinit
@@ -28,6 +27,7 @@ extension UIKit.UIDevice {
   @objc public func setdeviceToken(deviceToken: Foundation.Data)
   public func getPushNotificationToken() -> Swift.String
   public func registerPush(isAPNs: Swift.Bool, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func setFCMToken(fcmToken: Swift.String)
   public func registerInapp(integrationID: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   public func identify(newDistinctId: Swift.String, userName: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   public func updateName(userName: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)

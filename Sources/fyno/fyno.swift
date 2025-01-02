@@ -1,10 +1,9 @@
 import UserNotifications
 import UIKit
 import SwiftyJSON
-import FirebaseMessaging
 
 @objc
-public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelegate, MessagingDelegate {
+public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelegate {
     
     @objc public static let app = fyno()
     
@@ -133,27 +132,21 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                     }
                 }
             } else {
-                Messaging.messaging().token {token, error in
-                    if let error = error {
-                        print("Error fetching FCM registration token: \(error)")
+                payloadInstance.pushToken = Utilities.getFCMToken()
+                Utilities.addChannelData(payload: payloadInstance) { result in
+                    switch result {
+                    case .success(let success):
+                        completionHandler(.success(success))
+                    case .failure(let error):
                         completionHandler(.failure(error))
-                    } else if let token = token {
-                        print("FCM registration token: \(token)")
-                        Utilities.setFCMToken(fcmToken: token)
-                        payloadInstance.pushToken = Utilities.getFCMToken()
-                        Utilities.addChannelData(payload: payloadInstance) { result in
-                            switch result {
-                            case .success(let success):
-                                Utilities.setFCMToken(fcmToken: token)
-                                completionHandler(.success(success))
-                            case .failure(let error):
-                                completionHandler(.failure(error))
-                            }
-                        }
                     }
                 }
             }
         }
+    }
+    
+    public func setFCMToken(fcmToken:String){
+        Utilities.setFCMToken(fcmToken: fcmToken)
     }
     
     public func registerInapp(integrationID: String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
