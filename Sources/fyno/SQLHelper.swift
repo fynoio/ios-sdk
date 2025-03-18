@@ -171,30 +171,46 @@ class SQLHelper {
         }
     }
     
-    func getNextRequest() -> FMResultSet? {
-        var result: FMResultSet?
+    func getNextRequest() -> [String: Any]? {
+        var resultDict: [String: Any]? = nil
         
         let query = "SELECT * FROM \(DatabaseConstants.reqTableName) ORDER BY \(DatabaseConstants.columnId) ASC LIMIT 1"
         
-        databaseQueue?.inDatabase {database in
-            result = database.executeQuery(query, withArgumentsIn: [])
+        databaseQueue?.inDatabase { database in
+            if let resultSet = database.executeQuery(query, withArgumentsIn: []) {
+                if resultSet.next() {
+                    resultDict = resultSet.resultDictionary as? [String: Any]
+                }
+                resultSet.close()
+            } else {
+                print("Failed to execute query: \(database.lastErrorMessage())")
+            }
         }
-         
-        return result
+        
+        return resultDict
     }
+
     
-    func getNextCBRequest() -> FMResultSet? {
-        var result: FMResultSet?
+    func getNextCBRequest() -> [String: Any]? {
+        var resultDict: [String: Any]? = nil
         
         let query = "SELECT * FROM \(DatabaseConstants.cbTableName) WHERE \(DatabaseConstants.columnStatus) = ? ORDER BY \(DatabaseConstants.columnId) ASC LIMIT 1"
         let values: [Any] = ["not_processed"]
         
-        databaseQueue?.inDatabase {database in
-            result = database.executeQuery(query, withArgumentsIn: values)
+        databaseQueue?.inDatabase { database in
+            if let resultSet = database.executeQuery(query, withArgumentsIn: values) {
+                if resultSet.next() {
+                    resultDict = resultSet.resultDictionary as? [String: Any]
+                }
+                resultSet.close()
+            } else {
+                print("Failed to execute query: \(database.lastErrorMessage())")
+            }
         }
-         
-        return result
+        
+        return resultDict
     }
+
 }
 
 

@@ -60,74 +60,72 @@ class RequestHandler {
     
     public func processRequests(caller: String? = "", completion: @escaping (Result<Bool, Error>) -> Void) {
         let dispatchGroup = DispatchGroup()
-        var requestCursor: FMResultSet? = nil
-        
-        defer {
-            requestCursor?.close()
-        }
-        
         var shouldBreakOuterLoop = false
         
         outerLoop: do {
             while true {
                 dispatchGroup.enter() // Enter the dispatch group before starting any asynchronous operation
                 
-                requestCursor = SQLHelper.shared.getNextRequest()
-                
-                if requestCursor?.next() == true {
-                    guard let url = requestCursor?.string(forColumn: SQLHelper.DatabaseConstants.columnUrl),
-                          let payloadStr = requestCursor?.string(forColumn: SQLHelper.DatabaseConstants.columnPostData),
-                          let method = requestCursor?.string(forColumn: SQLHelper.DatabaseConstants.columnMethod),
-                          let id = Int(requestCursor?.string(forColumn: SQLHelper.DatabaseConstants.columnId) ?? ""),
-                          let status = requestCursor?.string(forColumn: SQLHelper.DatabaseConstants.columnStatus),
-                          let lastProcessedTimeMillis = requestCursor?.long(forColumn: SQLHelper.DatabaseConstants.columnLastProcessedAt) else {
-                        print("Error in retrieving data from SQLite")
-                        completion(.failure(NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Error in retrieving data from SQLite"])))
-                        break
-                    }
-                    
-                    let timeDifference = TimeInterval((Date().timeIntervalSince1970 * 1000).rounded()) - Double(lastProcessedTimeMillis)
-                    
-                    if caller != "PerformRequest" && timeDifference < 2000  || status == "processing" {
-                        break outerLoop
-                    }
-                    
-                    SQLHelper.shared.updateStatusAndLastProcessedTime(id: id, tableName: SQLHelper.DatabaseConstants.reqTableName, status: "processing")
-                    
-                    var payload: JSON?
-                    if payloadStr != "" {
-                        if let data = payloadStr.data(using: .utf8) {
-                            do {
-                                payload = try JSON(data: data)
-                            } catch {
-                                print("Error deserializing JSON: \(error.localizedDescription)")
-                                completion(.failure(NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Error deserializing JSON: \(error.localizedDescription)"])))
-                                break outerLoop
-                            }
-                        }
-                    }
-                    
-                    let request = Request(url: url, payload: payload, method: method)
-                    self.handleRetries(for: request, withID: id) { result in
-                        defer {
-                            dispatchGroup.leave() // Leave the dispatch group when the asynchronous operation is completed
-                        }
-                        
-                        switch result {
-                        case .failure(let error):
-                            shouldBreakOuterLoop = true
-                            completion(.failure(NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])))
-                        case .success(_):
-                            print("request successful")
-                        }
-                    }
-                } else {
-                    requestCursor?.close()
+                guard let resultDict = SQLHelper.shared.getNextRequest() else {
+                    dispatchGroup.leave()
                     completion(.success(true))
                     break
                 }
                 
-                dispatchGroup.wait() // Wait for the current iteration to finish before proceeding to the next one
+                guard
+                    let url = resultDict[SQLHelper.DatabaseConstants.columnUrl] as? String,
+                    let payloadStr = resultDict[SQLHelper.DatabaseConstants.columnPostData] as? String,
+                    let method = resultDict[SQLHelper.DatabaseConstants.columnMethod] as? String,
+                    let id = (resultDict[SQLHelper.DatabaseConstants.columnId] as? Int) ?? Int(resultDict[SQLHelper.DatabaseConstants.columnId] as? String ?? ""),
+                    let lastProcessedTimeMillis = resultDict[SQLHelper.DatabaseConstants.columnLastProcessedAt] as? Int64,
+                    let status = resultDict[SQLHelper.DatabaseConstants.columnStatus] as? String
+                else {
+                    print("Error in retrieving data from SQLite")
+                    dispatchGroup.leave()
+                    completion(.failure(NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Error in retrieving data from SQLite"])))
+                    break
+                }
+                
+                let currentTimeMillis = Int64((Date().timeIntervalSince1970 * 1000).rounded())
+                let timeDifference = TimeInterval(currentTimeMillis - lastProcessedTimeMillis)
+                
+                if (caller != "PerformRequest" && timeDifference < 2000) || status == "processing" {
+                    dispatchGroup.leave()
+                    break outerLoop
+                }
+                
+                SQLHelper.shared.updateStatusAndLastProcessedTime(id: id, tableName: SQLHelper.DatabaseConstants.reqTableName, status: "processing")
+                
+                var payload: JSON? = nil
+                if !payloadStr.isEmpty {
+                    if let data = payloadStr.data(using: .utf8) {
+                        do {
+                            payload = try JSON(data: data)
+                        } catch {
+                            print("Error deserializing JSON: \(error.localizedDescription)")
+                            dispatchGroup.leave()
+                            completion(.failure(NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Error deserializing JSON: \(error.localizedDescription)"])))
+                            break outerLoop
+                        }
+                    }
+                }
+                
+                let request = Request(url: url, payload: payload, method: method)
+                self.handleRetries(for: request, withID: id) { result in
+                    defer {
+                        dispatchGroup.leave() // Leave the dispatch group when the async operation completes
+                    }
+                    
+                    switch result {
+                    case .failure(let error):
+                        shouldBreakOuterLoop = true
+                        completion(.failure(NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])))
+                    case .success(_):
+                        print("Request successful for ID: \(id)")
+                    }
+                }
+                
+                dispatchGroup.wait() // Wait for the current operation to complete before proceeding
                 
                 if shouldBreakOuterLoop {
                     break outerLoop
@@ -136,65 +134,83 @@ class RequestHandler {
         }
     }
 
-    public func processCBRequests(caller:String? = "", completion: @escaping (Result<Bool, Error>) -> Void) {
-        var cbRequestCursor: FMResultSet? = nil
-        
-        defer {
-            cbRequestCursor?.close()
-        }
-        
-        do {
+    public func processCBRequests(caller: String? = "", completion: @escaping (Result<Bool, Error>) -> Void) {
+        let dispatchGroup = DispatchGroup()
+        var shouldBreakOuterLoop = false
+
+        outerLoop: do {
             while true {
-                // Retrieve one request from SQLite database
-                cbRequestCursor = SQLHelper.shared.getNextCBRequest()
+                dispatchGroup.enter() // Enter dispatch group for the async operation
                 
-                if cbRequestCursor?.next() == true {
-                    guard let url = cbRequestCursor?.string(forColumn: SQLHelper.DatabaseConstants.columnUrl),
-                          let payloadStr = cbRequestCursor?.string(forColumn: SQLHelper.DatabaseConstants.columnPostData),
-                          let method = cbRequestCursor?.string(forColumn: SQLHelper.DatabaseConstants.columnMethod),
-                          let id = Int(cbRequestCursor?.string(forColumn: SQLHelper.DatabaseConstants.columnId) ?? ""),
-                          let lastProcessedTimeMillis = cbRequestCursor?.long(forColumn: SQLHelper.DatabaseConstants.columnLastProcessedAt) else {
-                        print("Error in retrieving data from SQLite")
-                        continue
-                    }
-                    
-                    let timeDifference = TimeInterval((Date().timeIntervalSince1970 * 1000).rounded()) - Double(lastProcessedTimeMillis)
-                    
-                    if caller != "PerformRequest" && timeDifference < 2000 {
-                        // Skip this record as the last update time is less than 2 seconds ago
-                        continue
-                    }
-                    
-                    SQLHelper.shared.updateStatusAndLastProcessedTime(id: id, tableName: SQLHelper.DatabaseConstants.cbTableName, status: "processing")
-                    
-                    var payload: JSON?
-                    if payloadStr != "" {
-                        if let data = payloadStr.data(using: .utf8) {
-                            do {
-                                payload = try JSON(data: data)
-                            } catch {
-                                print("Error deserializing JSON: \(error.localizedDescription)")
-                                continue
-                            }
-                        }
-                    }
-                    
-                    let request = Request(url: url, payload: payload, method: method)
-                    handleRetries(for:request,withID: id) {result in
-                        switch result{
-                        case .success(_):
-                            print("request successful")
-                        case .failure(_):
-                            print("request failed")
-                        }
-                    }
-                } else {
-                    cbRequestCursor?.close()
+                guard let resultDict = SQLHelper.shared.getNextCBRequest() else {
+                    dispatchGroup.leave()
+                    completion(.success(true))
                     break
+                }
+                
+                guard
+                    let url = resultDict[SQLHelper.DatabaseConstants.columnUrl] as? String,
+                    let payloadStr = resultDict[SQLHelper.DatabaseConstants.columnPostData] as? String,
+                    let method = resultDict[SQLHelper.DatabaseConstants.columnMethod] as? String,
+                    let id = (resultDict[SQLHelper.DatabaseConstants.columnId] as? Int) ?? Int(resultDict[SQLHelper.DatabaseConstants.columnId] as? String ?? ""),
+                    let lastProcessedTimeMillis = resultDict[SQLHelper.DatabaseConstants.columnLastProcessedAt] as? Int64
+                else {
+                    print("Error in retrieving data from SQLite")
+                    dispatchGroup.leave()
+                    completion(.failure(NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Error in retrieving data from SQLite"])))
+                    break
+                }
+                
+                let currentTimeMillis = Int64((Date().timeIntervalSince1970 * 1000).rounded())
+                let timeDifference = TimeInterval(currentTimeMillis - lastProcessedTimeMillis)
+                
+                if (caller != "PerformRequest" && timeDifference < 2000) {
+                    print("Request skipped because it's processed recently.")
+                    dispatchGroup.leave()
+                    break outerLoop
+                }
+                
+                // Update the status to processing
+                SQLHelper.shared.updateStatusAndLastProcessedTime(id: id, tableName: SQLHelper.DatabaseConstants.cbTableName, status: "processing")
+                
+                var payload: JSON? = nil
+                if !payloadStr.isEmpty {
+                    if let data = payloadStr.data(using: .utf8) {
+                        do {
+                            payload = try JSON(data: data)
+                        } catch {
+                            print("Error deserializing JSON: \(error.localizedDescription)")
+                            dispatchGroup.leave()
+                            continue
+                        }
+                    }
+                }
+                
+                let request = Request(url: url, payload: payload, method: method)
+                handleRetries(for: request, withID: id) { result in
+                    defer {
+                        dispatchGroup.leave() // Leave the dispatch group when the async operation is completed
+                    }
+                    
+                    switch result {
+                    case .success(_):
+                        print("Request successful for ID: \(id)")
+                    case .failure(let error):
+                        print("Request failed for ID: \(id) with error: \(error.localizedDescription)")
+                        shouldBreakOuterLoop = true
+                        completion(.failure(error))
+                    }
+                }
+                
+                dispatchGroup.wait() // Wait until the current request is fully processed
+                
+                if shouldBreakOuterLoop {
+                    break outerLoop
                 }
             }
         }
     }
+
     
     private func calculateDelay(retryCount: Int) -> Int64 {
         return min(Int64(pow(4.0, Double(retryCount)) * 1000), RequestHandler.MAX_BACKOFF_DELAY)
