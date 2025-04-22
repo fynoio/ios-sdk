@@ -98,20 +98,63 @@ class Utilities : NSObject{
         task.resume()
     }
     
-    public static func createUserProfile(payload:Payload, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
-        let payload: JSON = [
-            "distinct_id": payload.distinctID as Any,
-            "status": payload.status as Any,
-        ]
+    public static func createUserProfile(payload: Payload, forceCreate: Bool = false, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+        let currentDistinctID = getDistinctID()
+        let newDistinctID = payload.distinctID ?? ""
         
-        RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "create_profile"), method: "POST", payload: payload){ result in
-            if case .failure(let error) = result {
-                completionHandler(.failure(error))
-                return
-            } else if case .success(let success) = result {
-                completionHandler(.success(success))
+        if !currentDistinctID.isEmpty && newDistinctID.starts(with: "fytp:") && !forceCreate {
+            completionHandler(.success(true))
+            return
+        }
+
+        func finalizeProfileSetup(success: Bool, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+            setDistinctID(distinctID: newDistinctID)
+
+            let fcmToken = getFCMToken()
+            let apnsToken = getAPNsToken()
+            let pushToken = !fcmToken.isEmpty ? fcmToken : apnsToken
+
+            guard !pushToken.isEmpty else {
+                completionHandler(.success(true))
                 return
             }
+
+            let payloadInstance = Payload(
+                pushToken: pushToken,
+                integrationId: Utilities.getintegrationID()
+            )
+
+            Utilities.addChannelData(payload: payloadInstance) { channelResult in
+                completionHandler(channelResult)
+            }
+        }
+
+        func handleCompletion(_ result: Result<Bool, Error>) {
+            switch result {
+            case .success:
+                deleteChannelData { result in
+                    switch result {
+                    case .failure(let error):
+                        completionHandler(.failure(error))
+                    case .success:
+                        finalizeProfileSetup(success: true, completionHandler: completionHandler)
+                    }
+                }
+            case .failure(let error):
+                completionHandler(.failure(error))
+            }
+        }
+
+        if currentDistinctID.isEmpty || !currentDistinctID.starts(with: "fytp:") || forceCreate {
+            let jsonPayload: JSON = [
+                "distinct_id": newDistinctID,
+                "status": payload.status as Any,
+            ]
+
+            let url = FynoUtils().getEndpoint(event: "create_profile", profile: newDistinctID)
+            RequestHandler.shared.PerformRequest(url: url, method: "POST", payload: jsonPayload, completionHandler: handleCompletion)
+        } else {
+            mergeUserProfile(oldDistinctId: currentDistinctID, newDistinctId: newDistinctID, isForceMerge: true, completionHandler: handleCompletion)
         }
     }
     
@@ -127,6 +170,11 @@ class Utilities : NSObject{
 
         if !apnsToken.isEmpty {
             pushArray.append(apnsToken)
+        }
+        
+        if pushArray.count == 0 { // no channel data to delete
+            completionHandler(.success(true))
+            return
         }
 
         let payload: JSON = [
@@ -259,20 +307,41 @@ class Utilities : NSObject{
         return preferences.string(forKey: currentLevelKey) ?? ""
     }
     
-    public static func mergeUserProfile(newDistinctId:String, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
-        if getDistinctID() == newDistinctId {
+    public static func mergeUserProfile(oldDistinctId: String, newDistinctId: String, isForceMerge: Bool = false, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+        let currentDistinctID = getDistinctID()
+
+        guard currentDistinctID != newDistinctId else {
             completionHandler(.success(true))
             return
         }
-            
-        RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "merge_profile", profile:  Utilities.getDistinctID(), newId: newDistinctId), method: "PATCH"){ result in
-            switch result {
-            case .success(let success):
-                setDistinctID(distinctID: newDistinctId)
-                completionHandler(.success(success))
-            case .failure(let error):
-                completionHandler(.failure(error))
-                return
+
+        if currentDistinctID.starts(with: "fytp:") || isForceMerge {
+            let url = FynoUtils().getEndpoint(event: "merge_profile", profile: oldDistinctId, newId: newDistinctId)
+            RequestHandler.shared.PerformRequest(url: url, method: "PATCH") { result in
+                switch result {
+                case .success:
+                    setDistinctID(distinctID: newDistinctId)
+                    completionHandler(.success(true))
+                case .failure(let error):
+                    completionHandler(.failure(error))
+                }
+            }
+        } else {
+            deleteChannelData { deleteResult in
+                switch deleteResult {
+                case .success:
+                    let payload = Payload(distinctID: newDistinctId, status: 1)
+                    createUserProfile(payload: payload) { result in
+                        switch result {
+                        case .success:
+                            completionHandler(.success(true))
+                        case .failure(let error):
+                            completionHandler(.failure(error))
+                        }
+                    }
+                case .failure(let error):
+                    completionHandler(.failure(error))
+                }
             }
         }
     }
