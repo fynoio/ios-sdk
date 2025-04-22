@@ -54,21 +54,25 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         Utilities.setVersion(Version: version)
         Utilities.setFynoInitialized()
         
-        if !Utilities.getDistinctID().isEmpty {
+        if !Utilities.getDistinctID().isEmpty && !distinctId.isEmpty && Utilities.getDistinctID() == distinctId {
             completionHandler(.success(true))
             return
         }
         
         let myUUID = UUID()
-        
-        Utilities.setDistinctID(distinctID: myUUID.uuidString)
-        
+        var distinctIdToBeSent = "fytp:" + myUUID.uuidString
+            
         if !distinctId.isEmpty {
-            Utilities.setDistinctID(distinctID: distinctId)
+            distinctIdToBeSent = distinctId
+        }
+        
+        if Utilities.getDistinctID().starts(with: "fytp:") && distinctIdToBeSent.starts(with: "fytp:") {
+            completionHandler(.success(true))
+            return
         }
         
         let payloadInstance = Payload(
-            distinctID: Utilities.getDistinctID(),
+            distinctID: distinctIdToBeSent,
             status: 1
         )
         
@@ -193,7 +197,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             return
         }
         
-        Utilities.mergeUserProfile(newDistinctId: newDistinctId) { result in
+        Utilities.mergeUserProfile(oldDistinctId: Utilities.getDistinctID(), newDistinctId: newDistinctId, isForceMerge: false) { result in
             switch result {
             case .success(_):
                 print("merge successful")
@@ -233,7 +237,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         }
     }
     
-    public func mergeProfile(newDistinctId: String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
+    public func mergeProfile(oldDistinctId:String, newDistinctId: String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
         if !Utilities.isFynoInitialized() {
             let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
             print(error.localizedDescription)
@@ -241,7 +245,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             return
         }
         
-        Utilities.mergeUserProfile(newDistinctId: newDistinctId){ result in
+        Utilities.mergeUserProfile(oldDistinctId: oldDistinctId, newDistinctId: newDistinctId, isForceMerge: true){ result in
             switch result {
             case .success(let success):
                 completionHandler(.success(success))
@@ -271,21 +275,28 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             return
         }
         
+        if Utilities.getDistinctID().starts(with: "fytp:") {
+            print("can't reset temperorary profile")
+            completionHandler(.success(true))
+            return
+        }
+        
         Utilities.deleteChannelData(){result in
             switch result{
             case .success(let success):
                 print("success delete channel")
                 completionHandler(.success(success))
                 let myUUID = UUID()
+                let distinctID = "fytp:" + myUUID.uuidString
                 let payloadInstance = Payload(
-                    distinctID: myUUID.uuidString
+                    distinctID: distinctID
                 )
                 
-                Utilities.createUserProfile(payload: payloadInstance) { result in
+                Utilities.createUserProfile(payload: payloadInstance, forceCreate:true) { result in
                     switch result {
                     case .success(let success):
                         print("success create user")
-                        Utilities.setDistinctID(distinctID: myUUID.uuidString)
+                        Utilities.setDistinctID(distinctID: distinctID)
                         let payload = Payload(
                             integrationId: Utilities.getintegrationID()
                         )

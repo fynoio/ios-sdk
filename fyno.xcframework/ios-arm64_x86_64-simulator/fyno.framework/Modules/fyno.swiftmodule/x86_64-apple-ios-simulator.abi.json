@@ -670,12 +670,18 @@
           {
             "kind": "Function",
             "name": "mergeProfile",
-            "printedName": "mergeProfile(newDistinctId:completionHandler:)",
+            "printedName": "mergeProfile(oldDistinctId:newDistinctId:completionHandler:)",
             "children": [
               {
                 "kind": "TypeNominal",
                 "name": "Void",
                 "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
               },
               {
                 "kind": "TypeNominal",
@@ -717,8 +723,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:4fynoAAC12mergeProfile13newDistinctId17completionHandlerySS_ys6ResultOySbs5Error_pGctF",
-            "mangledName": "$s4fynoAAC12mergeProfile13newDistinctId17completionHandlerySS_ys6ResultOySbs5Error_pGctF",
+            "usr": "s:4fynoAAC12mergeProfile13oldDistinctId03neweF017completionHandlerySS_SSys6ResultOySbs5Error_pGctF",
+            "mangledName": "$s4fynoAAC12mergeProfile13oldDistinctId03neweF017completionHandlerySS_SSys6ResultOySbs5Error_pGctF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -3052,6 +3058,20 @@
       "offset": 7808,
       "length": 1,
       "value": "\"\""
+    },
+    {
+      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
+      "kind": "BooleanLiteral",
+      "offset": 4398,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
+      "kind": "BooleanLiteral",
+      "offset": 12743,
+      "length": 5,
+      "value": "false"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/WebSocketManager.swift",
