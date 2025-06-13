@@ -1,0 +1,30 @@
+stages:
+  - sonar
+
+sonarqube_scan:
+  image: sonarsource/sonar-scanner-cli:5.0.1
+  stage: sonar
+  only:
+    - merge_requests
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" # cache sonar files between runs
+    GIT_DEPTH: 0 # necessary for sonar to get full history info
+  before_script:
+    - apk add --no-cache curl jq
+  script:
+    - sonar-scanner --version
+    - sonar-scanner -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.sources=. -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+    - echo "Waiting for SonarQube to process the analysis..."
+    - sleep 20 # You may tune this value based on processing speed
+
+    - echo "Checking Quality Gate status..."
+    - >
+      curl -s "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY" -u "$SONAR_TOKEN:" | jq -r '.projectStatus.status' > qg_status.txt
+
+    - |
+      if [ "$(cat qg_status.txt)" != "OK" ]; then
+        echo "❌ Custom Quality Gate check failed."
+        exit 1
+      else
+        echo "✅ Custom Quality Gate check passed."
+      fi
