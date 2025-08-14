@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |spec|
     spec.name         = "fyno-push-ios"
-    spec.version      = "3.7.0"
+    spec.version      = "4.0.0"
     spec.summary      = "Fyno's iOS SDK."
   
     spec.description  = <<-DESC
@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
     spec.source       = { :git => "https://github.com/fynoio/ios-sdk.git", :tag => "#{spec.version}" }
     # Replace "yourusername" and adjust the URL accordingly.
   
-    spec.swift_version = "5.7"
+    spec.swift_version = "6.0"
   
     spec.source_files = "Sources/**/*.swift"
     # Adjust the source file path accordingly.

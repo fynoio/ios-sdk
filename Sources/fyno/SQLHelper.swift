@@ -1,7 +1,7 @@
 import FMDB
 import SwiftyJSON
 
-class SQLHelper {
+class SQLHelper: @unchecked Sendable {
     static let shared = SQLHelper() // Singleton instance
     
     struct DatabaseConstants {

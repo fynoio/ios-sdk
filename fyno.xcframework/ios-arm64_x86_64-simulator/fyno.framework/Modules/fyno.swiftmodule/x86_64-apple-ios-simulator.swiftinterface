@@ -1,6 +1,6 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 6.0 effective-5.10 (swiftlang-6.0.0.9.10 clang-1600.0.26.2)
-// swift-module-flags: -target x86_64-apple-ios12.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name fyno
+// swift-compiler-version: Apple Swift version 6.0.3 (swiftlang-6.0.3.1.10 clang-1600.0.30.1)
+// swift-module-flags: -target x86_64-apple-ios13.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 6 -enforce-exclusivity=checked -O -module-name fyno -package-name ios_sdk
 // swift-module-flags-ignorable: -no-verify-emitted-module-interface
 import CommonCrypto
 import FMDB
@@ -20,20 +20,20 @@ extension UIKit.UIDevice {
   @_Concurrency.MainActor @preconcurrency public static let modelName: Swift.String
 }
 @_inheritsConvenienceInitializers @objc public class fyno : UserNotifications.UNNotificationServiceExtension, UserNotifications.UNUserNotificationCenterDelegate {
-  @objc public static let app: fyno.fyno
+  @objc nonisolated(unsafe) public static let app: fyno.fyno
   @objc override dynamic public init()
   @objc deinit
-  public func initializeApp(workspaceID: Swift.String, integrationID: Swift.String, distinctId: Swift.String, version: Swift.String = "live", completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func initializeApp(workspaceID: Swift.String, integrationID: Swift.String, distinctId: Swift.String, version: Swift.String = "live", completionHandler: @escaping @Sendable (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   @objc public func setdeviceToken(deviceToken: Foundation.Data)
   public func getPushNotificationToken() -> Swift.String
-  public func registerPush(isAPNs: Swift.Bool, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func registerPush(isAPNs: Swift.Bool, completionHandler: @escaping @Sendable (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   public func setFCMToken(fcmToken: Swift.String)
-  public func registerInapp(integrationID: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
-  public func identify(newDistinctId: Swift.String, userName: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
-  public func updateName(userName: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
-  public func mergeProfile(oldDistinctId: Swift.String, newDistinctId: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
-  public func updateStatus(callbackUrl: Swift.String, status: Swift.String, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
-  public func resetUser(completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func registerInapp(integrationID: Swift.String, completionHandler: @escaping @Sendable (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func identify(newDistinctId: Swift.String, userName: Swift.String, completionHandler: @escaping @Sendable (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func updateName(userName: Swift.String, completionHandler: @escaping @Sendable (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func mergeProfile(oldDistinctId: Swift.String, newDistinctId: Swift.String, completionHandler: @escaping @Sendable (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func updateStatus(callbackUrl: Swift.String, status: Swift.String, completionHandler: @escaping @Sendable (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  public func resetUser(completionHandler: @escaping @Sendable (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
   public func requestNotificationAuthorization(completionHandler: @escaping (Swift.Bool) -> Swift.Void)
   @objc public func registerForRemoteNotifications()
   @objc public func userNotificationCenter(_ center: UserNotifications.UNUserNotificationCenter, willPresent notification: UserNotifications.UNNotification, withCompletionHandler completionHandler: @escaping (UserNotifications.UNNotificationPresentationOptions) -> Swift.Void)

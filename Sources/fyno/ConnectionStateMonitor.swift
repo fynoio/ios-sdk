@@ -1,7 +1,7 @@
 import Foundation
 import SystemConfiguration
 
-class ConnectionStateMonitor {
+class ConnectionStateMonitor: @unchecked Sendable {
     static let shared = ConnectionStateMonitor()
 
     private var reachability: SCNetworkReachability?

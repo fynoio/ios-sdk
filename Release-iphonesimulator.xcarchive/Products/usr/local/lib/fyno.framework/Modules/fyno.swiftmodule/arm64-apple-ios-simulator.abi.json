@@ -94,7 +94,10 @@
         "name": "SwiftyJSON",
         "printedName": "SwiftyJSON",
         "declKind": "Import",
-        "moduleName": "fyno"
+        "moduleName": "fyno",
+        "declAttributes": [
+          "Preconcurrency"
+        ]
       },
       {
         "kind": "Import",
@@ -146,7 +149,10 @@
         "name": "UserNotifications",
         "printedName": "UserNotifications",
         "declKind": "Import",
-        "moduleName": "fyno"
+        "moduleName": "fyno",
+        "declAttributes": [
+          "Preconcurrency"
+        ]
       },
       {
         "kind": "Import",
@@ -161,16 +167,6 @@
         "printedName": "SwiftyJSON",
         "declKind": "Import",
         "moduleName": "fyno"
-      },
-      {
-        "kind": "Import",
-        "name": "Foundation",
-        "printedName": "Foundation",
-        "declKind": "Import",
-        "moduleName": "fyno",
-        "declAttributes": [
-          "RawDocComment"
-        ]
       },
       {
         "kind": "Import",
@@ -220,6 +216,7 @@
               "Final",
               "HasStorage",
               "AccessControl",
+              "Nonisolated",
               "ObjC"
             ],
             "isLet": true,
@@ -346,8 +343,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:4fynoAAC13initializeApp11workspaceID011integrationE010distinctId7version17completionHandlerySS_S3Sys6ResultOySbs5Error_pGctF",
-            "mangledName": "$s4fynoAAC13initializeApp11workspaceID011integrationE010distinctId7version17completionHandlerySS_S3Sys6ResultOySbs5Error_pGctF",
+            "usr": "s:4fynoAAC13initializeApp11workspaceID011integrationE010distinctId7version17completionHandlerySS_S3Sys6ResultOySbs5Error_pGYbctF",
+            "mangledName": "$s4fynoAAC13initializeApp11workspaceID011integrationE010distinctId7version17completionHandlerySS_S3Sys6ResultOySbs5Error_pGYbctF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -453,8 +450,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:4fynoAAC12registerPush6isAPNs17completionHandlerySb_ys6ResultOySbs5Error_pGctF",
-            "mangledName": "$s4fynoAAC12registerPush6isAPNs17completionHandlerySb_ys6ResultOySbs5Error_pGctF",
+            "usr": "s:4fynoAAC12registerPush6isAPNs17completionHandlerySb_ys6ResultOySbs5Error_pGYbctF",
+            "mangledName": "$s4fynoAAC12registerPush6isAPNs17completionHandlerySb_ys6ResultOySbs5Error_pGYbctF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -537,8 +534,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:4fynoAAC13registerInapp13integrationID17completionHandlerySS_ys6ResultOySbs5Error_pGctF",
-            "mangledName": "$s4fynoAAC13registerInapp13integrationID17completionHandlerySS_ys6ResultOySbs5Error_pGctF",
+            "usr": "s:4fynoAAC13registerInapp13integrationID17completionHandlerySS_ys6ResultOySbs5Error_pGYbctF",
+            "mangledName": "$s4fynoAAC13registerInapp13integrationID17completionHandlerySS_ys6ResultOySbs5Error_pGYbctF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -601,8 +598,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:4fynoAAC8identify13newDistinctId8userName17completionHandlerySS_SSys6ResultOySbs5Error_pGctF",
-            "mangledName": "$s4fynoAAC8identify13newDistinctId8userName17completionHandlerySS_SSys6ResultOySbs5Error_pGctF",
+            "usr": "s:4fynoAAC8identify13newDistinctId8userName17completionHandlerySS_SSys6ResultOySbs5Error_pGYbctF",
+            "mangledName": "$s4fynoAAC8identify13newDistinctId8userName17completionHandlerySS_SSys6ResultOySbs5Error_pGYbctF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -659,8 +656,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:4fynoAAC10updateName04userC017completionHandlerySS_ys6ResultOySbs5Error_pGctF",
-            "mangledName": "$s4fynoAAC10updateName04userC017completionHandlerySS_ys6ResultOySbs5Error_pGctF",
+            "usr": "s:4fynoAAC10updateName04userC017completionHandlerySS_ys6ResultOySbs5Error_pGYbctF",
+            "mangledName": "$s4fynoAAC10updateName04userC017completionHandlerySS_ys6ResultOySbs5Error_pGYbctF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -723,8 +720,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:4fynoAAC12mergeProfile13oldDistinctId03neweF017completionHandlerySS_SSys6ResultOySbs5Error_pGctF",
-            "mangledName": "$s4fynoAAC12mergeProfile13oldDistinctId03neweF017completionHandlerySS_SSys6ResultOySbs5Error_pGctF",
+            "usr": "s:4fynoAAC12mergeProfile13oldDistinctId03neweF017completionHandlerySS_SSys6ResultOySbs5Error_pGYbctF",
+            "mangledName": "$s4fynoAAC12mergeProfile13oldDistinctId03neweF017completionHandlerySS_SSys6ResultOySbs5Error_pGYbctF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -787,8 +784,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:4fynoAAC12updateStatus11callbackUrl6status17completionHandlerySS_SSys6ResultOySbs5Error_pGctF",
-            "mangledName": "$s4fynoAAC12updateStatus11callbackUrl6status17completionHandlerySS_SSys6ResultOySbs5Error_pGctF",
+            "usr": "s:4fynoAAC12updateStatus11callbackUrl6status17completionHandlerySS_SSys6ResultOySbs5Error_pGYbctF",
+            "mangledName": "$s4fynoAAC12updateStatus11callbackUrl6status17completionHandlerySS_SSys6ResultOySbs5Error_pGYbctF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -839,8 +836,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:4fynoAAC9resetUser17completionHandleryys6ResultOySbs5Error_pGc_tF",
-            "mangledName": "$s4fynoAAC9resetUser17completionHandleryys6ResultOySbs5Error_pGc_tF",
+            "usr": "s:4fynoAAC9resetUser17completionHandleryys6ResultOySbs5Error_pGYbc_tF",
+            "mangledName": "$s4fynoAAC9resetUser17completionHandleryys6ResultOySbs5Error_pGYbc_tF",
             "moduleName": "fyno",
             "declAttributes": [
               "AccessControl"
@@ -1347,14 +1344,14 @@
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/ConnectionStateMonitor.swift",
       "kind": "BooleanLiteral",
-      "offset": 211,
+      "offset": 232,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/ConnectionStateMonitor.swift",
       "kind": "StringLiteral",
-      "offset": 338,
+      "offset": 359,
       "length": 22,
       "value": "\"NetworkStatusChanged\""
     },
@@ -1438,112 +1435,105 @@
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "IntegerLiteral",
-      "offset": 288,
+      "offset": 614,
       "length": 4,
       "value": "6000"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "IntegerLiteral",
-      "offset": 334,
-      "length": 5,
+      "offset": 661,
+      "length": 6,
       "value": "60000"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "IntegerLiteral",
-      "offset": 369,
+      "offset": 708,
       "length": 1,
       "value": "3"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 543,
+      "offset": 924,
       "length": 6,
       "value": "\"POST\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 2173,
+      "offset": 2322,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
       "kind": "StringLiteral",
-      "offset": 6166,
+      "offset": 6388,
       "length": 2,
       "value": "\"\""
-    },
-    {
-      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/RequestHandler.swift",
-      "kind": "IntegerLiteral",
-      "offset": 11389,
-      "length": 1,
-      "value": "0"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/SQLHelper.swift",
       "kind": "StringLiteral",
-      "offset": 177,
+      "offset": 198,
       "length": 9,
       "value": "\"fyno.db\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/SQLHelper.swift",
       "kind": "StringLiteral",
-      "offset": 221,
+      "offset": 242,
       "length": 10,
       "value": "\"requests\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/SQLHelper.swift",
       "kind": "StringLiteral",
-      "offset": 265,
+      "offset": 286,
       "length": 11,
       "value": "\"callbacks\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/SQLHelper.swift",
       "kind": "StringLiteral",
-      "offset": 307,
+      "offset": 328,
       "length": 4,
       "value": "\"id\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/SQLHelper.swift",
       "kind": "StringLiteral",
-      "offset": 343,
+      "offset": 364,
       "length": 5,
       "value": "\"url\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/SQLHelper.swift",
       "kind": "StringLiteral",
-      "offset": 385,
+      "offset": 406,
       "length": 11,
       "value": "\"post_data\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/SQLHelper.swift",
       "kind": "StringLiteral",
-      "offset": 431,
+      "offset": 452,
       "length": 8,
       "value": "\"method\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/SQLHelper.swift",
       "kind": "StringLiteral",
-      "offset": 483,
+      "offset": 504,
       "length": 19,
       "value": "\"last_processed_at\""
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/SQLHelper.swift",
       "kind": "StringLiteral",
-      "offset": 537,
+      "offset": 558,
       "length": 8,
       "value": "\"status\""
     },
@@ -3062,28 +3052,21 @@
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "BooleanLiteral",
-      "offset": 4398,
+      "offset": 4443,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/Utilities.swift",
       "kind": "BooleanLiteral",
-      "offset": 12743,
-      "length": 5,
-      "value": "false"
-    },
-    {
-      "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/WebSocketManager.swift",
-      "kind": "BooleanLiteral",
-      "offset": 183,
+      "offset": 13433,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/viramjain\/workspace\/ios-sdk\/Sources\/fyno\/fyno.swift",
       "kind": "StringLiteral",
-      "offset": 1532,
+      "offset": 1585,
       "length": 6,
       "value": "\"live\""
     }

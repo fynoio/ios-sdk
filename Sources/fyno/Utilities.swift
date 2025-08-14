@@ -2,13 +2,13 @@
 
 import Foundation
 import UIKit
-import UserNotifications
+@preconcurrency import UserNotifications
 import CommonCrypto
 import SwiftyJSON
 
 @objc
 class Utilities : NSObject{
-    private static let preferences = UserDefaults.standard
+    nonisolated(unsafe) static let preferences = UserDefaults.standard
         
     @objc public static func addImageAndActionButtons(bestAttemptContent: UNMutableNotificationContent, completion: @escaping (UNMutableNotificationContent) -> Void) {
         let declineAction = UNNotificationAction(identifier: "DECLINE_ACTION", title: "Decline", options: .destructive)
@@ -98,7 +98,11 @@ class Utilities : NSObject{
         task.resume()
     }
     
-    public static func createUserProfile(payload: Payload, forceCreate: Bool = false, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+    public static func createUserProfile(
+        payload: Payload,
+        forceCreate: Bool = false,
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
         let currentDistinctID = getDistinctID()
         let newDistinctID = payload.distinctID ?? ""
         
@@ -107,7 +111,7 @@ class Utilities : NSObject{
             return
         }
 
-        func finalizeProfileSetup(success: Bool, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+        let finalizeProfileSetup: @Sendable (Bool, @escaping @Sendable (Result<Bool, Error>) -> Void) -> Void = { success, completion in
             setDistinctID(distinctID: newDistinctID)
 
             let fcmToken = getFCMToken()
@@ -115,7 +119,7 @@ class Utilities : NSObject{
             let pushToken = !fcmToken.isEmpty ? fcmToken : apnsToken
 
             guard !pushToken.isEmpty else {
-                completionHandler(.success(true))
+                completion(.success(true))
                 return
             }
 
@@ -125,19 +129,19 @@ class Utilities : NSObject{
             )
 
             Utilities.addChannelData(payload: payloadInstance) { channelResult in
-                completionHandler(channelResult)
+                completion(channelResult)
             }
         }
 
-        func handleCompletion(_ result: Result<Bool, Error>) {
+        let handleCompletion: @Sendable (Result<Bool, Error>) -> Void = { result in
             switch result {
             case .success:
-                deleteChannelData { result in
-                    switch result {
+                deleteChannelData { deleteResult in
+                    switch deleteResult {
                     case .failure(let error):
                         completionHandler(.failure(error))
                     case .success:
-                        finalizeProfileSetup(success: true, completionHandler: completionHandler)
+                        finalizeProfileSetup(true, completionHandler)
                     }
                 }
             case .failure(let error):
@@ -152,13 +156,26 @@ class Utilities : NSObject{
             ]
 
             let url = FynoUtils().getEndpoint(event: "create_profile", profile: newDistinctID)
-            RequestHandler.shared.PerformRequest(url: url, method: "POST", payload: jsonPayload, completionHandler: handleCompletion)
+            RequestHandler.shared.PerformRequest(
+                url: url,
+                method: "POST",
+                payload: jsonPayload,
+                completionHandler: handleCompletion
+            )
         } else {
-            mergeUserProfile(oldDistinctId: currentDistinctID, newDistinctId: newDistinctID, isForceMerge: true, completionHandler: handleCompletion)
+            mergeUserProfile(
+                oldDistinctId: currentDistinctID,
+                newDistinctId: newDistinctID,
+                isForceMerge: true,
+                completionHandler: handleCompletion
+            )
         }
     }
+
     
-    public static func deleteChannelData(completionHandler: @escaping(Result<Bool,Error>) -> Void){
+    public static func deleteChannelData(
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
         let fcmToken = getFCMToken()
         let apnsToken = getAPNsToken()
 
@@ -172,7 +189,7 @@ class Utilities : NSObject{
             pushArray.append(apnsToken)
         }
         
-        if pushArray.count == 0 { // no channel data to delete
+        if pushArray.isEmpty { // no channel data to delete
             completionHandler(.success(true))
             return
         }
@@ -181,7 +198,11 @@ class Utilities : NSObject{
             "push": pushArray
         ]
         
-        RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "delete_channel", profile: getDistinctID()), method: "POST", payload: payload){ result in
+        RequestHandler.shared.PerformRequest(
+            url: FynoUtils().getEndpoint(event: "delete_channel", profile: getDistinctID()),
+            method: "POST",
+            payload: payload
+        ) { @Sendable result in
             switch result {
             case .success(let success):
                 completionHandler(.success(success))
@@ -191,8 +212,11 @@ class Utilities : NSObject{
         }
     }
  
-    public static func updateUserProfile(payload:Payload, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
-        let payloadInstance: JSON =  [
+    public static func updateUserProfile(
+        payload: Payload,
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
+        let payloadInstance: JSON = [
             "distinct_id": payload.distinctID as Any,
             "status": payload.status as Any,
             "channel": [
@@ -205,7 +229,11 @@ class Utilities : NSObject{
             ]
         ]
         
-        RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "upsert_profile", profile: payload.distinctID), method: "PUT", payload: payloadInstance){ result in
+        RequestHandler.shared.PerformRequest(
+            url: FynoUtils().getEndpoint(event: "upsert_profile", profile: payload.distinctID),
+            method: "PUT",
+            payload: payloadInstance
+        ) { @Sendable result in
             switch result {
             case .success(let success):
                 completionHandler(.success(success))
@@ -215,17 +243,19 @@ class Utilities : NSObject{
         }
     }
     
-    public static func addChannelData(payload:Payload, completionHandler: @escaping (Result<Bool, Error>) -> Void){
- 
-        var isNotificationPermissionEnabled = 0
-        
+    public static func addChannelData(
+        payload: Payload,
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
+            let permissionStatus: Int
             switch settings.authorizationStatus {
             case .authorized, .provisional:
                 print("Authorized")
-                isNotificationPermissionEnabled = 1
+                permissionStatus = 1
             case .denied:
                 print("Denied")
+                permissionStatus = 0
             case .notDetermined:
                 print("Not determined, asking user for permission now")
                 fyno.app.requestNotificationAuthorization { granted in
@@ -235,31 +265,42 @@ class Utilities : NSObject{
                         }
                     }
                 }
+                permissionStatus = 0
             case .ephemeral:
                 print("ephemeral")
+                permissionStatus = 0
             @unknown default:
                 print("unknown status")
+                permissionStatus = 0
             }
             
-            if isNotificationPermissionEnabled != getPushPermission()
+            if permissionStatus != getPushPermission()
                 || getDistinctID() != getPushDistinctID()
                 || getPushPermissionFirstTime() == false {
-                let payloadInstance: JSON =  [
+                
+                let payloadInstance: JSON = [
                     "channel": [
                         "push": [
                             [
                                 "token": payload.pushToken as Any,
                                 "integration_id": payload.integrationId as Any,
-                                "status": isNotificationPermissionEnabled
+                                "status": permissionStatus
                             ]
                         ]
                     ]
                 ]
                 
-                RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "update_channel", profile: Utilities.getDistinctID()), method: "PATCH", payload: payloadInstance){ result in
+                RequestHandler.shared.PerformRequest(
+                    url: FynoUtils().getEndpoint(
+                        event: "update_channel",
+                        profile: Utilities.getDistinctID()
+                    ),
+                    method: "PATCH",
+                    payload: payloadInstance
+                ) { @Sendable result in
                     switch result {
                     case .success(let success):
-                        setPushPermission(isNotificationPermissionEnabled: isNotificationPermissionEnabled)
+                        setPushPermission(isNotificationPermissionEnabled: permissionStatus)
                         setPushDistinctID(fynoPushDistinctID: getDistinctID())
                         setPushPermissionFirstTime(value: true)
                         completionHandler(.success(success))
@@ -269,7 +310,6 @@ class Utilities : NSObject{
                 }
             } else {
                 completionHandler(.success(true))
-                return
             }
         }
     }
@@ -307,7 +347,12 @@ class Utilities : NSObject{
         return preferences.string(forKey: currentLevelKey) ?? ""
     }
     
-    public static func mergeUserProfile(oldDistinctId: String, newDistinctId: String, isForceMerge: Bool = false, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+    public static func mergeUserProfile(
+        oldDistinctId: String,
+        newDistinctId: String,
+        isForceMerge: Bool = false,
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
         let currentDistinctID = getDistinctID()
 
         guard currentDistinctID != newDistinctId else {
@@ -316,8 +361,12 @@ class Utilities : NSObject{
         }
 
         if currentDistinctID.starts(with: "fytp:") || isForceMerge {
-            let url = FynoUtils().getEndpoint(event: "merge_profile", profile: oldDistinctId, newId: newDistinctId)
-            RequestHandler.shared.PerformRequest(url: url, method: "PATCH") { result in
+            let url = FynoUtils().getEndpoint(
+                event: "merge_profile",
+                profile: oldDistinctId,
+                newId: newDistinctId
+            )
+            RequestHandler.shared.PerformRequest(url: url, method: "PATCH") { @Sendable result in
                 switch result {
                 case .success:
                     setDistinctID(distinctID: newDistinctId)
@@ -327,11 +376,11 @@ class Utilities : NSObject{
                 }
             }
         } else {
-            deleteChannelData { deleteResult in
+            deleteChannelData { @Sendable deleteResult in
                 switch deleteResult {
                 case .success:
                     let payload = Payload(distinctID: newDistinctId, status: 1)
-                    createUserProfile(payload: payload) { result in
+                    createUserProfile(payload: payload) { @Sendable result in
                         switch result {
                         case .success:
                             completionHandler(.success(true))
@@ -346,9 +395,20 @@ class Utilities : NSObject{
         }
     }
     
-    public static func callback(url:String, action:String, deviceDetails: AnyHashable, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
-        var formattedDate: Any
-        
+    public static func callback(
+        url: String,
+        action: String,
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
+        let deviceDetails: [String: String] = {
+            var details: [String: String] = [:]
+            DispatchQueue.main.sync {
+                details = Utilities.getDeviceDetails()
+            }
+            return details
+        }()
+
+        let formattedDate: Any
         if #available(iOS 8.0, *) {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXX"
@@ -356,21 +416,24 @@ class Utilities : NSObject{
         } else {
             formattedDate = Date()
         }
-        
+
         var updatedAction = action.uppercased()
-        
         if !["RECEIVED", "CLICKED", "DISMISSED"].contains(updatedAction) {
             updatedAction = "UNKNOWN"
         }
-        
-        let payload: JSON =  [
+
+        let payload: JSON = [
             "status": updatedAction,
             "message": deviceDetails,
             "eventType": "Delivery",
             "timestamp": "\(updatedAction) at \(formattedDate)"
         ]
-        
-        RequestHandler.shared.PerformRequest(url: url, method: "POST", payload: payload){ result in
+
+        RequestHandler.shared.PerformRequest(
+            url: url,
+            method: "POST",
+            payload: payload
+        ) { @Sendable result in
             switch result {
             case .success(let success):
                 completionHandler(.success(success))
@@ -380,17 +443,27 @@ class Utilities : NSObject{
         }
     }
     
-    public static func updateUserName(userName:String, completionHandler: @escaping (Result<Bool,Error>) -> Void) {
+    public static func updateUserName(
+        userName: String,
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
         if getUserName() == userName {
             completionHandler(.success(true))
             return
         }
         
-        let payloadInstance: JSON =  [
+        let payloadInstance: JSON = [
             "name": userName
         ]
 
-        RequestHandler.shared.PerformRequest(url: FynoUtils().getEndpoint(event: "upsert_profile", profile: getDistinctID()), method: "PUT", payload: payloadInstance){ result in
+        RequestHandler.shared.PerformRequest(
+            url: FynoUtils().getEndpoint(
+                event: "upsert_profile",
+                profile: getDistinctID()
+            ),
+            method: "PUT",
+            payload: payloadInstance
+        ) { @Sendable result in
             switch result {
             case .success(let success):
                 setUserName(userName: userName)
@@ -580,6 +653,7 @@ class Utilities : NSObject{
         return ""
     }
 
+    @MainActor
     public static func getDeviceDetails() -> [String: String] {
         let device = UIDevice.current
         var details = [String: String]()
