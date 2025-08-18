@@ -5,7 +5,7 @@ import SwiftyJSON
 @objc
 public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelegate {
     
-    @objc public static let app = fyno()
+    @objc nonisolated(unsafe) public static let app = fyno()
     
     var contentHandler: ((UNNotificationContent) -> Void)?
     var modifiedNotificationContent: UNMutableNotificationContent?
@@ -39,9 +39,20 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         }
     }
     
-    public func initializeApp(workspaceID: String, integrationID: String, distinctId: String, version: String = "live", completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+    public func initializeApp(
+        workspaceID: String,
+        integrationID: String,
+        distinctId: String,
+        version: String = "live",
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
         guard !workspaceID.isEmpty && !integrationID.isEmpty else {
-            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "workspaceID and/or integrationID cannot be empty. Please check your configuration"])
+            let error = NSError(
+                domain: "FynoSDK",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey:
+                           "workspaceID and/or integrationID cannot be empty. Please check your configuration"]
+            )
             print(error.localizedDescription)
             completionHandler(.failure(error))
             return
@@ -54,7 +65,9 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         Utilities.setVersion(Version: version)
         Utilities.setFynoInitialized()
         
-        if !Utilities.getDistinctID().isEmpty && !distinctId.isEmpty && Utilities.getDistinctID() == distinctId {
+        if !Utilities.getDistinctID().isEmpty &&
+            !distinctId.isEmpty &&
+            Utilities.getDistinctID() == distinctId {
             completionHandler(.success(true))
             return
         }
@@ -66,7 +79,8 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             distinctIdToBeSent = distinctId
         }
         
-        if Utilities.getDistinctID().starts(with: "fytp:") && distinctIdToBeSent.starts(with: "fytp:") {
+        if Utilities.getDistinctID().starts(with: "fytp:") &&
+            distinctIdToBeSent.starts(with: "fytp:") {
             completionHandler(.success(true))
             return
         }
@@ -76,18 +90,17 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             status: 1
         )
         
-        Utilities.createUserProfile(payload: payloadInstance) { result in
+        Utilities.createUserProfile(payload: payloadInstance) { @Sendable result in
             switch result {
             case .failure(let error):
                 completionHandler(.failure(error))
-                return
             case .success(let success):
                 print("Fyno instance initialized successfully")
                 completionHandler(.success(success))
-                return
             }
         }
     }
+
     
     @objc public func setdeviceToken (deviceToken: Data) -> Void {
         let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
@@ -109,51 +122,50 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         return String(token.split(separator: ":", maxSplits: 1)[1])
     }
     
-    public func registerPush(isAPNs:Bool, completionHandler:@escaping (Result<Bool,Error>) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {           
-            if !Utilities.isFynoInitialized() {
-                let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
+    public func registerPush(
+        isAPNs: Bool,
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [isAPNs] in
+            
+            @Sendable
+            func complete(_ result: Result<Bool, Error>) {
+                DispatchQueue.main.async {
+                    completionHandler(result)
+                }
+            }
+            
+            guard Utilities.isFynoInitialized() else {
+                let error = NSError(
+                    domain: "FynoSDK",
+                    code: 1,
+                    userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"]
+                )
                 print(error.localizedDescription)
-                completionHandler(.failure(error))
+                complete(.failure(error))
                 return
             }
             
-            let payloadInstance = Payload(
-                integrationId: Utilities.getintegrationID()
-            )
+            let payloadInstance = Payload(integrationId: Utilities.getintegrationID())
             
             if isAPNs {
                 Utilities.setAPNsToken(apnsToken: Utilities.getdeviceToken())
-                
                 payloadInstance.pushToken = Utilities.getAPNsToken()
-                
-                Utilities.addChannelData(payload: payloadInstance) { result in
-                    switch result {
-                    case .success(let success):
-                        completionHandler(.success(success))
-                    case .failure(let error):
-                        completionHandler(.failure(error))
-                    }
-                }
             } else {
                 payloadInstance.pushToken = Utilities.getFCMToken()
-                Utilities.addChannelData(payload: payloadInstance) { result in
-                    switch result {
-                    case .success(let success):
-                        completionHandler(.success(success))
-                    case .failure(let error):
-                        completionHandler(.failure(error))
-                    }
-                }
+            }
+            
+            Utilities.addChannelData(payload: payloadInstance) { result in
+                complete(result)
             }
         }
     }
-    
+
     public func setFCMToken(fcmToken:String){
         Utilities.setFCMToken(fcmToken: fcmToken)
     }
     
-    public func registerInapp(integrationID: String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
+    public func registerInapp(integrationID: String, completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void){
         if !Utilities.isFynoInitialized() {
             let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
             print(error.localizedDescription)
@@ -189,20 +201,32 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         }
     }
     
-    public func identify(newDistinctId: String, userName:String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
+    public func identify(
+        newDistinctId: String,
+        userName: String,
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
         if !Utilities.isFynoInitialized() {
-            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
+            let error = NSError(
+                domain: "FynoSDK",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"]
+            )
             print(error.localizedDescription)
             completionHandler(.failure(error))
             return
         }
         
-        Utilities.mergeUserProfile(oldDistinctId: Utilities.getDistinctID(), newDistinctId: newDistinctId, isForceMerge: false) { result in
+        Utilities.mergeUserProfile(
+            oldDistinctId: Utilities.getDistinctID(),
+            newDistinctId: newDistinctId,
+            isForceMerge: false
+        ) { @Sendable result in
             switch result {
-            case .success(_):
+            case .success:
                 print("merge successful")
-                if userName != "" {
-                    Utilities.updateUserName(userName: userName) { result in
+                if !userName.isEmpty {
+                    Utilities.updateUserName(userName: userName) { @Sendable result in
                         switch result {
                         case .success(let success):
                             completionHandler(.success(success))
@@ -219,15 +243,22 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         }
     }
     
-    public func updateName(userName: String, completionHandler:@escaping (Result<Bool,Error>) -> Void) {
+    public func updateName(
+        userName: String,
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
         if !Utilities.isFynoInitialized() {
-            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
+            let error = NSError(
+                domain: "FynoSDK",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"]
+            )
             print(error.localizedDescription)
             completionHandler(.failure(error))
             return
         }
         
-        Utilities.updateUserName(userName: userName) { result in
+        Utilities.updateUserName(userName: userName) { @Sendable result in
             switch result {
             case .success(let success):
                 completionHandler(.success(success))
@@ -236,16 +267,28 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             }
         }
     }
-    
-    public func mergeProfile(oldDistinctId:String, newDistinctId: String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
+
+    public func mergeProfile(
+        oldDistinctId: String,
+        newDistinctId: String,
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
         if !Utilities.isFynoInitialized() {
-            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
+            let error = NSError(
+                domain: "FynoSDK",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"]
+            )
             print(error.localizedDescription)
             completionHandler(.failure(error))
             return
         }
         
-        Utilities.mergeUserProfile(oldDistinctId: oldDistinctId, newDistinctId: newDistinctId, isForceMerge: true){ result in
+        Utilities.mergeUserProfile(
+            oldDistinctId: oldDistinctId,
+            newDistinctId: newDistinctId,
+            isForceMerge: true
+        ) { @Sendable result in
             switch result {
             case .success(let success):
                 completionHandler(.success(success))
@@ -254,9 +297,13 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             }
         }
     }
-    
-    public func updateStatus(callbackUrl: String, status: String, completionHandler:@escaping (Result<Bool,Error>) -> Void){
-        Utilities.callback(url: callbackUrl, action: status, deviceDetails: Utilities.getDeviceDetails()){ result in
+
+    public func updateStatus(
+        callbackUrl: String,
+        status: String,
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
+        Utilities.callback(url: callbackUrl, action: status) { @Sendable result in
             switch result {
             case .success(let success):
                 completionHandler(.success(success))
@@ -265,47 +312,51 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
             }
         }
     }
+
     
-    public func resetUser(completionHandler:@escaping (Result<Bool,Error>) -> Void)
-    {
+    public func resetUser(
+        completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
+    ) {
         if !Utilities.isFynoInitialized() {
-            let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"])
+            let error = NSError(
+                domain: "FynoSDK",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "fyno instance not initialized"]
+            )
             print(error.localizedDescription)
             completionHandler(.failure(error))
             return
         }
         
         if Utilities.getDistinctID().starts(with: "fytp:") {
-            print("can't reset temperorary profile")
+            print("can't reset temporary profile")
             completionHandler(.success(true))
             return
         }
         
-        Utilities.deleteChannelData(){result in
-            switch result{
+        Utilities.deleteChannelData() { @Sendable result in
+            switch result {
             case .success(let success):
                 print("success delete channel")
                 completionHandler(.success(success))
+                
                 let myUUID = UUID()
                 let distinctID = "fytp:" + myUUID.uuidString
-                let payloadInstance = Payload(
-                    distinctID: distinctID
-                )
+                let payloadInstance = Payload(distinctID: distinctID)
                 
-                Utilities.createUserProfile(payload: payloadInstance, forceCreate:true) { result in
+                Utilities.createUserProfile(payload: payloadInstance, forceCreate: true) { @Sendable result in
                     switch result {
                     case .success(let success):
                         print("success create user")
                         Utilities.setDistinctID(distinctID: distinctID)
-                        let payload = Payload(
-                            integrationId: Utilities.getintegrationID()
-                        )
+                        let payload = Payload(integrationId: Utilities.getintegrationID())
                         
-                        if !Utilities.getAPNsToken().isEmpty{
-                            payload.pushToken = Utilities.getAPNsToken()
-                            Utilities.addChannelData(payload: payload) { result in
+                        if !Utilities.getAPNsToken().isEmpty {
+                            let apnsPayload = payload
+                            apnsPayload.pushToken = Utilities.getAPNsToken()
+                            Utilities.addChannelData(payload: apnsPayload) { @Sendable result in
                                 switch result {
-                                case .success(_):
+                                case .success:
                                     print("addChannelData success")
                                 case .failure(let error):
                                     print(error.localizedDescription)
@@ -313,12 +364,12 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                             }
                         }
                         
-                        if !Utilities.getFCMToken().isEmpty{
-                            payload.pushToken = Utilities.getFCMToken()
-                            
-                            Utilities.addChannelData(payload: payload) { result in
+                        if !Utilities.getFCMToken().isEmpty {
+                            let fcmPayload = payload
+                            fcmPayload.pushToken = Utilities.getFCMToken()
+                            Utilities.addChannelData(payload: fcmPayload) { @Sendable result in
                                 switch result {
-                                case .success(_):
+                                case .success:
                                     print("addChannelData success")
                                 case .failure(let error):
                                     print(error.localizedDescription)
@@ -328,7 +379,6 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                         completionHandler(.success(success))
                     case .failure(let error):
                         completionHandler(.failure(error))
-                        return
                     }
                 }
             case .failure(let error):
@@ -357,22 +407,18 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
     }
     
     @objc public func registerForRemoteNotifications() {
-        UIApplication.shared.registerForRemoteNotifications()
+       Task {@MainActor in
+            UIApplication.shared.registerForRemoteNotifications()
+       }
     }
     
     @objc public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // The notification was received while the app is active. Handle here.
-        
-        if WebSocketManager.shared.isConnected && UIApplication.shared.applicationState == .active {
-            // If both conditions are true, simply return and ignore the notification
-            completionHandler([])
+        // The notification was received while the app is active. Handle here. 
+        // If you want to show the notification while the app is active, call the completion handler with .banner or .list
+        if #available(iOS 14.0, *) {
+            completionHandler([.banner, .list])
         } else {
-            // If you want to show the notification while the app is active, call the completion handler with .banner or .list
-            if #available(iOS 14.0, *) {
-                completionHandler([.banner, .list])
-            } else {
-                // Fallback on earlier versions
-            }
+            print("unsupported ios version, ios version less than 14.0")
         }
     }
           
@@ -399,7 +445,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         }
         
         if !callbackUrl.isEmpty {
-            Utilities.callback(url: callbackUrl, action: "RECEIVED", deviceDetails: Utilities.getDeviceDetails()){result in
+            Utilities.callback(url: callbackUrl, action: "RECEIVED"){result in
                 switch(result)
                 {
                 case .success(let success):
@@ -458,7 +504,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         
         if !callbackUrl.isEmpty
         {
-            Utilities.callback(url: callbackUrl, action: action, deviceDetails: Utilities.getDeviceDetails()){result in
+            Utilities.callback(url: callbackUrl, action: action){result in
                 switch(result)
                 {
                 case .success(let success):
@@ -476,10 +522,12 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                     completionHandler()
                     return
                 }
-
-                UIApplication.shared.open(url) { (result) in
-                    if result {
-                        print("successfully opened deeplink")
+                
+                Task{@MainActor in
+                    UIApplication.shared.open(url) { (result) in
+                        if result {
+                            print("successfully opened deeplink")
+                        }
                     }
                 }
             }
@@ -488,12 +536,15 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         // To call URL on button click
         if response.actionIdentifier != UNNotificationDismissActionIdentifier &&
            response.actionIdentifier != "DECLINE_ACTION" &&
-           response.actionIdentifier != UNNotificationDefaultActionIdentifier {
+            response.actionIdentifier != UNNotificationDefaultActionIdentifier {
             guard let url = URL(string: response.actionIdentifier) else {
                 completionHandler()
                 return
             }
-            UIApplication.shared.open(url)
+            
+            Task{@MainActor in
+                UIApplication.shared.open(url)
+            }
         }
         
         completionHandler()
