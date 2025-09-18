@@ -400,14 +400,6 @@ class Utilities : NSObject{
         action: String,
         completionHandler: @escaping @Sendable (Result<Bool, Error>) -> Void
     ) {
-        let deviceDetails: [String: String] = {
-            var details: [String: String] = [:]
-            DispatchQueue.main.sync {
-                details = Utilities.getDeviceDetails()
-            }
-            return details
-        }()
-
         let formattedDate: Any
         if #available(iOS 8.0, *) {
             let dateFormatter = DateFormatter()
@@ -424,7 +416,6 @@ class Utilities : NSObject{
 
         let payload: JSON = [
             "status": updatedAction,
-            "message": deviceDetails,
             "eventType": "Delivery",
             "timestamp": "\(updatedAction) at \(formattedDate)"
         ]
