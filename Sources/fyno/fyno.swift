@@ -155,6 +155,13 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                 payloadInstance.pushToken = Utilities.getFCMToken()
             }
             
+            if payloadInstance.pushToken == "apns_token:" || payloadInstance.pushToken == "fcm_token:" {
+                let error = NSError(domain: "FynoSDK", code: 1, userInfo: [NSLocalizedDescriptionKey: "Push token not available"])
+                print(error.localizedDescription)
+                complete(.failure(error))
+                return
+            }
+            
             Utilities.addChannelData(payload: payloadInstance) { result in
                 complete(result)
             }
@@ -416,7 +423,7 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
         // The notification was received while the app is active. Handle here. 
         // If you want to show the notification while the app is active, call the completion handler with .banner or .list
         if #available(iOS 14.0, *) {
-            completionHandler([.banner, .list])
+            completionHandler([.banner, .list, .sound])
         } else {
             print("unsupported ios version, ios version less than 14.0")
         }
