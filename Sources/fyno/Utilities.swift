@@ -17,6 +17,12 @@ class Utilities : NSObject{
         
         bestAttemptContent.categoryIdentifier = categoryIdentifier
         
+        if let soundName = bestAttemptContent.userInfo["sound"] as? String, !soundName.isEmpty {
+            bestAttemptContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: soundName))
+        } else {
+            bestAttemptContent.sound = UNNotificationSound.default
+        }
+        
         let actions = bestAttemptContent.userInfo[AnyHashable("actions")] as? [[AnyHashable: Any]]
         
         let notificationActions = actions?.compactMap { actionDict -> UNNotificationAction? in
