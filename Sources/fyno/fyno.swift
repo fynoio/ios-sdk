@@ -414,9 +414,13 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
     }
     
     @objc public func registerForRemoteNotifications() {
-       Task {@MainActor in
-            UIApplication.shared.registerForRemoteNotifications()
-       }
+        if #available(iOS 13.0, *) {
+            Task {@MainActor in
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
     @objc public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
@@ -530,12 +534,16 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                     return
                 }
                 
-                Task{@MainActor in
-                    UIApplication.shared.open(url) { (result) in
-                        if result {
-                            print("successfully opened deeplink")
+                if #available(iOS 13.0, *) {
+                    Task{@MainActor in
+                        UIApplication.shared.open(url) { (result) in
+                            if result {
+                                print("successfully opened deeplink")
+                            }
                         }
                     }
+                } else {
+                    // Fallback on earlier versions
                 }
             }
         }
@@ -549,8 +557,12 @@ public class fyno:UNNotificationServiceExtension, UNUserNotificationCenterDelega
                 return
             }
             
-            Task{@MainActor in
-                UIApplication.shared.open(url)
+            if #available(iOS 13.0, *) {
+                Task{@MainActor in
+                    UIApplication.shared.open(url)
+                }
+            } else {
+                // Fallback on earlier versions
             }
         }
         
